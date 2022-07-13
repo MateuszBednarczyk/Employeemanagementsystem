@@ -1,4 +1,4 @@
-package com.matthew.employeemanagementsystem.service.user;
+package com.matthew.employeemanagementsystem.repository;
 
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

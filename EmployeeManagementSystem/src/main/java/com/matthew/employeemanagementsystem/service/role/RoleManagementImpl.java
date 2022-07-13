@@ -2,6 +2,7 @@ package com.matthew.employeemanagementsystem.service.role;
 
 import com.matthew.employeemanagementsystem.domain.entities.RoleEntity;
 import com.matthew.employeemanagementsystem.domain.types.RoleType;
+import com.matthew.employeemanagementsystem.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +10,7 @@ import java.rmi.UnexpectedException;
 
 @Service
 @RequiredArgsConstructor
-public class RoleManagementImpl implements RoleManagementService{
+class RoleManagementImpl implements RoleManagementService{
 
     private final RoleRepository roleRepository;
 

@@ -2,6 +2,7 @@ package com.matthew.employeemanagementsystem.service.department;
 
 import com.matthew.employeemanagementsystem.dtos.department.AddNewDepartmentRequestDTO;
 import com.matthew.employeemanagementsystem.domain.entities.DepartmentEntity;
+import com.matthew.employeemanagementsystem.repository.DepartmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

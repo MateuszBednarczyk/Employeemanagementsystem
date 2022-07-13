@@ -1,5 +1,6 @@
 package com.matthew.employeemanagementsystem.service.user;
 
+import com.matthew.employeemanagementsystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
