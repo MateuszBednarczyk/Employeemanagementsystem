@@ -2,11 +2,7 @@ package com.matthew.employeemanagementsystem.user;
 
 import com.matthew.employeemanagementsystem.configuration.SuffixConfiguration;
 import com.matthew.employeemanagementsystem.department.DepartmentManagementService;
-import com.matthew.employeemanagementsystem.domain.entities.DepartmentEntity;
-import com.matthew.employeemanagementsystem.domain.entities.RoleEntity;
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
-import com.matthew.employeemanagementsystem.domain.types.DepartmentType;
-import com.matthew.employeemanagementsystem.domain.types.RoleType;
 import com.matthew.employeemanagementsystem.role.RoleManagementService;
 import com.matthew.employeemanagementsystem.user.dtos.RegisterNewUserRequestDTO;
 import lombok.RequiredArgsConstructor;
@@ -36,14 +32,9 @@ class UserManagementServiceImpl implements UserManagementService {
     private UserEntity createEntityToSave(RegisterNewUserRequestDTO requestDTO) throws UnexpectedException {
         UserEntity newUser = new UserEntity(requestDTO.username(), encodePassword(requestDTO.password()));
         newUser.getRoles().add(roleManagementService.createRoleEntity(requestDTO.role()));
-        newUser.getDepartmentEntities().add(getDepartmentEntity(requestDTO));
+        newUser.getDepartmentEntities().add(departmentManagementService.getDepartmentEntity(requestDTO.department()));
 
         return newUser;
-    }
-
-    private DepartmentEntity getDepartmentEntity(RegisterNewUserRequestDTO requestDTO) {
-
-        return departmentManagementService.getDepartmentEntity(DepartmentType.valueOf(requestDTO.department()));
     }
 
     private void checkIfUserWithGivenUsernameAlreadyExists(String username) {

@@ -1,6 +1,5 @@
 package com.matthew.employeemanagementsystem.domain.entities;
 
-import com.matthew.employeemanagementsystem.domain.types.DepartmentType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -15,10 +14,10 @@ public class DepartmentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private DepartmentType departmentType;
+    private String department;
 
-    public DepartmentEntity(DepartmentType departmentType) {
-        this.departmentType = departmentType;
+    public DepartmentEntity(String department) {
+        this.department = department;
     }
 
     @ManyToMany
