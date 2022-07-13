@@ -1,6 +1,6 @@
-package com.matthew.employeemanagementsystem.department;
+package com.matthew.employeemanagementsystem.service.department;
 
-import com.matthew.employeemanagementsystem.department.dtos.AddNewDepartmentRequestDTO;
+import com.matthew.employeemanagementsystem.dtos.department.AddNewDepartmentRequestDTO;
 import com.matthew.employeemanagementsystem.domain.entities.DepartmentEntity;
 import org.springframework.http.ResponseEntity;
 

@@ -1,8 +1,7 @@
-package com.matthew.employeemanagementsystem.role;
+package com.matthew.employeemanagementsystem.service.role;
 
 import com.matthew.employeemanagementsystem.domain.entities.RoleEntity;
 import com.matthew.employeemanagementsystem.domain.types.RoleType;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

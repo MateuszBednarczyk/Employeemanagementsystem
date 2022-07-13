@@ -1,6 +1,7 @@
-package com.matthew.employeemanagementsystem.department;
+package com.matthew.employeemanagementsystem.api;
 
-import com.matthew.employeemanagementsystem.department.dtos.AddNewDepartmentRequestDTO;
+import com.matthew.employeemanagementsystem.service.department.DepartmentManagementService;
+import com.matthew.employeemanagementsystem.dtos.department.AddNewDepartmentRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

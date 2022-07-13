@@ -1,6 +1,6 @@
 package com.matthew.employeemanagementsystem.configuration;
 
-import com.matthew.employeemanagementsystem.user.UserDetailsServiceImpl;
+import com.matthew.employeemanagementsystem.service.user.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

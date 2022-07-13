@@ -1,4 +1,4 @@
-package com.matthew.employeemanagementsystem.department;
+package com.matthew.employeemanagementsystem.service.department;
 
 import com.matthew.employeemanagementsystem.domain.entities.DepartmentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
