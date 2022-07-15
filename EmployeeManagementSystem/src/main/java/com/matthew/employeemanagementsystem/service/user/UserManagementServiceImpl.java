@@ -31,11 +31,11 @@ class UserManagementServiceImpl implements UserManagementService {
     }
 
     private UserEntity createEntityToSave(RegisterNewUserRequestDTO requestDTO) throws UnexpectedException {
-        UserEntity newUser = new UserEntity(requestDTO.username(), encodePassword(requestDTO.password()));
-        newUser.getRoles().add(roleManagementService.createRoleEntity(requestDTO.role()));
-        newUser.getDepartmentEntities().add(departmentManagementService.getDepartmentEntity(requestDTO.department()));
+        UserEntity newUserEntity = new UserEntity(requestDTO.username(), encodePassword(requestDTO.password()));
+        newUserEntity.getRoles().add(roleManagementService.createRoleEntity(requestDTO.role()));
+        newUserEntity.getDepartmentEntities().add(departmentManagementService.getDepartmentEntity(requestDTO.department()));
 
-        return newUser;
+        return newUserEntity;
     }
 
     private void checkIfUserWithGivenUsernameAlreadyExists(String username) {

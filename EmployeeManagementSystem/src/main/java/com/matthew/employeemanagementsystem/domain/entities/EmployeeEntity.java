@@ -1,7 +1,7 @@
 package com.matthew.employeemanagementsystem.domain.entities;
 
-import com.matthew.employeemanagementsystem.domain.types.RoleType;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import java.util.List;
 @Entity
 @Table(name = "employees")
 @Data
+@NoArgsConstructor
 public class EmployeeEntity {
 
     @Id
@@ -21,4 +22,8 @@ public class EmployeeEntity {
     @ManyToMany
     private List<DepartmentEntity> departmentEntities = new ArrayList<>();
 
+    public EmployeeEntity(String name, String surname) {
+        this.name = name;
+        this.surname = surname;
+    }
 }
