@@ -17,6 +17,7 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
 
     @Override
     public DepartmentEntity getDepartmentEntity(String department) {
+
         return departmentRepository.findByDepartmentName(department).orElseThrow(() -> new RuntimeException("Department not found"));
     }
 

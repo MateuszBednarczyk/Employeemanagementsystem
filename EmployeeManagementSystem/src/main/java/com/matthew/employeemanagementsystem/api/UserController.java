@@ -1,7 +1,7 @@
 package com.matthew.employeemanagementsystem.api;
 
-import com.matthew.employeemanagementsystem.service.user.UserManagementService;
 import com.matthew.employeemanagementsystem.dtos.user.RegisterNewUserRequestDTO;
+import com.matthew.employeemanagementsystem.service.user.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,5 +20,4 @@ class UserController {
 
         return userManagementService.registerNewUser(requestDTO);
     }
-
 }

@@ -5,10 +5,9 @@ import com.matthew.employeemanagementsystem.dtos.employee.AddNewEmployeeRequestD
 import org.springframework.http.ResponseEntity;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
 
 public interface EmployeeManagementService {
     @Transactional
     ResponseEntity<String> addNewEmployee(AddNewEmployeeRequestDTO requestDTO);
-    ResponseEntity<Optional<EmployeeEntity>> findEmployeeByNameAndSurname(String name, String surname);
+    ResponseEntity<EmployeeEntity> findEmployeeByNameAndSurname(String name, String surname);
 }

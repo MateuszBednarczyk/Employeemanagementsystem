@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -31,10 +30,10 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
     }
 
     @Override
-    public ResponseEntity<Optional<EmployeeEntity>> findEmployeeByNameAndSurname(String name, String surname) {
+    public ResponseEntity<EmployeeEntity> findEmployeeByNameAndSurname(String name, String surname) {
 
-        return new ResponseEntity<>(Optional.ofNullable(employeeRepository.findByNameAndSurname(name, surname)
-                .orElseThrow(() -> new RuntimeException("Employee not found"))), HttpStatus.OK);
+        return new ResponseEntity<>(employeeRepository.findByNameAndSurname(name, surname)
+                .orElseThrow(() -> new RuntimeException("Employee not found")), HttpStatus.OK);
     }
 
     @Transactional

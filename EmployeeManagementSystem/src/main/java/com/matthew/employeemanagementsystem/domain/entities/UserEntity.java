@@ -1,5 +1,6 @@
 package com.matthew.employeemanagementsystem.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,8 +28,10 @@ public class UserEntity implements UserDetails {
     @NotNull
     private String password;
 
+    @JsonIgnore
     @ManyToMany
     private List<DepartmentEntity> departmentEntities = new ArrayList<>();
+    @JsonIgnore
     @OneToMany
     private List<RoleEntity> roles = new ArrayList<>();
 
