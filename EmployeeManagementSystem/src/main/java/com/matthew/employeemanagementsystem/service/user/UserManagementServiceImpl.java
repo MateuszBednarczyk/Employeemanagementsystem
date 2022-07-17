@@ -1,11 +1,11 @@
 package com.matthew.employeemanagementsystem.service.user;
 
 import com.matthew.employeemanagementsystem.configuration.SuffixConfiguration;
+import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
+import com.matthew.employeemanagementsystem.dtos.user.RegisterNewUserRequestDTO;
 import com.matthew.employeemanagementsystem.repository.UserRepository;
 import com.matthew.employeemanagementsystem.service.department.DepartmentManagementService;
-import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
 import com.matthew.employeemanagementsystem.service.role.RoleManagementService;
-import com.matthew.employeemanagementsystem.dtos.user.RegisterNewUserRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

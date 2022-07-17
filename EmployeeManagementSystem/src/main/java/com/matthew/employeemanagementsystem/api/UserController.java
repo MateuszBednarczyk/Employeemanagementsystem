@@ -17,7 +17,6 @@ class UserController {
 
     @PostMapping("/api/users/register")
     public ResponseEntity<String> registerNewUser(@RequestBody RegisterNewUserRequestDTO requestDTO) throws UnexpectedException {
-
         return userManagementService.registerNewUser(requestDTO);
     }
 }

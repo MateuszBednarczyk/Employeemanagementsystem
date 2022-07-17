@@ -9,5 +9,6 @@ import javax.transaction.Transactional;
 public interface EmployeeManagementService {
     @Transactional
     ResponseEntity<String> addNewEmployee(AddNewEmployeeRequestDTO requestDTO);
+
     ResponseEntity<EmployeeEntity> findEmployeeByNameAndSurname(String name, String surname);
 }

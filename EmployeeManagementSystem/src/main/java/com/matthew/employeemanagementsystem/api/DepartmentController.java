@@ -16,7 +16,6 @@ class DepartmentController {
 
     @PostMapping("/api/department/add")
     public ResponseEntity<String> addNewDepartment(@RequestBody AddNewDepartmentRequestDTO requestDTO) {
-
         return departmentManagementService.addNewDepartment(requestDTO);
     }
 

@@ -1,7 +1,7 @@
 package com.matthew.employeemanagementsystem.service.department;
 
-import com.matthew.employeemanagementsystem.dtos.department.AddNewDepartmentRequestDTO;
 import com.matthew.employeemanagementsystem.domain.entities.DepartmentEntity;
+import com.matthew.employeemanagementsystem.dtos.department.AddNewDepartmentRequestDTO;
 import org.springframework.http.ResponseEntity;
 
 import javax.transaction.Transactional;

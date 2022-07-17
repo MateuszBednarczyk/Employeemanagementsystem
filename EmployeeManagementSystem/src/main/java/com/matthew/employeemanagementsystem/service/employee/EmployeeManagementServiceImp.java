@@ -31,7 +31,6 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
 
     @Override
     public ResponseEntity<EmployeeEntity> findEmployeeByNameAndSurname(String name, String surname) {
-
         return new ResponseEntity<>(employeeRepository.findByNameAndSurname(name, surname)
                 .orElseThrow(() -> new RuntimeException("Employee not found")), HttpStatus.OK);
     }
