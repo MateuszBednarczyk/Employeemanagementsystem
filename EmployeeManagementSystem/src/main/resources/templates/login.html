@@ -7,24 +7,22 @@
 </head>
 <body>
 <div class="main">
-    <div class="container">
-        <div class="loginregisterform">
-            <form th:action="@{/login}"
-                  method="post">
-                <label for="username">Username:</label><br>
-                <input type="username" id="username" name="username"
-                       class="forminp"/> <br/><br>
-                <label for="password">Password:</label><br>
-                <input type="password" id="password" name="password"
-                       class="forminp"/> <br/><br>
-                <div class="form-btns">
-                    <input type="submit" value="Login"/>
-                    <a href="/register">
-                        <button type="button" class="login">Register</button>
-                    </a>
-                </div>
-            </form>
-        </div>
+    <div class="loginregisterform">
+        <form th:action="@{/login}"
+              method="post">
+            <label for="username">Username:</label><br>
+            <input type="username" id="username" name="username"
+                   class="forminp"/> <br/><br>
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password"
+                   class="forminp"/> <br/><br>
+            <div class="form-btns">
+                <input type="submit" value="Login"/>
+                <a href="/register">
+                    <button type="button" class="login">Register</button>
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 </body>
