@@ -3,12 +3,11 @@ package com.matthew.employeemanagementsystem.service.user;
 import com.matthew.employeemanagementsystem.configuration.SuffixConfiguration;
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
 import com.matthew.employeemanagementsystem.dtos.user.RegisterNewUserRequestDTO;
+import com.matthew.employeemanagementsystem.dtos.user.UserResponseDTO;
 import com.matthew.employeemanagementsystem.repository.UserRepository;
 import com.matthew.employeemanagementsystem.service.department.DepartmentManagementService;
 import com.matthew.employeemanagementsystem.service.role.RoleManagementService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.rmi.UnexpectedException;
@@ -23,11 +22,12 @@ class UserManagementServiceImpl implements UserManagementService {
     private final RoleManagementService roleManagementService;
 
     @Override
-    public ResponseEntity<String> registerNewUser(RegisterNewUserRequestDTO requestDTO) throws UnexpectedException {
+    public UserResponseDTO registerNewUser(RegisterNewUserRequestDTO requestDTO) throws UnexpectedException {
         checkIfUserWithGivenUsernameAlreadyExists(requestDTO.username());
-        userRepository.save(createEntityToSave(requestDTO));
+        UserEntity newUserEntity = createEntityToSave(requestDTO);
+        userRepository.save(newUserEntity);
 
-        return new ResponseEntity<>(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
+        return new UserResponseDTO(newUserEntity.getUsername(), newUserEntity.getDepartmentEntities(), newUserEntity.getRoles());
     }
 
     private UserEntity createEntityToSave(RegisterNewUserRequestDTO requestDTO) throws UnexpectedException {
@@ -46,7 +46,6 @@ class UserManagementServiceImpl implements UserManagementService {
 
     private String encodePassword(String password) throws UnexpectedException {
         if (password != null) {
-
             return suffixConfiguration.bCryptPasswordEncoder().encode(password);
         } else {
             throw new UnexpectedException("Password empty");
