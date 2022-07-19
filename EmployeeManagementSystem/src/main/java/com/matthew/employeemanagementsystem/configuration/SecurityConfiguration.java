@@ -38,6 +38,12 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
-                .loginPage("/login");
+                .loginPage("/login")
+                .successForwardUrl("/home")
+                .defaultSuccessUrl("/home", true)
+                .and()
+                .rememberMe()
+                .rememberMeCookieName("remember")
+                .tokenValiditySeconds(86400);
     }
 }

@@ -1,6 +1,7 @@
 package com.matthew.employeemanagementsystem.service.user;
 
 import com.matthew.employeemanagementsystem.configuration.SuffixConfiguration;
+import com.matthew.employeemanagementsystem.domain.entities.RoleEntity;
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
 import com.matthew.employeemanagementsystem.dtos.user.RegisterNewUserRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.user.UserResponseDTO;
@@ -32,7 +33,8 @@ class UserManagementServiceImpl implements UserManagementService {
 
     private UserEntity createEntityToSave(RegisterNewUserRequestDTO requestDTO) throws UnexpectedException {
         UserEntity newUserEntity = new UserEntity(requestDTO.username(), encodePassword(requestDTO.password()));
-        newUserEntity.getRoles().add(roleManagementService.createRoleEntity(requestDTO.role()));
+        RoleEntity role = roleManagementService.createRoleEntity(requestDTO.role());
+        newUserEntity.getRoles().add(role);
         newUserEntity.getDepartmentEntities().add(departmentManagementService.getDepartmentEntity(requestDTO.department()));
 
         return newUserEntity;

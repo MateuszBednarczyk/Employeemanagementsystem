@@ -1,5 +1,5 @@
 package com.matthew.employeemanagementsystem.domain.types;
 
 public enum RoleType {
-    ADMIN, MODERATOR
+    ROLE_ADMIN, ROLE_MODERATOR
 }

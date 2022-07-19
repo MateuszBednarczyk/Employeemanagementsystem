@@ -21,9 +21,16 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
 
     @Override
     public DepartmentResponseDTO addNewDepartment(AddNewDepartmentRequestDTO requestDTO) {
-        DepartmentEntity departmentEntity = new DepartmentEntity(requestDTO.departmentName());
-        departmentRepository.save(departmentEntity);
+        checkIfDepartmentAlreadyExists(requestDTO.departmentName());
+        DepartmentEntity newDepartmentEntity = new DepartmentEntity(requestDTO.departmentName());
+        departmentRepository.save(newDepartmentEntity);
 
-        return new DepartmentResponseDTO(departmentEntity.getDepartmentName(), departmentEntity.getEmployeesList());
+        return new DepartmentResponseDTO(newDepartmentEntity.getDepartmentName(), newDepartmentEntity.getEmployeesList());
+    }
+
+    private void checkIfDepartmentAlreadyExists(String departmentName) {
+        departmentRepository.findByDepartmentName(departmentName).ifPresent(department -> {
+            throw new RuntimeException("Department already exists");
+        });
     }
 }

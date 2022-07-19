@@ -17,7 +17,7 @@ class RoleManagementImpl implements RoleManagementService{
     @Override
     public RoleEntity createRoleEntity(String role) throws UnexpectedException {
         RoleEntity roleEntity = new RoleEntity();
-        if (role.equals("ADMIN") || role.equals("MODERATOR")) {
+        if (role.equals("ROLE_ADMIN") || role.equals("ROLE_MODERATOR")) {
             roleEntity.setRoleType(RoleType.valueOf(role));
             roleRepository.save(roleEntity);
         } else {

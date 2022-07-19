@@ -32,7 +32,7 @@ public class UserEntity implements UserDetails {
     @ManyToMany
     private List<DepartmentEntity> departmentEntities = new ArrayList<>();
     @JsonIgnore
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<RoleEntity> roles = new ArrayList<>();
 
     public UserEntity(String username, String password) {
