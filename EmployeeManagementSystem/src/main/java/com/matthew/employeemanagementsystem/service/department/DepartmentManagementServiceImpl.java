@@ -21,16 +21,29 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
 
     @Override
     public DepartmentResponseDTO addNewDepartment(AddNewDepartmentRequestDTO requestDTO) {
-        checkIfDepartmentAlreadyExists(requestDTO.departmentName());
-        DepartmentEntity newDepartmentEntity = new DepartmentEntity(requestDTO.departmentName());
-        departmentRepository.save(newDepartmentEntity);
+        checkIfAddingNewDepartmentIsPossible(requestDTO.departmentName());
+        DepartmentEntity newDepartmentEntity = createAndSaveDepartmentEntity(requestDTO);
 
         return new DepartmentResponseDTO(newDepartmentEntity.getDepartmentName(), newDepartmentEntity.getEmployeesList());
     }
 
-    private void checkIfDepartmentAlreadyExists(String departmentName) {
+    private DepartmentEntity createAndSaveDepartmentEntity(AddNewDepartmentRequestDTO requestDTO) {
+        DepartmentEntity newDepartmentEntity = new DepartmentEntity(requestDTO.departmentName());
+        departmentRepository.save(newDepartmentEntity);
+
+        return newDepartmentEntity;
+    }
+
+    private void checkIfAddingNewDepartmentIsPossible(String departmentName) {
+        checkIfVariablesNotNull(departmentName);
         departmentRepository.findByDepartmentName(departmentName).ifPresent(department -> {
             throw new RuntimeException("Department already exists");
         });
+    }
+
+    private void checkIfVariablesNotNull(String departmentName) {
+        if (departmentName == null) {
+            throw new RuntimeException("Unexpected variable");
+        }
     }
 }

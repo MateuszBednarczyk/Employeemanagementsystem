@@ -1,6 +1,5 @@
 package com.matthew.employeemanagementsystem.api;
 
-import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
 import com.matthew.employeemanagementsystem.dtos.user.RegisterNewUserRequestDTO;
 import com.matthew.employeemanagementsystem.service.user.UserManagementService;
 import lombok.RequiredArgsConstructor;

@@ -3,6 +3,7 @@ package com.matthew.employeemanagementsystem.service.employee;
 import com.matthew.employeemanagementsystem.domain.entities.DepartmentEntity;
 import com.matthew.employeemanagementsystem.domain.entities.EmployeeEntity;
 import com.matthew.employeemanagementsystem.dtos.employee.AddNewEmployeeRequestDTO;
+import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.employee.EmployeeResponseDTO;
 import com.matthew.employeemanagementsystem.repository.EmployeeRepository;
 import com.matthew.employeemanagementsystem.service.department.DepartmentManagementService;
@@ -30,8 +31,15 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
     @Override
     public EmployeeResponseDTO findEmployeeByNameAndSurname(String name, String surname) {
         EmployeeEntity foundEmployeeEntity = employeeRepository.findByNameAndSurname(name, surname).orElseThrow(() -> new RuntimeException("Employee not found"));
-        
+
         return new EmployeeResponseDTO(foundEmployeeEntity.getName(), foundEmployeeEntity.getSurname(), foundEmployeeEntity.getDepartmentEntities());
+    }
+
+    @Override
+    public void deleteEmployeeByNameAndSurname(DeleteEmployeeRequestDTO requestDTO) {
+        employeeRepository.findByNameAndSurname(requestDTO.name(), requestDTO.surname()).ifPresent(employeeEntity -> {
+            employeeRepository.deleteByNameAndSurname(requestDTO.name(), requestDTO.surname());
+        });
     }
 
     @Transactional

@@ -6,6 +6,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 class LoginController {
 
+    @GetMapping("")
+    public String redirectToLoginWhenUserDidntPassEndpoint() {
+        return "login.html";
+    }
+
     @GetMapping("/login")
     public String showLoginForm() {
         return "login.html";
