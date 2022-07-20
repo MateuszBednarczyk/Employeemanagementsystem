@@ -5,12 +5,10 @@ import com.matthew.employeemanagementsystem.dtos.department.AddNewDepartmentRequ
 import com.matthew.employeemanagementsystem.dtos.department.DepartmentResponseDTO;
 import com.matthew.employeemanagementsystem.repository.DepartmentRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 class DepartmentManagementServiceImpl implements DepartmentManagementService {
     private final DepartmentRepository departmentRepository;
 
