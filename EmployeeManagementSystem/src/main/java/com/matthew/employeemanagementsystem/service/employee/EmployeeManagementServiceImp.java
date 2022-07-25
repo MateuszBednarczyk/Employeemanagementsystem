@@ -6,7 +6,7 @@ import com.matthew.employeemanagementsystem.dtos.employee.AddNewEmployeeRequestD
 import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.employee.EmployeeResponseDTO;
 import com.matthew.employeemanagementsystem.repository.EmployeeRepository;
-import com.matthew.employeemanagementsystem.service.department.DepartmentManagementService;
+import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import javax.transaction.Transactional;
 class EmployeeManagementServiceImp implements EmployeeManagementService {
 
     private final EmployeeRepository employeeRepository;
-    private final DepartmentManagementService departmentManagementService;
+    private final DepartmentFacade departmentFacade;
 
     @Override
     public EmployeeResponseDTO checkIfAddingEmployeeIsPossibleAndIfYesAddElseThrowException(AddNewEmployeeRequestDTO requestDTO) {
@@ -45,7 +45,7 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
     @Transactional
     public EmployeeResponseDTO createAndPrepareEntitiesAlsoReturnEmployeeDTO(AddNewEmployeeRequestDTO requestDTO) {
         EmployeeEntity newEmployeeEntity = new EmployeeEntity(requestDTO.name(), requestDTO.surname());
-        DepartmentEntity selectedDepartment = departmentManagementService.getDepartmentEntity(requestDTO.departmentName());
+        DepartmentEntity selectedDepartment = departmentFacade.getDepartmentEntity(requestDTO.departmentName());
         addDepartmentToEmployeeAndAddEmployeeToDepartment(selectedDepartment, newEmployeeEntity);
         employeeRepository.save(newEmployeeEntity);
 

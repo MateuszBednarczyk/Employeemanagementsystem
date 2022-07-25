@@ -13,11 +13,6 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     private final DepartmentRepository departmentRepository;
 
     @Override
-    public DepartmentEntity getDepartmentEntity(String department) {
-        return departmentRepository.findByDepartmentName(department).orElseThrow(() -> new RuntimeException("Department not found"));
-    }
-
-    @Override
     public DepartmentResponseDTO addNewDepartment(AddNewDepartmentRequestDTO requestDTO) {
         checkIfAddingNewDepartmentIsPossible(requestDTO.departmentName());
         DepartmentEntity newDepartmentEntity = createAndSaveDepartmentEntity(requestDTO);

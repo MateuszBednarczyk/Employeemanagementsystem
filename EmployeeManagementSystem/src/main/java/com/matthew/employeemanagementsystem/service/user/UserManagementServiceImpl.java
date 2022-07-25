@@ -6,7 +6,7 @@ import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
 import com.matthew.employeemanagementsystem.dtos.user.RegisterNewUserRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.user.UserResponseDTO;
 import com.matthew.employeemanagementsystem.repository.UserRepository;
-import com.matthew.employeemanagementsystem.service.department.DepartmentManagementService;
+import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
 import com.matthew.employeemanagementsystem.service.role.RoleManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ class UserManagementServiceImpl implements UserManagementService {
 
     private final UserRepository userRepository;
     private final SuffixConfiguration suffixConfiguration;
-    private final DepartmentManagementService departmentManagementService;
+    private final DepartmentFacade departmentFacade;
     private final RoleManagementService roleManagementService;
 
     @Override
@@ -35,7 +35,7 @@ class UserManagementServiceImpl implements UserManagementService {
         UserEntity newUserEntity = new UserEntity(requestDTO.username(), encodePassword(requestDTO.password()));
         RoleEntity role = roleManagementService.createRoleEntity(requestDTO.role());
         newUserEntity.getRoles().add(role);
-        newUserEntity.getDepartmentEntities().add(departmentManagementService.getDepartmentEntity(requestDTO.department()));
+        newUserEntity.getDepartmentEntities().add(departmentFacade.getDepartmentEntity(requestDTO.department()));
 
         return newUserEntity;
     }
