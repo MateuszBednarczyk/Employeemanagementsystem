@@ -27,16 +27,16 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
         return newDepartmentEntity;
     }
 
-    private void checkIfAddingNewDepartmentIsPossible(String departmentName) {
+    private void checkIfAddingNewDepartmentIsPossible(String departmentName){
         checkIfVariablesNotNull(departmentName);
         departmentRepository.findByDepartmentName(departmentName).ifPresent(department -> {
-            throw new RuntimeException("Department already exists");
+            throw new IllegalArgumentException("Department already exists");
         });
     }
 
     private void checkIfVariablesNotNull(String departmentName) {
         if (departmentName == null) {
-            throw new RuntimeException("Unexpected variable");
+            throw new IllegalArgumentException("Unexpected variable");
         }
     }
 }

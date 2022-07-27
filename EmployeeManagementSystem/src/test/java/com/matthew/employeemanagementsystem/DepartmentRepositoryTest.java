@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,11 +22,14 @@ class DepartmentRepositoryTest {
     private DepartmentEntity departmentEntity;
 
     @BeforeEach
+    @Transactional
     void setupEntity() {
         departmentEntity = new DepartmentEntity("IT");
+        departmentRepository.save(departmentEntity);
     }
 
     @AfterEach
+    @Transactional
     void deleteEntity() {
         departmentRepository.delete(departmentEntity);
     }
@@ -35,7 +39,6 @@ class DepartmentRepositoryTest {
         //given
 
         //when
-        departmentRepository.save(departmentEntity);
         //then
         Optional<DepartmentEntity> entityGotFromDatabase = departmentRepository.findByDepartmentName(departmentEntity.getDepartmentName());
         assertThat(entityGotFromDatabase, notNullValue());
@@ -47,7 +50,6 @@ class DepartmentRepositoryTest {
         //given
 
         //when
-        departmentRepository.save(departmentEntity);
         //then
         Optional<DepartmentEntity> entityGotFromDatabase = departmentRepository.findByDepartmentName(departmentEntity.getDepartmentName());
         assertEquals(entityGotFromDatabase.get().getDepartmentName(), departmentEntity.getDepartmentName());

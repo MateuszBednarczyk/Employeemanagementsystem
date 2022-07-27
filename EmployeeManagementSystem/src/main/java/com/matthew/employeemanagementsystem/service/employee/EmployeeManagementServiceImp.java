@@ -60,7 +60,7 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
 
     private void checkIfEmployeeAlreadyExists(String name, String surname) {
         employeeRepository.findByNameAndSurname(name, surname).ifPresent(employee -> {
-            throw new RuntimeException("Employee already exists");
+            throw new IllegalArgumentException("Employee already exists");
         });
     }
 }

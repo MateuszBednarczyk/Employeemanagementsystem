@@ -42,15 +42,15 @@ class UserManagementServiceImpl implements UserManagementService {
 
     private void checkIfUserWithGivenUsernameAlreadyExists(String username) {
         userRepository.findByUsername(username).ifPresent(user -> {
-            throw new RuntimeException("Username taken");
+            throw new IllegalArgumentException("Username taken");
         });
     }
 
-    private String encodePassword(String password) throws UnexpectedException {
+    private String encodePassword(String password) {
         if (password != null) {
             return suffixConfiguration.bCryptPasswordEncoder().encode(password);
         } else {
-            throw new UnexpectedException("Password empty");
+            throw new IllegalArgumentException("Password empty");
         }
     }
 }

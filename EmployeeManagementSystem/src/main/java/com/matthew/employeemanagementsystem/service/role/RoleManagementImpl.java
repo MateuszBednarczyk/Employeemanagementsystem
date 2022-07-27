@@ -21,7 +21,7 @@ class RoleManagementImpl implements RoleManagementService{
             roleEntity.setRoleType(RoleType.valueOf(role));
             roleRepository.save(roleEntity);
         } else {
-            throw new UnexpectedException("Unexpected role");
+            throw new IllegalArgumentException("Unexpected role");
         }
 
         return roleEntity;
