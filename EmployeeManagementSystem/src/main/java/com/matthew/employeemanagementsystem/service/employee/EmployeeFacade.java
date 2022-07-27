@@ -6,7 +6,9 @@ import com.matthew.employeemanagementsystem.dtos.employee.EmployeeResponseDTO;
 
 import javax.transaction.Transactional;
 
-interface EmployeeManagementService {
+public interface EmployeeFacade {
+    EmployeeResponseDTO findEmployeeByNameAndSurname(String name, String surname);
+
     @Transactional
     EmployeeResponseDTO checkIfAddingEmployeeIsPossibleAndIfYesAddElseThrowException(AddNewEmployeeRequestDTO requestDTO);
 

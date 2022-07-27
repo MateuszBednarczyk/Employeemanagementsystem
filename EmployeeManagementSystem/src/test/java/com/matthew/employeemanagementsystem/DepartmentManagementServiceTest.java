@@ -6,7 +6,7 @@ import com.matthew.employeemanagementsystem.dtos.employee.AddNewEmployeeRequestD
 import com.matthew.employeemanagementsystem.dtos.employee.EmployeeResponseDTO;
 import com.matthew.employeemanagementsystem.repository.DepartmentRepository;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
-import com.matthew.employeemanagementsystem.service.employee.EmployeeManagementService;
+import com.matthew.employeemanagementsystem.service.employee.EmployeeFacade;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +28,7 @@ class DepartmentManagementServiceTest {
     private DepartmentRepository departmentRepository;
 
     @Autowired
-    private EmployeeManagementService employeeManagementService;
+    private EmployeeFacade employeeFacade;
     @Autowired
     private DepartmentFacade departmentFacade;
 
@@ -51,7 +51,7 @@ class DepartmentManagementServiceTest {
         //given
         AddNewEmployeeRequestDTO requestDTO = new AddNewEmployeeRequestDTO("x", "y", "IT");
         //when
-        EmployeeResponseDTO responseDTO = employeeManagementService.checkIfAddingEmployeeIsPossibleAndIfYesAddElseThrowException(requestDTO);
+        EmployeeResponseDTO responseDTO = employeeFacade.checkIfAddingEmployeeIsPossibleAndIfYesAddElseThrowException(requestDTO);
         //then
         assertThat(departmentEntity.getEmployeesList(), hasSize(1));
     }

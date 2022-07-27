@@ -29,13 +29,6 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
     }
 
     @Override
-    public EmployeeResponseDTO findEmployeeByNameAndSurname(String name, String surname) {
-        EmployeeEntity foundEmployeeEntity = employeeRepository.findByNameAndSurname(name, surname).orElseThrow(() -> new RuntimeException("Employee not found"));
-
-        return new EmployeeResponseDTO(foundEmployeeEntity.getName(), foundEmployeeEntity.getSurname(), foundEmployeeEntity.getDepartmentEntities());
-    }
-
-    @Override
     public void deleteEmployeeByNameAndSurname(DeleteEmployeeRequestDTO requestDTO) {
         employeeRepository.findByNameAndSurname(requestDTO.name(), requestDTO.surname()).ifPresent(employeeEntity -> {
             employeeRepository.deleteByNameAndSurname(requestDTO.name(), requestDTO.surname());
