@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = EmployeeManagementSystemApplication.class)
-public class DepartmentRepositoryTest {
+class DepartmentRepositoryTest {
     @Autowired
     private DepartmentRepository departmentRepository;
     private DepartmentEntity departmentEntity;
