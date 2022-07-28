@@ -10,5 +10,6 @@ interface EmployeeManagementService {
     @Transactional
     EmployeeResponseDTO checkIfAddingEmployeeIsPossibleAndIfYesAddElseThrowException(AddNewEmployeeRequestDTO requestDTO);
 
+    @Transactional
     void deleteEmployeeByNameAndSurname(DeleteEmployeeRequestDTO requestDTO);
 }

@@ -20,4 +20,5 @@ class LoginController {
     public String successLogin() {
         return "home.html";
     }
+
 }

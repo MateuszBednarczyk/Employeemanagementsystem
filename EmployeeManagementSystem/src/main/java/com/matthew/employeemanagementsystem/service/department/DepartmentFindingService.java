@@ -5,5 +5,5 @@ import com.matthew.employeemanagementsystem.dtos.department.DepartmentResponseDT
 
 interface DepartmentFindingService {
     DepartmentEntity getDepartmentEntity(String department);
-    DepartmentResponseDTO findDepartmentEntityAndReturnAsDTO(String departmentName);
+    DepartmentResponseDTO findDepartmentEntityByNameAndReturnAsDTO(String departmentName);
 }

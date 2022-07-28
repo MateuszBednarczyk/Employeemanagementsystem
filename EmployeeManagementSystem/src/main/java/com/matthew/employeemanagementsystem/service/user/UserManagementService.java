@@ -9,4 +9,5 @@ import java.rmi.UnexpectedException;
 public interface UserManagementService {
     @Transactional
     UserResponseDTO registerNewUser(RegisterNewUserRequestDTO requestDTO) throws UnexpectedException;
+
 }

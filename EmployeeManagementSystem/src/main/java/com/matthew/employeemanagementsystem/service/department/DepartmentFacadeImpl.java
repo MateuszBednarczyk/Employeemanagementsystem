@@ -1,10 +1,16 @@
 package com.matthew.employeemanagementsystem.service.department;
 
 import com.matthew.employeemanagementsystem.domain.entities.DepartmentEntity;
+import com.matthew.employeemanagementsystem.domain.entities.EmployeeEntity;
+import com.matthew.employeemanagementsystem.dtos.department.AddModeratorToDepartmentRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.department.AddNewDepartmentRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.department.DepartmentResponseDTO;
+import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.nio.file.AccessDeniedException;
+import java.security.Principal;
 
 @Service
 @RequiredArgsConstructor
@@ -19,8 +25,8 @@ class DepartmentFacadeImpl implements DepartmentFacade {
     }
 
     @Override
-    public DepartmentResponseDTO findDepartmentEntityAndReturnAsDTO(String departmentName) {
-        return departmentFindingService.findDepartmentEntityAndReturnAsDTO(departmentName);
+    public DepartmentResponseDTO findDepartmentEntityByNameAndReturnAsDTO(String departmentName) {
+        return departmentFindingService.findDepartmentEntityByNameAndReturnAsDTO(departmentName);
     }
 
     @Override
@@ -28,5 +34,18 @@ class DepartmentFacadeImpl implements DepartmentFacade {
         return departmentManagementService.addNewDepartment(requestDTO);
     }
 
+    @Override
+    public void deleteEmployeeFromDepartment(DeleteEmployeeRequestDTO deleteEmployeeRequestDTO, EmployeeEntity employeeEntity) {
+        departmentManagementService.deleteEmployeeFromDepartment(deleteEmployeeRequestDTO, employeeEntity);
+    }
 
+    @Override
+    public void deleteDepartmentByName(Principal loggedUser, String departmentName) throws AccessDeniedException {
+        departmentManagementService.deleteDepartmentByName(loggedUser, departmentName);
+    }
+
+    @Override
+    public void addUserEntityToModeratorList(AddModeratorToDepartmentRequestDTO requestDTO) {
+        departmentManagementService.addUserEntityToModeratorList(requestDTO);
+    }
 }

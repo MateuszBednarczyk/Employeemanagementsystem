@@ -6,16 +6,14 @@ import com.matthew.employeemanagementsystem.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.rmi.UnexpectedException;
-
 @Service
 @RequiredArgsConstructor
-class RoleManagementImpl implements RoleManagementService{
+class RoleManagementImpl implements RoleManagementService {
 
     private final RoleRepository roleRepository;
 
     @Override
-    public RoleEntity createRoleEntity(String role) throws UnexpectedException {
+    public RoleEntity createRoleEntity(String role) {
         RoleEntity roleEntity = new RoleEntity();
         if (role.equals("ROLE_ADMIN") || role.equals("ROLE_MODERATOR")) {
             roleEntity.setRoleType(RoleType.valueOf(role));

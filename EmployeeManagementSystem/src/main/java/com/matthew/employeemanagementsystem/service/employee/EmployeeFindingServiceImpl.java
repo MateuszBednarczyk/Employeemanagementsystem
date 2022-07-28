@@ -13,7 +13,12 @@ class EmployeeFindingServiceImpl implements EmployeeFindingService {
     private final EmployeeRepository employeeRepository;
 
     @Override
-    public EmployeeResponseDTO findEmployeeByNameAndSurname(String name, String surname) {
+    public EmployeeEntity findEmployeeEntityByNameAndSurname(String name, String surname) {
+        return employeeRepository.findByNameAndSurname(name, surname).orElseThrow(() -> new RuntimeException("Employee not found"));
+    }
+
+    @Override
+    public EmployeeResponseDTO findEmployeeByNameAndSurnameAndReturnItAsDTO(String name, String surname) {
         EmployeeEntity foundEmployeeEntity = employeeRepository.findByNameAndSurname(name, surname).orElseThrow(() -> new RuntimeException("Employee not found"));
 
         return new EmployeeResponseDTO(foundEmployeeEntity.getName(), foundEmployeeEntity.getSurname(), foundEmployeeEntity.getDepartmentEntities());

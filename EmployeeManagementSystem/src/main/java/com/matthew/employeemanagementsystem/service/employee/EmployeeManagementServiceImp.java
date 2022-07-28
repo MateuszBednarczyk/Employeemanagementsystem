@@ -19,6 +19,7 @@ import javax.transaction.Transactional;
 class EmployeeManagementServiceImp implements EmployeeManagementService {
 
     private final EmployeeRepository employeeRepository;
+    private final EmployeeFindingService employeeFindingService;
     private final DepartmentFacade departmentFacade;
 
     @Override
@@ -29,8 +30,11 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
     }
 
     @Override
+    @Transactional
     public void deleteEmployeeByNameAndSurname(DeleteEmployeeRequestDTO requestDTO) {
         employeeRepository.findByNameAndSurname(requestDTO.name(), requestDTO.surname()).ifPresent(employeeEntity -> {
+            departmentFacade.deleteEmployeeFromDepartment(requestDTO,
+                    employeeFindingService.findEmployeeEntityByNameAndSurname(requestDTO.name(), requestDTO.surname()));
             employeeRepository.deleteByNameAndSurname(requestDTO.name(), requestDTO.surname());
         });
     }

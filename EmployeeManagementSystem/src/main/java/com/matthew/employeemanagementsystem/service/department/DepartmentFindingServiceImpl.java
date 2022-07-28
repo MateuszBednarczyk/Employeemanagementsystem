@@ -18,7 +18,7 @@ class DepartmentFindingServiceImpl implements DepartmentFindingService {
     }
 
     @Override
-    public DepartmentResponseDTO findDepartmentEntityAndReturnAsDTO(String departmentName) {
+    public DepartmentResponseDTO findDepartmentEntityByNameAndReturnAsDTO(String departmentName) {
         DepartmentEntity foundEntity = getDepartmentEntity(departmentName);
 
         return new DepartmentResponseDTO(foundEntity.getDepartmentName(), foundEntity.getEmployeesList());

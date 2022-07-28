@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface DepartmentRepository extends JpaRepository<DepartmentEntity, Long> {
     Optional<DepartmentEntity> findByDepartmentName(String departmentName);
+
+    void deleteByDepartmentName(String departmentName);
 }

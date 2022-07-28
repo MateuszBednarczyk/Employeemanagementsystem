@@ -12,5 +12,6 @@ public interface EmployeeFacade {
     @Transactional
     EmployeeResponseDTO checkIfAddingEmployeeIsPossibleAndIfYesAddElseThrowException(AddNewEmployeeRequestDTO requestDTO);
 
+    @Transactional
     void deleteEmployeeByNameAndSurname(DeleteEmployeeRequestDTO requestDTO);
 }

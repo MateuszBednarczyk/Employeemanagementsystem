@@ -15,7 +15,7 @@ class EmployeeFacadeImpl implements EmployeeFacade {
 
     @Override
     public EmployeeResponseDTO findEmployeeByNameAndSurname(String name, String surname) {
-        return employeeFindingService.findEmployeeByNameAndSurname(name, surname);
+        return employeeFindingService.findEmployeeByNameAndSurnameAndReturnItAsDTO(name, surname);
     }
 
     @Override
