@@ -47,11 +47,18 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     @Transactional
     public void deleteDepartmentByName(Principal loggedUser, String departmentName) throws AccessDeniedException {
         DepartmentEntity departmentEntity = departmentFindingService.getDepartmentEntity(departmentName);
+        UserEntity userEntity = userFindingService.getUserEntity(loggedUser.getName());
         if (departmentEntity.getModeratorList().contains(userFindingService.getUserEntity(loggedUser.getName()))) {
+            deleteRelationedData(userEntity, departmentEntity);
             departmentRepository.deleteByDepartmentName(departmentName);
         } else {
             throw new AccessDeniedException("No permission");
         }
+    }
+
+    private void deleteRelationedData(UserEntity userEntity, DepartmentEntity departmentEntity) {
+        userEntity.getDepartmentEntities().remove(departmentEntity);
+        departmentEntity.getModeratorList().remove(userEntity);
     }
 
     @Override
