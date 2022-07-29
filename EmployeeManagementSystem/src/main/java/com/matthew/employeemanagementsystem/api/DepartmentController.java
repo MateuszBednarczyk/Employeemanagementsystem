@@ -28,7 +28,7 @@ class DepartmentController {
         return new ResponseEntity<>(departmentFacade.findDepartmentEntityByNameAndReturnAsDTO(departmentName), HttpStatus.OK);
     }
 
-    @DeleteMapping("api/department/delete/{departmentName}")
+    @PostMapping("api/department/delete/{departmentName}")
     public ResponseEntity<String> deleteDepartmentByName(Principal loggedUser, @PathVariable String departmentName) throws AccessDeniedException {
         departmentFacade.deleteDepartmentByName(loggedUser, departmentName);
 

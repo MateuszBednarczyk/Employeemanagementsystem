@@ -11,6 +11,7 @@ import com.matthew.employeemanagementsystem.repository.DepartmentRepository;
 import com.matthew.employeemanagementsystem.service.user.UserFindingService;
 import com.matthew.employeemanagementsystem.service.user.UserManagementService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -18,6 +19,7 @@ import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 class DepartmentManagementServiceImpl implements DepartmentManagementService {
     private final DepartmentRepository departmentRepository;
@@ -53,6 +55,7 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     }
 
     @Override
+    @Transactional
     public void addUserEntityToModeratorList(AddModeratorToDepartmentRequestDTO requestDTO) {
         departmentFindingService.getDepartmentEntity(requestDTO.departmentName()).getModeratorList().add(userFindingService.getUserEntity(requestDTO.username()));
     }

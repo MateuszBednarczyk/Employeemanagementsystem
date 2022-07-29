@@ -8,5 +8,12 @@
     <script>
         alert("logged in");
     </script>
+
+    <div class = "testbtn">
+        <form method="POST" th:action="@{/api/department/delete/IT}">
+            <button type="submit" name="submit" value="send">send</button>
+        </form>
+    </div>
+
 </body>
 </html>
