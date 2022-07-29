@@ -14,7 +14,7 @@ class DepartmentFindingServiceImpl implements DepartmentFindingService {
 
     @Override
     public DepartmentEntity getDepartmentEntity(String departmentName) {
-        return departmentRepository.findByDepartmentName(departmentName).orElseThrow(() -> new RuntimeException("Department not found"));
+        return departmentRepository.findByDepartmentName(departmentName).orElseThrow(() -> new IllegalArgumentException("Department not found"));
     }
 
     @Override

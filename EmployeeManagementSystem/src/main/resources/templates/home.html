@@ -10,7 +10,7 @@
     </script>
 
     <div class = "testbtn">
-        <form method="POST" th:action="@{/api/department/delete/IT}">
+        <form th:method="_delete" th:action="@{/api/department/delete/IT}">
             <button type="submit" name="submit" value="send">send</button>
         </form>
     </div>
