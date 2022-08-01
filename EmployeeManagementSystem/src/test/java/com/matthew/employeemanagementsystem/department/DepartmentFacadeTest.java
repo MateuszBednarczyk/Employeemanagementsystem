@@ -142,4 +142,12 @@ class DepartmentFacadeTest {
         Assertions.assertDoesNotThrow(() -> departmentFacade.deleteDepartmentByName(principal, exampleDepartmentName));
     }
 
+    @Test
+    void shouldThrowExceptionIfDepartmentEntityDoesNotExist() {
+        //given
+        //when
+        //then
+        Assertions.assertThrows(Exception.class, () -> departmentFacade.getDepartmentEntity("notexists"));
+    }
+
 }
