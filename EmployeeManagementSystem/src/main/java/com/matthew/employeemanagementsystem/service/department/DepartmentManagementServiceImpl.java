@@ -37,9 +37,7 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     @Override
     @Transactional
     public void deleteEmployeeFromDepartment(DeleteEmployeeRequestDTO deleteEmployeeRequestDTO, EmployeeEntity employeeEntity) {
-        departmentRepository.findByDepartmentName(deleteEmployeeRequestDTO.departmentName()).ifPresent(departmentEntity -> {
-            departmentEntity.getEmployeesList().remove(employeeEntity);
-        });
+        departmentFindingService.getDepartmentEntity(deleteEmployeeRequestDTO.departmentName()).getEmployeesList().remove(employeeEntity);
     }
 
     @Override

@@ -120,12 +120,12 @@ class DepartmentFacadeTest {
         Assertions.assertDoesNotThrow(() -> departmentFacade.addDepartmentToEmployeeAndAddEmployeeToDepartment(departmentEntity, employeeEntity));
     }
 
-
     @Test
     void shouldDeleteEmployeeFromDepartment() {
         //given
         DeleteEmployeeRequestDTO deleteEmployeeRequestDTO = new DeleteEmployeeRequestDTO(exampleName, exampleSurname, exampleDepartmentName);
         //when
+        departmentResponseDTO = departmentFacade.addNewDepartment(addNewDepartmentRequestDTO);
         //then
         Assertions.assertDoesNotThrow(() -> departmentFacade.deleteEmployeeFromDepartment(deleteEmployeeRequestDTO, employeeEntity));
     }
@@ -141,13 +141,4 @@ class DepartmentFacadeTest {
         //then
         Assertions.assertDoesNotThrow(() -> departmentFacade.deleteDepartmentByName(principal, exampleDepartmentName));
     }
-
-    @Test
-    void shouldThrowExceptionIfDepartmentEntityDoesNotExist() {
-        //given
-        //when
-        //then
-        Assertions.assertThrows(Exception.class, () -> departmentFacade.getDepartmentEntity("notexists"));
-    }
-
 }
