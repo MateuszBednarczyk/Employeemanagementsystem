@@ -9,7 +9,6 @@ import com.matthew.employeemanagementsystem.dtos.department.DepartmentResponseDT
 import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.repository.DepartmentRepository;
 import com.matthew.employeemanagementsystem.service.user.UserFindingService;
-import com.matthew.employeemanagementsystem.service.user.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -72,6 +71,12 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
         departmentRepository.save(newDepartmentEntity);
 
         return newDepartmentEntity;
+    }
+
+    @Transactional
+    public void addDepartmentToEmployeeAndAddEmployeeToDepartment(DepartmentEntity selectedDepartment, EmployeeEntity newEmployeeEntity) {
+        newEmployeeEntity.getDepartmentEntities().add(selectedDepartment);
+        selectedDepartment.getEmployeesList().add(newEmployeeEntity);
     }
 
     private void checkIfAddingNewDepartmentIsPossible(String departmentName) {

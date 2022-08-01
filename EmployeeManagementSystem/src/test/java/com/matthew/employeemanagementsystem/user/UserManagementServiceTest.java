@@ -30,7 +30,7 @@ class UserManagementServiceTest {
         RegisterNewUserRequestDTO requestDTO = new RegisterNewUserRequestDTO("mati", "mati", "IT", "ROLE_MODERATOR");
         //when
         //then
-        Assertions.assertThrows(IllegalArgumentException.class, () -> userManagementService.registerNewUser(requestDTO));
+        Assertions.assertThrows(Exception.class, () -> userManagementService.registerNewUser(requestDTO));
     }
 
     //It won't work cuz it's too isolated, and it needs extra injections of dependencies.

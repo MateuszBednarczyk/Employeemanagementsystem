@@ -23,6 +23,7 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
     private final DepartmentFacade departmentFacade;
 
     @Override
+    @Transactional
     public EmployeeResponseDTO checkIfAddingEmployeeIsPossibleAndIfYesAddElseThrowException(AddNewEmployeeRequestDTO requestDTO) {
         checkIfEmployeeAlreadyExists(requestDTO.name(), requestDTO.surname());
 
@@ -43,16 +44,10 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
     public EmployeeResponseDTO createAndPrepareEntitiesAlsoReturnEmployeeDTO(AddNewEmployeeRequestDTO requestDTO) {
         EmployeeEntity newEmployeeEntity = new EmployeeEntity(requestDTO.name(), requestDTO.surname());
         DepartmentEntity selectedDepartment = departmentFacade.getDepartmentEntity(requestDTO.departmentName());
-        addDepartmentToEmployeeAndAddEmployeeToDepartment(selectedDepartment, newEmployeeEntity);
+        departmentFacade.addDepartmentToEmployeeAndAddEmployeeToDepartment(selectedDepartment, newEmployeeEntity);
         employeeRepository.save(newEmployeeEntity);
 
         return new EmployeeResponseDTO(newEmployeeEntity.getName(), newEmployeeEntity.getSurname(), newEmployeeEntity.getDepartmentEntities());
-    }
-
-    @Transactional
-    public void addDepartmentToEmployeeAndAddEmployeeToDepartment(DepartmentEntity selectedDepartment, EmployeeEntity newEmployeeEntity) {
-        newEmployeeEntity.getDepartmentEntities().add(selectedDepartment);
-        selectedDepartment.getEmployeesList().add(newEmployeeEntity);
     }
 
     private void checkIfEmployeeAlreadyExists(String name, String surname) {

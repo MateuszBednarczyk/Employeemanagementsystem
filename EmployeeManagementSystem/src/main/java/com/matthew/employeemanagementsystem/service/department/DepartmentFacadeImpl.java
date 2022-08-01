@@ -48,4 +48,9 @@ class DepartmentFacadeImpl implements DepartmentFacade {
     public void addUserEntityToModeratorList(AddModeratorToDepartmentRequestDTO requestDTO) {
         departmentManagementService.addUserEntityToModeratorList(requestDTO);
     }
+
+    @Override
+    public void addDepartmentToEmployeeAndAddEmployeeToDepartment(DepartmentEntity selectedDepartment, EmployeeEntity newEmployeeEntity) {
+        departmentManagementService.addDepartmentToEmployeeAndAddEmployeeToDepartment(selectedDepartment, newEmployeeEntity);
+    }
 }

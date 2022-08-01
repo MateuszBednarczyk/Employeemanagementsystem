@@ -28,4 +28,7 @@ public interface DepartmentFacade {
     @Transactional
     void addUserEntityToModeratorList(AddModeratorToDepartmentRequestDTO requestDTO);
 
+    @Transactional
+    void addDepartmentToEmployeeAndAddEmployeeToDepartment(DepartmentEntity selectedDepartment, EmployeeEntity newEmployeeEntity);
+
 }

@@ -1,5 +1,6 @@
 package com.matthew.employeemanagementsystem.service.department;
 
+import com.matthew.employeemanagementsystem.domain.entities.DepartmentEntity;
 import com.matthew.employeemanagementsystem.domain.entities.EmployeeEntity;
 import com.matthew.employeemanagementsystem.dtos.department.AddModeratorToDepartmentRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.department.AddNewDepartmentRequestDTO;
@@ -23,5 +24,8 @@ interface DepartmentManagementService {
 
     @Transactional
     void addUserEntityToModeratorList(AddModeratorToDepartmentRequestDTO requestDTO);
+
+    @Transactional
+    void addDepartmentToEmployeeAndAddEmployeeToDepartment(DepartmentEntity selectedDepartment, EmployeeEntity newEmployeeEntity);
 
 }
