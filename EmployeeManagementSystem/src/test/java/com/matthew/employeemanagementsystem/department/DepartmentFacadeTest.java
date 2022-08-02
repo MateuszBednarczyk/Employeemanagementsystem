@@ -13,8 +13,7 @@ import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestD
 import com.matthew.employeemanagementsystem.dtos.user.RegisterNewUserRequestDTO;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
 import com.matthew.employeemanagementsystem.service.employee.EmployeeFacade;
-import com.matthew.employeemanagementsystem.service.role.RoleManagementService;
-import com.matthew.employeemanagementsystem.service.user.UserFindingService;
+import com.matthew.employeemanagementsystem.service.role.RoleFacade;
 import com.matthew.employeemanagementsystem.service.user.UserManagementService;
 import lombok.SneakyThrows;
 import org.hamcrest.Matchers;
@@ -51,13 +50,10 @@ class DepartmentFacadeTest {
     private UserManagementService userManagementService = mock(UserManagementService.class);
 
     @Autowired
-    private static RoleManagementService roleManagementService = mock(RoleManagementService.class);
+    private static RoleFacade RoleFacade = mock(RoleFacade.class);
 
     @Autowired
     private EmployeeFacade employeeFacade = mock(EmployeeFacade.class);
-
-    @Autowired
-    private UserFindingService userFindingService = mock(UserFindingService.class);
 
     Principal principal = new Principal() {
 
@@ -72,7 +68,7 @@ class DepartmentFacadeTest {
     @SneakyThrows
     @BeforeAll
     static void prepareRole() {
-        roleManagementService.createRoleEntity(exampleRoleName);
+        RoleFacade.createRoleEntity(exampleRoleName);
     }
 
     @Test
