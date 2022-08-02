@@ -2,6 +2,7 @@ package com.matthew.employeemanagementsystem.api;
 
 import com.matthew.employeemanagementsystem.dtos.department.AddModeratorToDepartmentRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.department.AddNewDepartmentRequestDTO;
+import com.matthew.employeemanagementsystem.dtos.department.DeleteUserEntityFromModeratorListRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.department.DepartmentResponseDTO;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,13 @@ class DepartmentController {
     @PostMapping("api/department/add-moderator")
     public ResponseEntity<String> addUserEntityToModeratorList(@RequestBody AddModeratorToDepartmentRequestDTO requestDTO) {
         departmentFacade.addUserEntityToModeratorList(requestDTO);
+
+        return new ResponseEntity<>(HttpStatus.ACCEPTED.getReasonPhrase(), HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping("api/department/delete-user-from-moderator-list")
+    public ResponseEntity<String> deleteUserEntityFromModeratorList(Principal loggedUser, @RequestBody DeleteUserEntityFromModeratorListRequestDTO requestDTO) throws AccessDeniedException {
+        departmentFacade.deleteUserEntityFromModeratorList(loggedUser, requestDTO);
 
         return new ResponseEntity<>(HttpStatus.ACCEPTED.getReasonPhrase(), HttpStatus.ACCEPTED);
     }

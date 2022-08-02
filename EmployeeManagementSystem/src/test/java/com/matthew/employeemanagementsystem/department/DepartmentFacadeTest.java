@@ -16,7 +16,6 @@ import com.matthew.employeemanagementsystem.service.employee.EmployeeFacade;
 import com.matthew.employeemanagementsystem.service.role.RoleFacade;
 import com.matthew.employeemanagementsystem.service.user.UserManagementService;
 import lombok.SneakyThrows;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,6 +27,7 @@ import java.security.Principal;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.mock;
 
 @SpringBootTest(classes = EmployeeManagementSystemApplication.class)
@@ -101,7 +101,7 @@ class DepartmentFacadeTest {
         departmentFacade.addUserEntityToModeratorList(addModeratorToDepartmentRequestDTO);
         //then
         List<UserEntity> moderatorList = departmentFacade.getDepartmentEntity(exampleDepartmentName).getModeratorList();
-        assertThat(moderatorList, Matchers.hasSize(1));
+        assertThat(moderatorList, hasSize(1));
     }
 
     @Test
@@ -137,4 +137,5 @@ class DepartmentFacadeTest {
         //then
         Assertions.assertDoesNotThrow(() -> departmentFacade.deleteDepartmentByName(principal, exampleDepartmentName));
     }
+
 }
