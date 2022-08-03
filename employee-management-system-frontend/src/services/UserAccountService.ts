@@ -7,9 +7,11 @@ const UserAccountService = {
     return localStorage.getItem("isLogged") == "true";
   },
 
-  Login() {},
-  Logout(){
-    localStorage.setItem("isLogged","false")
+  Login() {
+    localStorage.setItem("isLogged", "true");
+  },
+  Logout() {
+    localStorage.setItem("isLogged", "false");
   },
 
   async Register(request: RegisterRequestDto) {
