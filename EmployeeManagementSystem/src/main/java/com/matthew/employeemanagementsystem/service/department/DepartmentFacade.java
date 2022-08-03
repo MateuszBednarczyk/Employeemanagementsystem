@@ -32,6 +32,6 @@ public interface DepartmentFacade {
 
     @Transactional
     void deleteUserEntityFromModeratorList(Principal loggedUser, DeleteUserEntityFromModeratorListRequestDTO requestDTO) throws AccessDeniedException;
-    List<DepartmentDTOForObjectMapper> findAllDepartments();
+    List<DepartmentDTOForObjectMapper> findAllDepartments(Principal loggedUser) throws AccessDeniedException;
 
 }

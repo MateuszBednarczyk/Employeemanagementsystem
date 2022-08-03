@@ -1,13 +1,21 @@
 package com.matthew.employeemanagementsystem.service.department;
 
 import com.matthew.employeemanagementsystem.domain.entities.DepartmentEntity;
+import com.matthew.employeemanagementsystem.domain.entities.RoleEntity;
+import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
+import com.matthew.employeemanagementsystem.domain.types.RoleType;
 import com.matthew.employeemanagementsystem.dtos.department.DepartmentDTOForObjectMapper;
 import com.matthew.employeemanagementsystem.dtos.department.DepartmentResponseDTO;
 import com.matthew.employeemanagementsystem.repository.DepartmentRepository;
+import com.matthew.employeemanagementsystem.service.role.RoleFacade;
+import com.matthew.employeemanagementsystem.service.user.UserFindingService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.nio.file.AccessDeniedException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +24,8 @@ import java.util.List;
 class DepartmentFindingServiceImpl implements DepartmentFindingService {
 
     private final DepartmentRepository departmentRepository;
+    private final UserFindingService userFindingService;
+    private final RoleFacade roleFacade;
     private final ModelMapper modelMapper = new ModelMapper();
 
     @Override
@@ -31,10 +41,21 @@ class DepartmentFindingServiceImpl implements DepartmentFindingService {
     }
 
     @Override
-    public List<DepartmentDTOForObjectMapper> findAllDepartments() {
+    @Transactional
+    public List<DepartmentDTOForObjectMapper> findAllDepartments(Principal loggedUser) throws AccessDeniedException {
         List<DepartmentDTOForObjectMapper> responseDTOList = new ArrayList<>();
-        for (DepartmentEntity departmentEntity : departmentRepository.findAll()) {
-            responseDTOList.add(modelMapper.map(departmentEntity, DepartmentDTOForObjectMapper.class));
+        UserEntity loggedUserEntity = userFindingService.getUserEntity(loggedUser.getName());
+        List<RoleEntity> userRoles = loggedUserEntity.getRoles();
+        if (userRoles.contains(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
+            for (DepartmentEntity departmentEntity : departmentRepository.findAll()) {
+                responseDTOList.add(modelMapper.map(departmentEntity, DepartmentDTOForObjectMapper.class));
+            }
+        } else if (userRoles.contains(roleFacade.findByRoleType(RoleType.ROLE_MODERATOR))) {
+            for (DepartmentEntity departmentEntity : loggedUserEntity.getDepartmentEntities()) {
+                responseDTOList.add(modelMapper.map(departmentEntity, DepartmentDTOForObjectMapper.class));
+            }
+        } else {
+            throw new AccessDeniedException("No permission");
         }
 
         return responseDTOList;
