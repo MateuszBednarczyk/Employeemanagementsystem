@@ -9,6 +9,8 @@ import com.matthew.employeemanagementsystem.dtos.department.AddNewDepartmentRequ
 import com.matthew.employeemanagementsystem.dtos.department.DeleteUserEntityFromModeratorListRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.department.DepartmentResponseDTO;
 import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
+import com.matthew.employeemanagementsystem.exception.department.DepartmentAlreadyExistsException;
+import com.matthew.employeemanagementsystem.exception.department.DepartmentNoPermissionException;
 import com.matthew.employeemanagementsystem.repository.DepartmentRepository;
 import com.matthew.employeemanagementsystem.service.role.RoleFacade;
 import com.matthew.employeemanagementsystem.service.user.UserFindingService;
@@ -17,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 
 @Service
@@ -46,18 +47,18 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
 
     @Override
     @Transactional
-    public void deleteDepartmentByName(Principal loggedUser, String departmentName) throws AccessDeniedException {
+    public void deleteDepartmentByName(Principal loggedUser, String departmentName) throws DepartmentNoPermissionException {
         DepartmentEntity departmentEntity = departmentFindingService.getDepartmentEntity(departmentName);
         UserEntity userEntity = userFindingService.getUserEntity(loggedUser.getName());
         if (departmentEntity.getModeratorList().contains(userFindingService.getUserEntity(loggedUser.getName()))) {
-            deleteRelationedData(userEntity, departmentEntity);
+            deleteRelatedData(userEntity, departmentEntity);
             departmentRepository.deleteByDepartmentName(departmentName);
         } else {
-            throw new AccessDeniedException("No permission");
+            throw new DepartmentNoPermissionException(departmentName);
         }
     }
 
-    private void deleteRelationedData(UserEntity userEntity, DepartmentEntity departmentEntity) {
+    private void deleteRelatedData(UserEntity userEntity, DepartmentEntity departmentEntity) {
         userEntity.getDepartmentEntities().remove(departmentEntity);
         departmentEntity.getModeratorList().remove(userEntity);
     }
@@ -70,13 +71,13 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
 
     @Override
     @Transactional
-    public void deleteUserEntityFromModeratorList(Principal loggedUser, DeleteUserEntityFromModeratorListRequestDTO requestDTO) throws AccessDeniedException {
+    public void deleteUserEntityFromModeratorList(Principal loggedUser, DeleteUserEntityFromModeratorListRequestDTO requestDTO) throws DepartmentNoPermissionException {
         UserEntity userEntity = userFindingService.getUserEntity(loggedUser.getName());
         if (userEntity.getRoles().contains(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
-            deleteRelationedData(userFindingService.getUserEntity(requestDTO.username()),
+            deleteRelatedData(userFindingService.getUserEntity(requestDTO.username()),
                     departmentFindingService.getDepartmentEntity(requestDTO.departmentName()));
         } else {
-            throw new AccessDeniedException("No perrmision");
+            throw new DepartmentNoPermissionException(requestDTO.departmentName());
         }
     }
 
@@ -96,13 +97,13 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     private void checkIfAddingNewDepartmentIsPossible(String departmentName) {
         checkIfVariablesNotNull(departmentName);
         departmentRepository.findByDepartmentName(departmentName).ifPresent(department -> {
-            throw new IllegalArgumentException("Department already exists");
+            throw new DepartmentAlreadyExistsException(departmentName);
         });
     }
 
     private void checkIfVariablesNotNull(String departmentName) {
         if (departmentName == null) {
-            throw new IllegalArgumentException("Unexpected variable");
+            throw new IllegalArgumentException("You can't pass null variables");
         }
     }
 }

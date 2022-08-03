@@ -7,9 +7,9 @@ import com.matthew.employeemanagementsystem.dtos.department.AddNewDepartmentRequ
 import com.matthew.employeemanagementsystem.dtos.department.DeleteUserEntityFromModeratorListRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.department.DepartmentResponseDTO;
 import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
+import com.matthew.employeemanagementsystem.exception.department.DepartmentNoPermissionException;
 
 import javax.transaction.Transactional;
-import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 
 interface DepartmentManagementService {
@@ -21,7 +21,7 @@ interface DepartmentManagementService {
     void deleteEmployeeFromDepartment(DeleteEmployeeRequestDTO deleteEmployeeRequestDTO, EmployeeEntity employeeEntity);
 
     @Transactional
-    void deleteDepartmentByName(Principal loggedUser, String departmentName) throws AccessDeniedException;
+    void deleteDepartmentByName(Principal loggedUser, String departmentName) throws DepartmentNoPermissionException;
 
     @Transactional
     void addUserEntityToModeratorList(AddModeratorToDepartmentRequestDTO requestDTO);
@@ -30,6 +30,6 @@ interface DepartmentManagementService {
     void addDepartmentToEmployeeAndAddEmployeeToDepartment(DepartmentEntity selectedDepartment, EmployeeEntity newEmployeeEntity);
 
     @Transactional
-    void deleteUserEntityFromModeratorList(Principal loggedUser, DeleteUserEntityFromModeratorListRequestDTO requestDTO) throws AccessDeniedException;
+    void deleteUserEntityFromModeratorList(Principal loggedUser, DeleteUserEntityFromModeratorListRequestDTO requestDTO) throws DepartmentNoPermissionException;
 
 }

@@ -13,12 +13,12 @@ class RoleFacadeImpl implements RoleFacade {
     private final RoleManagementService roleManagementService;
 
     @Override
-    public RoleEntity createRoleEntity(String role) throws IllegalArgumentException {
+    public RoleEntity createRoleEntity(String role) {
         return roleManagementService.createRoleEntity(role);
     }
 
     @Override
-    public void deleteRoleEntity(String role) throws IllegalArgumentException {
+    public void deleteRoleEntity(String role) {
         roleManagementService.deleteRoleEntity(role);
     }
 

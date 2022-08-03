@@ -7,6 +7,9 @@ import com.matthew.employeemanagementsystem.domain.types.RoleType;
 import com.matthew.employeemanagementsystem.dtos.user.DeleteUserRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.user.RegisterNewUserRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.user.UserResponseDTO;
+import com.matthew.employeemanagementsystem.exception.user.EmptyPasswordException;
+import com.matthew.employeemanagementsystem.exception.user.UserDoesNotHavePermissionException;
+import com.matthew.employeemanagementsystem.exception.user.UsernameTakenException;
 import com.matthew.employeemanagementsystem.repository.UserRepository;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
 import com.matthew.employeemanagementsystem.service.role.RoleFacade;
@@ -15,8 +18,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.nio.file.AccessDeniedException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,13 +42,13 @@ class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     @Transactional
-    public void deleteUser(DeleteUserRequestDTO deleteUserRequestDTO) throws AccessDeniedException {
-        UserEntity requestingUser = userRepository.findByUsername(deleteUserRequestDTO.principal().getName()).orElseThrow(() -> new UsernameNotFoundException(deleteUserRequestDTO.principal().getName()));
+    public void deleteUser(DeleteUserRequestDTO requestDTO) {
+        UserEntity requestingUser = userRepository.findByUsername(requestDTO.principal().getName()).orElseThrow(() -> new UsernameNotFoundException(requestDTO.principal().getName()));
         List<RoleEntity> allowedRoles = Arrays.asList(roleFacade.findByRoleType(RoleType.ROLE_ADMIN), roleFacade.findByRoleType(RoleType.ROLE_MODERATOR));
         if (requestingUser.getRoles().containsAll(allowedRoles)) {
-            userRepository.deleteByUsername(deleteUserRequestDTO.username());
+            userRepository.deleteByUsername(requestDTO.username());
         } else {
-            throw new AccessDeniedException("No permission");
+            throw new UserDoesNotHavePermissionException(requestingUser.getUsername());
         }
     }
 
@@ -62,7 +63,7 @@ class UserManagementServiceImpl implements UserManagementService {
 
     private void checkIfUserWithGivenUsernameAlreadyExists(String username) {
         userRepository.findByUsername(username).ifPresent(user -> {
-            throw new IllegalArgumentException("Username taken");
+            throw new UsernameTakenException(username);
         });
     }
 
@@ -70,7 +71,7 @@ class UserManagementServiceImpl implements UserManagementService {
         if (password != null) {
             return suffixConfiguration.bCryptPasswordEncoder().encode(password);
         } else {
-            throw new IllegalArgumentException("Password empty");
+            throw new EmptyPasswordException();
         }
     }
 }

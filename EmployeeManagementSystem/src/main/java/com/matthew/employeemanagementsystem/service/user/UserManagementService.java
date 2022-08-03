@@ -5,14 +5,12 @@ import com.matthew.employeemanagementsystem.dtos.user.RegisterNewUserRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.user.UserResponseDTO;
 
 import javax.transaction.Transactional;
-import java.nio.file.AccessDeniedException;
-import java.rmi.UnexpectedException;
 
 public interface UserManagementService {
     @Transactional
-    UserResponseDTO registerNewUser(RegisterNewUserRequestDTO requestDTO) throws UnexpectedException;
+    UserResponseDTO registerNewUser(RegisterNewUserRequestDTO requestDTO);
 
     @Transactional
-    void deleteUser(DeleteUserRequestDTO deleteUserRequestDTO) throws AccessDeniedException;
+    void deleteUser(DeleteUserRequestDTO deleteUserRequestDTO);
 
 }

@@ -5,6 +5,7 @@ import com.matthew.employeemanagementsystem.domain.entities.EmployeeEntity;
 import com.matthew.employeemanagementsystem.dtos.employee.AddNewEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.employee.EmployeeResponseDTO;
+import com.matthew.employeemanagementsystem.exception.employee.EmployeeAlreadyExistsException;
 import com.matthew.employeemanagementsystem.repository.EmployeeRepository;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
     @Override
     @Transactional
     public EmployeeResponseDTO checkIfAddingEmployeeIsPossibleAndIfYesAddElseThrowException(AddNewEmployeeRequestDTO requestDTO) {
-        checkIfEmployeeAlreadyExists(requestDTO.name(), requestDTO.surname());
+        checkIfEmployeeAlreadyExists(requestDTO.name(), requestDTO.surname(), requestDTO.departmentName());
 
         return createAndPrepareEntitiesAlsoReturnEmployeeDTO(requestDTO);
     }
@@ -48,9 +49,9 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
         return new EmployeeResponseDTO(newEmployeeEntity.getName(), newEmployeeEntity.getSurname(), newEmployeeEntity.getDepartmentEntities());
     }
 
-    private void checkIfEmployeeAlreadyExists(String name, String surname) {
+    private void checkIfEmployeeAlreadyExists(String name, String surname, String departmentName) {
         employeeRepository.findByNameAndSurname(name, surname).ifPresent(employee -> {
-            throw new IllegalArgumentException("Employee already exists");
+            throw new EmployeeAlreadyExistsException(name, surname, departmentName);
         });
     }
 }

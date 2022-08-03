@@ -2,6 +2,8 @@ package com.matthew.employeemanagementsystem.service.role;
 
 import com.matthew.employeemanagementsystem.domain.entities.RoleEntity;
 import com.matthew.employeemanagementsystem.domain.types.RoleType;
+import com.matthew.employeemanagementsystem.exception.role.RoleNotFoundException;
+import com.matthew.employeemanagementsystem.exception.role.UnexpectedRoleValue;
 import com.matthew.employeemanagementsystem.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,7 @@ class RoleManagementImpl implements RoleManagementService {
             roleEntity.setRoleType(RoleType.valueOf(role));
             roleRepository.save(roleEntity);
         } else {
-            throw new IllegalArgumentException("Unexpected role");
+            throw new UnexpectedRoleValue(role);
         }
 
         return roleEntity;
@@ -30,8 +32,8 @@ class RoleManagementImpl implements RoleManagementService {
 
     @Override
     @Transactional
-    public void deleteRoleEntity(String role) throws IllegalArgumentException {
-        RoleEntity roleEntity = roleRepository.findByRoleType(RoleType.valueOf(role)).orElseThrow(() -> new IllegalArgumentException("Role not found"));
+    public void deleteRoleEntity(String role) {
+        RoleEntity roleEntity = roleRepository.findByRoleType(RoleType.valueOf(role)).orElseThrow(() -> new RoleNotFoundException(role));
         roleRepository.deleteByRoleType(roleEntity.getRoleType());
     }
 }

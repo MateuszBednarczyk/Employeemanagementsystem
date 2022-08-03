@@ -13,7 +13,7 @@ public class GlobalExceptionHandlerController {
     //todo error handling
 
     @ExceptionHandler(Throwable.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String catchAndThrowExceptionMessage(Exception e) {
         log.error(e.getMessage());
         return e.getMessage();
