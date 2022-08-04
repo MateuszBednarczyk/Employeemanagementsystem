@@ -1,6 +1,7 @@
 package com.matthew.employeemanagementsystem.api;
 
 import com.matthew.employeemanagementsystem.dtos.department.*;
+import com.matthew.employeemanagementsystem.exception.department.DepartmentAlreadyExistsException;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

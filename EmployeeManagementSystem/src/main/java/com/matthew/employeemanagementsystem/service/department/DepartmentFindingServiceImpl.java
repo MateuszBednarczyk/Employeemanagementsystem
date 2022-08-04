@@ -44,21 +44,28 @@ class DepartmentFindingServiceImpl implements DepartmentFindingService {
     @Override
     @Transactional
     public List<DepartmentDTOForObjectMapper> findAllDepartments(Principal loggedUser) throws DepartmentNoPermissionException {
-        List<DepartmentDTOForObjectMapper> responseDTOList = new ArrayList<>();
         UserEntity loggedUserEntity = userFindingService.getUserEntity(loggedUser.getName());
         List<RoleEntity> userRoles = loggedUserEntity.getRoles();
         if (userRoles.contains(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
-            for (DepartmentEntity departmentEntity : departmentRepository.findAll()) {
-                responseDTOList.add(modelMapper.map(departmentEntity, DepartmentDTOForObjectMapper.class));
-            }
+
+            return generateList(departmentRepository.findAll());
+
         } else if (userRoles.contains(roleFacade.findByRoleType(RoleType.ROLE_MODERATOR))) {
-            for (DepartmentEntity departmentEntity : loggedUserEntity.getDepartmentEntities()) {
-                responseDTOList.add(modelMapper.map(departmentEntity, DepartmentDTOForObjectMapper.class));
-            }
+
+            return generateList(loggedUserEntity.getDepartmentEntities());
+
         } else {
             throw new DepartmentNoPermissionException();
+        }
+    }
+
+    private List<DepartmentDTOForObjectMapper> generateList(List<DepartmentEntity> allowedDataSource) {
+        List<DepartmentDTOForObjectMapper> responseDTOList = new ArrayList<>();
+        for (DepartmentEntity departmentEntity : allowedDataSource) {
+            responseDTOList.add(modelMapper.map(departmentEntity, DepartmentDTOForObjectMapper.class));
         }
 
         return responseDTOList;
     }
+
 }
