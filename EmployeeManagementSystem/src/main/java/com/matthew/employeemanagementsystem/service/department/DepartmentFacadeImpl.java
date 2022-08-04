@@ -59,7 +59,7 @@ class DepartmentFacadeImpl implements DepartmentFacade {
     }
 
     @Override
-    public List<DepartmentDTOForObjectMapper> findAllDepartments(Principal loggedUser) throws DepartmentNoPermissionException {
+    public List<DepartmentResponseDTO> findAllDepartments(Principal loggedUser) throws DepartmentNoPermissionException {
         return departmentFindingService.findAllDepartments(loggedUser);
     }
 }

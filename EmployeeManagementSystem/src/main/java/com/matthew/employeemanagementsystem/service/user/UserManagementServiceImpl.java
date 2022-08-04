@@ -14,6 +14,7 @@ import com.matthew.employeemanagementsystem.repository.UserRepository;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
 import com.matthew.employeemanagementsystem.service.role.RoleFacade;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,7 @@ class UserManagementServiceImpl implements UserManagementService {
     private final SuffixConfiguration suffixConfiguration;
     private final DepartmentFacade departmentFacade;
     private final RoleFacade roleFacade;
+    private final ModelMapper modelMapper = new ModelMapper();
 
     @Override
     @Transactional
@@ -37,7 +39,7 @@ class UserManagementServiceImpl implements UserManagementService {
         UserEntity newUserEntity = createEntityToSave(requestDTO);
         userRepository.save(newUserEntity);
 
-        return new UserResponseDTO(newUserEntity.getUsername(), newUserEntity.getDepartmentEntities(), newUserEntity.getRoles());
+        return modelMapper.map(newUserEntity, UserResponseDTO.class);
     }
 
     @Override

@@ -33,6 +33,6 @@ public interface DepartmentFacade {
     @Transactional
     void deleteUserEntityFromModeratorList(Principal loggedUser, DeleteUserEntityFromModeratorListRequestDTO requestDTO) throws DepartmentNoPermissionException;
 
-    List<DepartmentDTOForObjectMapper> findAllDepartments(Principal loggedUser) throws DepartmentNoPermissionException;
+    List<DepartmentResponseDTO> findAllDepartments(Principal loggedUser) throws DepartmentNoPermissionException;
 
 }

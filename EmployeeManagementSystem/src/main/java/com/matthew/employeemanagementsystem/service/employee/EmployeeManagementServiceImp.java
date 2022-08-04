@@ -10,6 +10,7 @@ import com.matthew.employeemanagementsystem.repository.EmployeeRepository;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -22,6 +23,7 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
     private final EmployeeRepository employeeRepository;
     private final EmployeeFindingService employeeFindingService;
     private final DepartmentFacade departmentFacade;
+    private final ModelMapper modelMapper = new ModelMapper();
 
     @Override
     @Transactional
@@ -46,7 +48,7 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
         departmentFacade.addDepartmentToEmployeeAndAddEmployeeToDepartment(selectedDepartment, newEmployeeEntity);
         employeeRepository.save(newEmployeeEntity);
 
-        return new EmployeeResponseDTO(newEmployeeEntity.getName(), newEmployeeEntity.getSurname(), newEmployeeEntity.getDepartmentEntities());
+        return modelMapper.map(newEmployeeEntity, EmployeeResponseDTO.class);
     }
 
     private void checkIfEmployeeAlreadyExists(String name, String surname, String departmentName) {

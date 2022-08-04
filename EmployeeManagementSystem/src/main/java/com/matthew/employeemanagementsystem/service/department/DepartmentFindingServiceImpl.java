@@ -4,7 +4,6 @@ import com.matthew.employeemanagementsystem.domain.entities.DepartmentEntity;
 import com.matthew.employeemanagementsystem.domain.entities.RoleEntity;
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
 import com.matthew.employeemanagementsystem.domain.types.RoleType;
-import com.matthew.employeemanagementsystem.dtos.department.DepartmentDTOForObjectMapper;
 import com.matthew.employeemanagementsystem.dtos.department.DepartmentResponseDTO;
 import com.matthew.employeemanagementsystem.exception.department.DepartmentNoPermissionException;
 import com.matthew.employeemanagementsystem.exception.department.DepartmentNotFoundException;
@@ -38,12 +37,12 @@ class DepartmentFindingServiceImpl implements DepartmentFindingService {
     public DepartmentResponseDTO findDepartmentEntityByNameAndReturnAsDTO(String departmentName) {
         DepartmentEntity foundEntity = getDepartmentEntity(departmentName);
 
-        return new DepartmentResponseDTO(foundEntity.getDepartmentName(), foundEntity.getEmployeesList());
+        return modelMapper.map(foundEntity, DepartmentResponseDTO.class);
     }
 
     @Override
     @Transactional
-    public List<DepartmentDTOForObjectMapper> findAllDepartments(Principal loggedUser) throws DepartmentNoPermissionException {
+    public List<DepartmentResponseDTO> findAllDepartments(Principal loggedUser) throws DepartmentNoPermissionException {
         UserEntity loggedUserEntity = userFindingService.getUserEntity(loggedUser.getName());
         List<RoleEntity> userRoles = loggedUserEntity.getRoles();
         if (userRoles.contains(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
@@ -59,10 +58,10 @@ class DepartmentFindingServiceImpl implements DepartmentFindingService {
         }
     }
 
-    private List<DepartmentDTOForObjectMapper> generateList(List<DepartmentEntity> allowedDataSource) {
-        List<DepartmentDTOForObjectMapper> responseDTOList = new ArrayList<>();
+    private List<DepartmentResponseDTO> generateList(List<DepartmentEntity> allowedDataSource) {
+        List<DepartmentResponseDTO> responseDTOList = new ArrayList<>();
         for (DepartmentEntity departmentEntity : allowedDataSource) {
-            responseDTOList.add(modelMapper.map(departmentEntity, DepartmentDTOForObjectMapper.class));
+            responseDTOList.add(modelMapper.map(departmentEntity, DepartmentResponseDTO.class));
         }
 
         return responseDTOList;

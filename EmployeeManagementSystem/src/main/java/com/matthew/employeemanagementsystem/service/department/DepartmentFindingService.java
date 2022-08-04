@@ -1,7 +1,6 @@
 package com.matthew.employeemanagementsystem.service.department;
 
 import com.matthew.employeemanagementsystem.domain.entities.DepartmentEntity;
-import com.matthew.employeemanagementsystem.dtos.department.DepartmentDTOForObjectMapper;
 import com.matthew.employeemanagementsystem.dtos.department.DepartmentResponseDTO;
 import com.matthew.employeemanagementsystem.exception.department.DepartmentNoPermissionException;
 
@@ -13,5 +12,5 @@ interface DepartmentFindingService {
 
     DepartmentResponseDTO findDepartmentEntityByNameAndReturnAsDTO(String departmentName);
 
-    List<DepartmentDTOForObjectMapper> findAllDepartments(Principal loggedUser) throws DepartmentNoPermissionException;
+    List<DepartmentResponseDTO> findAllDepartments(Principal loggedUser) throws DepartmentNoPermissionException;
 }

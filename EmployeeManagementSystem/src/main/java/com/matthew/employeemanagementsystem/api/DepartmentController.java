@@ -50,7 +50,7 @@ class DepartmentController {
     }
 
     @GetMapping("api/department")
-    public ResponseEntity<List<DepartmentDTOForObjectMapper>> findAllDepartments(Principal loggedUser) throws AccessDeniedException {
+    public ResponseEntity<List<DepartmentResponseDTO>> findAllDepartments(Principal loggedUser) throws AccessDeniedException {
         return new ResponseEntity<>(departmentFacade.findAllDepartments(loggedUser), HttpStatus.OK);
     }
 
