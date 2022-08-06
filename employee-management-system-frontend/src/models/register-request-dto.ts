@@ -2,7 +2,7 @@ interface RegisterRequestDto {
   username: string;
   password: string;
   department: string;
-  role: string;
+  role?: string;
 }
 
 export default RegisterRequestDto;

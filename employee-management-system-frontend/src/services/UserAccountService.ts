@@ -1,5 +1,8 @@
 import RegisterRequestDto from "@/models/register-request-dto";
+import { useRouter } from "vue-router";
 import ApiService from "./ApiService";
+import router from "@/router";
+
 
 const UserAccountService = {
   IsLogged(): boolean {
@@ -7,15 +10,22 @@ const UserAccountService = {
     return localStorage.getItem("isLogged") == "true";
   },
 
-  Login() {
+  async Login() {
     localStorage.setItem("isLogged", "true");
+    router.push('/dashboard')
   },
   Logout() {
     localStorage.setItem("isLogged", "false");
+    router.push('/login')
   },
 
   async Register(request: RegisterRequestDto) {
-    ApiService.SendLoginRequest(request).then((res) => console.log(res));
+    ApiService.SendRegisterRequest(request).then((res) => {
+      if(res.status === 200){
+        localStorage.setItem("isLogged", "true")
+        router.push('/dashboard')
+      }
+    });
   },
 };
 

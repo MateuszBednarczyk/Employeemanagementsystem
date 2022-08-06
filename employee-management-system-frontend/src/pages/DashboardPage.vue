@@ -49,8 +49,9 @@ onMounted(() => {
   }
 });
 
-const logout = () => {
-  UserAccountService.Logout();
+const logout = async () => {
+  await UserAccountService.Logout();
+  // router.push('/login')
 };
 </script>
 

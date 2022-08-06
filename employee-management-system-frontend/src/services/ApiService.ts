@@ -3,7 +3,7 @@ import axios from "axios";
 
 const baseUrl = "http://localhost:8080/api";
 const ApiService = {
-  async SendLoginRequest(request: RegisterRequestDto) {
+  async SendRegisterRequest(request: RegisterRequestDto) {
     return await axios.post(`${baseUrl}/users/register`, {
         body: request
     });
