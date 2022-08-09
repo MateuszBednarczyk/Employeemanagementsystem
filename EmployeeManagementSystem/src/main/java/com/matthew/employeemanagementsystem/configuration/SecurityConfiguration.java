@@ -1,5 +1,6 @@
 package com.matthew.employeemanagementsystem.configuration;
 
+import com.matthew.employeemanagementsystem.filter.AuthenticationFilter;
 import com.matthew.employeemanagementsystem.service.user.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -44,6 +45,8 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .rememberMe()
                 .rememberMeCookieName("remember")
-                .tokenValiditySeconds(86400);
+                .tokenValiditySeconds(86400)
+                .and()
+                .addFilter(new AuthenticationFilter(authenticationManagerBean()));
     }
 }
