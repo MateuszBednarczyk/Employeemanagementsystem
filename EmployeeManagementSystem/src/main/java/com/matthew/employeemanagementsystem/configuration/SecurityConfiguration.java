@@ -1,6 +1,7 @@
 package com.matthew.employeemanagementsystem.configuration;
 
 import com.matthew.employeemanagementsystem.filter.AuthenticationFilter;
+import com.matthew.employeemanagementsystem.filter.AuthorizationFilter;
 import com.matthew.employeemanagementsystem.service.user.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -34,9 +36,8 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api").authenticated()
                 .antMatchers("/login").permitAll()
-                .anyRequest().permitAll()
+                .antMatchers("/register").permitAll()
                 .and()
                 .formLogin()
                 .loginPage("/login")
@@ -47,6 +48,9 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .rememberMeCookieName("remember")
                 .tokenValiditySeconds(86400)
                 .and()
-                .addFilter(new AuthenticationFilter(authenticationManagerBean()));
+                .addFilter(new AuthenticationFilter(authenticationManagerBean()))
+                .addFilterBefore(new AuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http.authorizeRequests().antMatchers("/api/department/delete/**").hasAnyAuthority("[ROLE_ADMIN]");
     }
 }

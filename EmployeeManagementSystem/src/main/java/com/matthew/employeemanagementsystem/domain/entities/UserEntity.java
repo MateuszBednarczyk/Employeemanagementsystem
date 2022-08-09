@@ -9,10 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -42,7 +39,11 @@ public class UserEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(roles.toString()));
+        List<String> roleTypes = new ArrayList<>();
+        for (RoleEntity role : roles) {
+            roleTypes.add(role.getRoleType().name());
+        }
+        return Collections.singleton(new SimpleGrantedAuthority(roleTypes.toString()));
     }
 
     @Override
