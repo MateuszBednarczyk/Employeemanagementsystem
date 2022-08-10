@@ -4,9 +4,12 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
+import com.matthew.employeemanagementsystem.dtos.user.LoginResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -34,15 +37,21 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+        try {
+            Map<String, String> requestMap = new ObjectMapper().readValue(request.getInputStream(), Map.class);
+            String username = requestMap.get("username");
+            String password = requestMap.get("password");
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, password);
 
-        return authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+            return authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+        } catch (IOException e) {
+            throw new AuthenticationServiceException(e.getMessage(), e);
+        }
     }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+        ModelMapper modelMapper = new ModelMapper();
         UserEntity user = (UserEntity) authResult.getPrincipal();
         Algorithm algorithm = Algorithm.HMAC256(SECRET.getBytes());
         String accessToken = JWT.create()
@@ -56,9 +65,10 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_LIFETIME * 12))
                 .withIssuer(request.getRequestURI())
                 .sign(algorithm);
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("access_token", accessToken);
+        Map<Object, Object> responseBody = new HashMap<>();
+        responseBody.put("access_token", accessToken);
+        responseBody.put("user", modelMapper.map(user, LoginResponseDTO.class));
         response.setContentType(APPLICATION_JSON_VALUE);
-        new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+        new ObjectMapper().writeValue(response.getOutputStream(), responseBody);
     }
 }

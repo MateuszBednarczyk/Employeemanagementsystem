@@ -1,5 +1,7 @@
 package com.matthew.employeemanagementsystem.api;
 
+import com.matthew.employeemanagementsystem.dtos.user.LoginRequestDTO;
+import com.matthew.employeemanagementsystem.dtos.user.LoginResponseDTO;
 import com.matthew.employeemanagementsystem.dtos.user.RegisterNewUserRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.user.UserResponseDTO;
 import com.matthew.employeemanagementsystem.service.user.UserManagementService;
@@ -10,15 +12,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.rmi.UnexpectedException;
-
 @RestController
 @RequiredArgsConstructor
 class UserController {
     private final UserManagementService userManagementService;
 
     @PostMapping("/api/users/register")
-    public ResponseEntity<UserResponseDTO> registerNewUser(@RequestBody RegisterNewUserRequestDTO requestDTO) throws UnexpectedException {
+    public ResponseEntity<UserResponseDTO> registerNewUser(@RequestBody RegisterNewUserRequestDTO requestDTO) {
         return new ResponseEntity<>(userManagementService.registerNewUser(requestDTO), HttpStatus.OK);
+    }
+
+    @PostMapping("/api/users/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO requestDTO) {
+        return new ResponseEntity<>(userManagementService.login(requestDTO), HttpStatus.OK);
     }
 }

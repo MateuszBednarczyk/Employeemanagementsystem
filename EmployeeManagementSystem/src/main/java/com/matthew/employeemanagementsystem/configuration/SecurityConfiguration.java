@@ -6,6 +6,7 @@ import com.matthew.employeemanagementsystem.service.user.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,21 +37,21 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/login").permitAll()
-                .antMatchers("/register").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/users/login").permitAll()
+                .antMatchers("/api/users/register").permitAll()
                 .and()
                 .formLogin()
-                .loginPage("/login")
+                .loginPage("/api/users/login")
                 .successForwardUrl("/home")
                 .defaultSuccessUrl("/home", true)
                 .and()
                 .rememberMe()
                 .rememberMeCookieName("remember")
-                .tokenValiditySeconds(86400)
-                .and()
-                .addFilter(new AuthenticationFilter(authenticationManagerBean()))
+                .tokenValiditySeconds(86400);
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManagerBean());
+        authenticationFilter.setFilterProcessesUrl("/api/users/login");
+        http
+                .addFilter(authenticationFilter)
                 .addFilterBefore(new AuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-
-        http.authorizeRequests().antMatchers("/api/department/delete/**").hasAnyAuthority("[ROLE_ADMIN]");
     }
 }
