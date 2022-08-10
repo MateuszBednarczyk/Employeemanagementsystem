@@ -15,7 +15,7 @@ public class RefreshTokenController {
 
     private final TokenService tokenService;
 
-    @GetMapping("api/users/refreshToken")
+    @GetMapping("api/users/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         tokenService.refreshToken(request, response);
     }

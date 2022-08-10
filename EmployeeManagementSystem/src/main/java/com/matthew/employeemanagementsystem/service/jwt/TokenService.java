@@ -1,7 +1,6 @@
 package com.matthew.employeemanagementsystem.service.jwt;
 
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
