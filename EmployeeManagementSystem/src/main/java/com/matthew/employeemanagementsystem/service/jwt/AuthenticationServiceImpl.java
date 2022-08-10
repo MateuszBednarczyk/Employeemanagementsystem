@@ -22,6 +22,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final TokenService tokenService;
 
     @Override
+    public UsernamePasswordAuthenticationToken createUsernameAuthenticationToken(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            Map<String, String> requestMap = new ObjectMapper().readValue(request.getInputStream(), Map.class);
+            String username = requestMap.get("username");
+            String password = requestMap.get("password");
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+
+            return usernamePasswordAuthenticationToken;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public Map<Object, Object> successfulAuthentication(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
         ModelMapper modelMapper = new ModelMapper();
         UserEntity user = (UserEntity) authResult.getPrincipal();
@@ -36,18 +50,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return responseBody;
     }
 
-    @Override
-    public UsernamePasswordAuthenticationToken createUsernameAuthenticationToken(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            Map<String, String> requestMap = new ObjectMapper().readValue(request.getInputStream(), Map.class);
-            String username = requestMap.get("username");
-            String password = requestMap.get("password");
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-
-            return usernamePasswordAuthenticationToken;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 }
