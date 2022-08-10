@@ -1,7 +1,5 @@
 package com.matthew.employeemanagementsystem.service.jwt;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
 import com.matthew.employeemanagementsystem.dtos.user.LoginResponseDTO;
@@ -14,12 +12,8 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.matthew.employeemanagementsystem.finals.JwtFinals.REFRESH_TOKEN_LIFETIME;
-import static com.matthew.employeemanagementsystem.finals.JwtFinals.SECRET;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +30,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String refreshToken = tokenService.generateRefreshToken(user, issuer);
         Map<Object, Object> responseBody = new HashMap<>();
         responseBody.put("access_token", accessToken);
+        responseBody.put("refresh_token", refreshToken);
         responseBody.put("user", modelMapper.map(user, LoginResponseDTO.class));
 
         return responseBody;
