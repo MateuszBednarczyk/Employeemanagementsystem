@@ -1,5 +1,6 @@
-interface LoginRequestDto{
-
+interface LoginRequestDto {
+  username: string;
+  password: string;
 }
 
-export default LoginRequestDto
+export default LoginRequestDto;

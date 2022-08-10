@@ -19,7 +19,7 @@ import router from "@/router";
 import UserAccountService from "@/services/UserAccountService";
 
 const login = () => {
-  UserAccountService.Login();
+  UserAccountService.Login('a', 'a')
 };
 
 const register = () => {
