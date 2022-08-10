@@ -60,6 +60,8 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(new AuthorizationFilter(authorizationService), UsernamePasswordAuthenticationFilter.class);
         http
                 .cors()
+                .disable()
+                .csrf()
                 .disable();
     }
 }
