@@ -32,7 +32,8 @@
 import RegisterRequestDto from "@/models/register-request-dto";
 import ApiService from "@/services/ApiService";
 import UserAccountService from "@/services/UserAccountService";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import {Roles} from "@/models/enums/roles"
 
 const username = ref("");
 const password = ref("");
@@ -41,12 +42,18 @@ const department = ref("");
 
 let departmentOptions: string[] = ["a", "b", "c"];
 
+onMounted(()=>{
+  loadDepartments()
+})
+
 const onSubmit = () => {
   if (password.value != null && password.value == passwordRepeated.value) {
     const request:RegisterRequestDto = {
     username: username.value,
     password: password.value,
-    department: department.value
+    department: department.value,
+    //TODO: set selected role
+    role: Roles.Admin
 }
     UserAccountService.Register(request)
   }
@@ -58,6 +65,11 @@ const onReset = () => {
   department.value = '';
 
 };
+const loadDepartments = async () => {
+  const departments = await ApiService.getDepartments()
+  console.log(departments)
+}
+
 </script>
 
 <style lang="scss" scoped>
