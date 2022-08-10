@@ -2,6 +2,7 @@ package com.matthew.employeemanagementsystem.configuration;
 
 import com.matthew.employeemanagementsystem.filter.AuthenticationFilter;
 import com.matthew.employeemanagementsystem.filter.AuthorizationFilter;
+import com.matthew.employeemanagementsystem.service.jwt.*;
 import com.matthew.employeemanagementsystem.service.user.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final UserDetailsServiceImpl userDetailsService;
     private final SuffixConfiguration suffixConfiguration;
+    private final AuthorizationService authorizationService;
+    private final AuthenticationService authenticationService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -48,10 +51,10 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .rememberMe()
                 .rememberMeCookieName("remember")
                 .tokenValiditySeconds(86400);
-        AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManagerBean());
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManagerBean(), authenticationService);
         authenticationFilter.setFilterProcessesUrl("/api/users/login");
         http
                 .addFilter(authenticationFilter)
-                .addFilterBefore(new AuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new AuthorizationFilter(authorizationService), UsernamePasswordAuthenticationFilter.class);
     }
 }

@@ -16,6 +16,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
@@ -59,6 +61,11 @@ class UserManagementServiceImpl implements UserManagementService {
         isCredentialsCorrect(requestDTO, userEntity);
 
         return modelMapper.map(userEntity, LoginResponseDTO.class);
+    }
+
+    @Override
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
+
     }
 
     private void isCredentialsCorrect(LoginRequestDTO requestDTO, UserEntity userEntity) {

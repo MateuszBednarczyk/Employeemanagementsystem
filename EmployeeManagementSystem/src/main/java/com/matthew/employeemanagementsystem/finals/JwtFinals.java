@@ -1,4 +1,4 @@
-package com.matthew.employeemanagementsystem.filter;
+package com.matthew.employeemanagementsystem.finals;
 
 public class JwtFinals {
     public static final String SECRET = "secret";
