@@ -8,16 +8,14 @@ import com.matthew.employeemanagementsystem.dtos.user.*;
 import com.matthew.employeemanagementsystem.exception.user.EmptyPasswordException;
 import com.matthew.employeemanagementsystem.exception.user.UserDoesNotHavePermissionException;
 import com.matthew.employeemanagementsystem.exception.user.UsernameTakenException;
+import com.matthew.employeemanagementsystem.mapper.UserModelMapper;
 import com.matthew.employeemanagementsystem.repository.UserRepository;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
 import com.matthew.employeemanagementsystem.service.role.RoleFacade;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
@@ -30,8 +28,8 @@ class UserManagementServiceImpl implements UserManagementService {
     private final SuffixConfiguration suffixConfiguration;
     private final DepartmentFacade departmentFacade;
     private final RoleFacade roleFacade;
-    private final ModelMapper modelMapper = new ModelMapper();
     private final UserFindingService userFindingService;
+    private final UserModelMapper userModelMapper;
 
     @Override
     @Transactional
@@ -40,7 +38,7 @@ class UserManagementServiceImpl implements UserManagementService {
         UserEntity newUserEntity = createEntityToSave(requestDTO);
         userRepository.save(newUserEntity);
 
-        return modelMapper.map(newUserEntity, UserResponseDTO.class);
+        return userModelMapper.mapUserEntityToUserResponseDTO(newUserEntity);
     }
 
     @Override
@@ -60,12 +58,7 @@ class UserManagementServiceImpl implements UserManagementService {
         UserEntity userEntity = userFindingService.getUserEntity(requestDTO.username());
         isCredentialsCorrect(requestDTO, userEntity);
 
-        return modelMapper.map(userEntity, LoginResponseDTO.class);
-    }
-
-    @Override
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
-
+        return userModelMapper.mapUserEntityToLoginResponseDTO(userEntity);
     }
 
     private void isCredentialsCorrect(LoginRequestDTO requestDTO, UserEntity userEntity) {

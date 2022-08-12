@@ -41,7 +41,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             filterChain.doFilter(request, response);
         } catch (Exception exception) {
-            log.error("Logging exception: " + exception.getMessage());
+            log.error("Logging exception: d" + exception.getMessage());
             throw exception;
         }
     }

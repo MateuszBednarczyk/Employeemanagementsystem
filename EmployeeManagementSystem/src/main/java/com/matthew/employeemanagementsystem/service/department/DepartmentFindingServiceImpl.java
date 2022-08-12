@@ -7,11 +7,11 @@ import com.matthew.employeemanagementsystem.domain.types.RoleType;
 import com.matthew.employeemanagementsystem.dtos.department.DepartmentResponseDTO;
 import com.matthew.employeemanagementsystem.exception.department.DepartmentNoPermissionException;
 import com.matthew.employeemanagementsystem.exception.department.DepartmentNotFoundException;
+import com.matthew.employeemanagementsystem.mapper.DepartmentModelMapper;
 import com.matthew.employeemanagementsystem.repository.DepartmentRepository;
 import com.matthew.employeemanagementsystem.service.role.RoleFacade;
 import com.matthew.employeemanagementsystem.service.user.UserFindingService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -26,7 +26,7 @@ class DepartmentFindingServiceImpl implements DepartmentFindingService {
     private final DepartmentRepository departmentRepository;
     private final UserFindingService userFindingService;
     private final RoleFacade roleFacade;
-    private final ModelMapper modelMapper = new ModelMapper();
+    private final DepartmentModelMapper departmentModelMapper;
 
     @Override
     public DepartmentEntity getDepartmentEntity(String departmentName) {
@@ -37,7 +37,7 @@ class DepartmentFindingServiceImpl implements DepartmentFindingService {
     public DepartmentResponseDTO findDepartmentEntityByNameAndReturnAsDTO(String departmentName) {
         DepartmentEntity foundEntity = getDepartmentEntity(departmentName);
 
-        return modelMapper.map(foundEntity, DepartmentResponseDTO.class);
+        return departmentModelMapper.mapDepartmentEntityToDepartmentResponseDTO(foundEntity);
     }
 
     @Override
@@ -61,7 +61,7 @@ class DepartmentFindingServiceImpl implements DepartmentFindingService {
     private List<DepartmentResponseDTO> generateList(List<DepartmentEntity> allowedDataSource) {
         List<DepartmentResponseDTO> responseDTOList = new ArrayList<>();
         for (DepartmentEntity departmentEntity : allowedDataSource) {
-            responseDTOList.add(modelMapper.map(departmentEntity, DepartmentResponseDTO.class));
+            responseDTOList.add(departmentModelMapper.mapDepartmentEntityToDepartmentResponseDTO(departmentEntity));
         }
 
         return responseDTOList;

@@ -6,11 +6,11 @@ import com.matthew.employeemanagementsystem.dtos.employee.AddNewEmployeeRequestD
 import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.employee.EmployeeResponseDTO;
 import com.matthew.employeemanagementsystem.exception.employee.EmployeeAlreadyExistsException;
+import com.matthew.employeemanagementsystem.mapper.EmployeeModelMapper;
 import com.matthew.employeemanagementsystem.repository.EmployeeRepository;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,7 +23,7 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
     private final EmployeeRepository employeeRepository;
     private final EmployeeFindingService employeeFindingService;
     private final DepartmentFacade departmentFacade;
-    private final ModelMapper modelMapper = new ModelMapper();
+    private final EmployeeModelMapper employeeModelMapper;
 
     @Override
     @Transactional
@@ -48,7 +48,7 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
         departmentFacade.addDepartmentToEmployeeAndAddEmployeeToDepartment(selectedDepartment, newEmployeeEntity);
         employeeRepository.save(newEmployeeEntity);
 
-        return modelMapper.map(newEmployeeEntity, EmployeeResponseDTO.class);
+        return employeeModelMapper.mapEmployeeEntityToEmployeeResponseDTO(newEmployeeEntity);
     }
 
     private void checkIfEmployeeAlreadyExists(String name, String surname, String departmentName) {
