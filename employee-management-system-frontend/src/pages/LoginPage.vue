@@ -7,9 +7,28 @@
         <div class="text-h6">Employee Management Service</div>
       </q-card-section>
       <q-card-actions horizontal align="center">
-        <q-btn flat label="Login" @click="login"/>
-        <q-btn flat label="Register" @click="register"/>
+        <q-btn flat label="Login" @click="openLoginDialog" />
+        <q-btn flat label="Register" @click="register" />
       </q-card-actions>
+
+      <q-dialog v-model="loginDialogOpen" :persistent="false">
+        <q-card>
+          <q-card-section class="row items-center">
+            <div class="col">
+              <div class="row">
+                <q-input v-model="username" type="text" label="username" />
+              </div>
+              <div class="row">
+                <q-input v-model="password" type="text" label="password" />
+              </div>
+            </div>
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat label="Cancel" color="primary" v-close-popup />
+            <q-btn flat label="Submit" color="primary" @click="login" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-card>
   </div>
 </template>
@@ -17,14 +36,31 @@
 <script setup lang="ts">
 import router from "@/router";
 import UserAccountService from "@/services/UserAccountService";
+import { ref } from "vue";
+
+const loginDialogOpen = ref(false);
+
+const username = ref("");
+const password = ref("");
 
 const login = () => {
-  UserAccountService.Login('a', 'a')
+  UserAccountService.Login(username.value, password.value);
 };
 
 const register = () => {
-  router.push('/register')
-}
+  router.push("/register");
+};
+
+const openLoginDialog = () => {
+  if(UserAccountService.IsLogged()){
+    UserAccountService.Login('', '')
+  }
+  loginDialogOpen.value = true;
+};
+
+const closeLoginDialog = () => {
+  loginDialogOpen.value = false;
+};
 </script>
 
 <style lang="scss" scoped>
@@ -35,7 +71,7 @@ const register = () => {
   text-align: center;
 }
 
-.container{
+.container {
   width: 100%;
   height: 100vh;
 

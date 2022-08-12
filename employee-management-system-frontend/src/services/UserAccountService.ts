@@ -7,25 +7,34 @@ import LoginRequestDto from "@/models/login-request-dto";
 const UserAccountService = {
   IsLogged(): boolean {
     //TODO: use cookies or something better
-    return localStorage.getItem("isLogged") == "true";
+    return this.GetJwt() != null;
   },
 
   async Login(username: string, password: string) {
+
+    if(this.IsLogged()){
+      router.push("/dashboard");
+      return
+    }
+
     const loginRequest: LoginRequestDto = {
       username: username,
       password: password,
     };
 
-    ApiService.SendLoginRequest(loginRequest)
-    .then(res=> {
-      console.log(res)
-    })
-    
-    // localStorage.setItem("isLogged", "true");
-    // router.push("/dashboard");
+    ApiService.SendLoginRequest(loginRequest).then((res) => {
+      if (res.status === 200) {
+        const data: LoginResponse = res.data;
+        this.SetJwt(data.access_token);
+        
+        localStorage.setItem('refreshToken', data.refresh_token)
+        
+        router.push("/dashboard");
+      }
+    });
   },
   Logout() {
-    localStorage.setItem("isLogged", "false");
+    this.ClearJwt()
     router.push("/login");
   },
 
@@ -39,6 +48,16 @@ const UserAccountService = {
         router.push("/dashboard");
       }
     });
+  },
+
+  SetJwt(token: string) {
+    localStorage.setItem("jwt", token);
+  },
+  ClearJwt(){
+    localStorage.removeItem('jwt')
+  },
+  GetJwt(): string | null {
+    return localStorage.getItem("jwt");
   },
 };
 
