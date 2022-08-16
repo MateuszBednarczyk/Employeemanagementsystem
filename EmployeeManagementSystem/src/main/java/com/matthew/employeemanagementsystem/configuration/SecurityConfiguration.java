@@ -61,6 +61,11 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .addFilter(authenticationFilter)
                 .addFilterBefore(new AuthorizationFilter(authorizationService), UsernamePasswordAuthenticationFilter.class);
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http
+                .authorizeRequests()
+                .antMatchers("/api/department/add-moderator")
+                .hasAnyAuthority("[ROLE_ADMIN]");
     }
 }
