@@ -11,7 +11,7 @@ import java.net.URI;
 
 @RestController
 @Slf4j
-public class LoginController {
+public class MainController {
     @GetMapping("")
     ResponseEntity<Void> redirect(HttpServletRequest request) {
         return ResponseEntity
