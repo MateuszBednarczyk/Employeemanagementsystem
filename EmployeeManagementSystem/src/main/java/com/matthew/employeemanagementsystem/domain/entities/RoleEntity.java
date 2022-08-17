@@ -1,6 +1,7 @@
 package com.matthew.employeemanagementsystem.domain.entities;
 
 import com.matthew.employeemanagementsystem.domain.types.RoleType;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,8 +14,10 @@ import javax.persistence.*;
 public class RoleEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull
     private RoleType roleType;
 
 }

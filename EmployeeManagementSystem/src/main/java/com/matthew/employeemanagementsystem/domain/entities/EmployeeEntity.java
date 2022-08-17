@@ -1,5 +1,6 @@
 package com.matthew.employeemanagementsystem.domain.entities;
 
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,9 +15,13 @@ import java.util.List;
 public class EmployeeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull
     private String name;
+
+    @NotNull
     private String surname;
 
     @ManyToMany

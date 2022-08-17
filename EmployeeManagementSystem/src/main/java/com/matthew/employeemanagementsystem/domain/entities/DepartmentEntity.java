@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,13 +16,11 @@ import java.util.List;
 public class DepartmentEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String departmentName;
 
-    public DepartmentEntity(String departmentName) {
-        this.departmentName = departmentName;
-    }
+    @NotNull
+    private String departmentName;
 
     @JsonIgnore
     @ManyToMany
@@ -30,5 +29,9 @@ public class DepartmentEntity {
     @JsonIgnore
     @ManyToMany
     private List<UserEntity> moderatorList = new ArrayList<>();
+
+    public DepartmentEntity(String departmentName) {
+        this.departmentName = departmentName;
+    }
 
 }

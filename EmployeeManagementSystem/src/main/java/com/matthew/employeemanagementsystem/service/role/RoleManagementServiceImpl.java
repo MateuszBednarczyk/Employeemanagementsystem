@@ -12,7 +12,7 @@ import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
-class RoleManagementImpl implements RoleManagementService {
+class RoleManagementServiceImpl implements RoleManagementService {
 
     private final RoleRepository roleRepository;
 

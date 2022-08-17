@@ -1,5 +1,20 @@
 package com.matthew.employeemanagementsystem.domain.entities;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
+@Entity
+@Table(name = "projects")
+@Data
+@NoArgsConstructor
 public class ProjectEntity {
-    //created it here to leak some new features :D :P
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotNull
+    private String projectName;
 }
