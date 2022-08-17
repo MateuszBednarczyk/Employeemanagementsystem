@@ -18,6 +18,7 @@ import javax.transaction.Transactional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 class EmployeeManagementServiceImp implements EmployeeManagementService {
 
     private final EmployeeRepository employeeRepository;
@@ -26,7 +27,6 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
     private final EmployeeModelMapper employeeModelMapper;
 
     @Override
-    @Transactional
     public EmployeeResponseDTO checkIfAddingEmployeeIsPossibleAndIfYesAddElseThrowException(AddNewEmployeeRequestDTO requestDTO) {
         checkIfEmployeeAlreadyExists(requestDTO.name(), requestDTO.surname(), requestDTO.departmentName());
 
@@ -34,14 +34,12 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
     }
 
     @Override
-    @Transactional
     public void deleteEmployeeByNameAndSurname(DeleteEmployeeRequestDTO requestDTO) {
         employeeFindingService.findEmployeeEntityByNameAndSurname(requestDTO.name(), requestDTO.surname());
         departmentFacade.deleteEmployeeFromDepartment(requestDTO, employeeFindingService.findEmployeeEntityByNameAndSurname(requestDTO.name(), requestDTO.surname()));
         employeeRepository.deleteByNameAndSurname(requestDTO.name(), requestDTO.surname());
     }
 
-    @Transactional
     public EmployeeResponseDTO createAndPrepareEntitiesAlsoReturnEmployeeDTO(AddNewEmployeeRequestDTO requestDTO) {
         EmployeeEntity newEmployeeEntity = new EmployeeEntity(requestDTO.name(), requestDTO.surname());
         DepartmentEntity selectedDepartment = departmentFacade.getDepartmentEntity(requestDTO.departmentName());

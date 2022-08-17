@@ -24,6 +24,7 @@ import java.security.Principal;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 class DepartmentManagementServiceImpl implements DepartmentManagementService {
     private final DepartmentRepository departmentRepository;
     private final DepartmentFindingService departmentFindingService;
@@ -31,7 +32,6 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     private final RoleFacade roleFacade;
 
     @Override
-    @Transactional
     public DepartmentResponseDTO addNewDepartment(AddNewDepartmentRequestDTO requestDTO) {
         checkIfAddingNewDepartmentIsPossible(requestDTO.departmentName());
         DepartmentEntity newDepartmentEntity = createAndSaveDepartmentEntity(requestDTO);
@@ -40,13 +40,11 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     }
 
     @Override
-    @Transactional
     public void deleteEmployeeFromDepartment(DeleteEmployeeRequestDTO deleteEmployeeRequestDTO, EmployeeEntity employeeEntity) {
         departmentFindingService.getDepartmentEntity(deleteEmployeeRequestDTO.departmentName()).getEmployeesList().remove(employeeEntity);
     }
 
     @Override
-    @Transactional
     public void deleteDepartmentByName(Principal loggedUser, String departmentName) throws DepartmentNoPermissionException {
         DepartmentEntity departmentEntity = departmentFindingService.getDepartmentEntity(departmentName);
         UserEntity userEntity = userFindingService.getUserEntity(loggedUser.getName());
@@ -64,13 +62,11 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     }
 
     @Override
-    @Transactional
     public void addUserEntityToModeratorList(AddModeratorToDepartmentRequestDTO requestDTO) {
         departmentFindingService.getDepartmentEntity(requestDTO.departmentName()).getModeratorList().add(userFindingService.getUserEntity(requestDTO.username()));
     }
 
     @Override
-    @Transactional
     public void deleteUserEntityFromModeratorList(Principal loggedUser, DeleteUserEntityFromModeratorListRequestDTO requestDTO) throws DepartmentNoPermissionException {
         UserEntity userEntity = userFindingService.getUserEntity(loggedUser.getName());
         if (userEntity.getRoles().contains(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
@@ -80,7 +76,6 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
         }
     }
 
-    @Transactional
     public void addDepartmentToEmployeeAndAddEmployeeToDepartment(DepartmentEntity selectedDepartment, EmployeeEntity newEmployeeEntity) {
         newEmployeeEntity.getDepartmentEntities().add(selectedDepartment);
         selectedDepartment.getEmployeesList().add(newEmployeeEntity);

@@ -9,27 +9,20 @@ import com.matthew.employeemanagementsystem.dtos.department.DepartmentResponseDT
 import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.exception.department.DepartmentNoPermissionException;
 
-import javax.transaction.Transactional;
 import java.security.Principal;
 
 interface DepartmentManagementService {
 
-    @Transactional
     DepartmentResponseDTO addNewDepartment(AddNewDepartmentRequestDTO requestDTO);
 
-    @Transactional
     void deleteEmployeeFromDepartment(DeleteEmployeeRequestDTO deleteEmployeeRequestDTO, EmployeeEntity employeeEntity);
 
-    @Transactional
     void deleteDepartmentByName(Principal loggedUser, String departmentName) throws DepartmentNoPermissionException;
 
-    @Transactional
     void addUserEntityToModeratorList(AddModeratorToDepartmentRequestDTO requestDTO);
 
-    @Transactional
     void addDepartmentToEmployeeAndAddEmployeeToDepartment(DepartmentEntity selectedDepartment, EmployeeEntity newEmployeeEntity);
 
-    @Transactional
     void deleteUserEntityFromModeratorList(Principal loggedUser, DeleteUserEntityFromModeratorListRequestDTO requestDTO) throws DepartmentNoPermissionException;
 
 }

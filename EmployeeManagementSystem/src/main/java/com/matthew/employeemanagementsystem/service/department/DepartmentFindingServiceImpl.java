@@ -21,6 +21,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 class DepartmentFindingServiceImpl implements DepartmentFindingService {
 
     private final DepartmentRepository departmentRepository;
@@ -41,7 +42,6 @@ class DepartmentFindingServiceImpl implements DepartmentFindingService {
     }
 
     @Override
-    @Transactional
     public List<DepartmentResponseDTO> findAllDepartments(Principal loggedUser) throws DepartmentNoPermissionException {
         UserEntity loggedUserEntity = userFindingService.getUserEntity(loggedUser.getName());
         List<RoleEntity> userRoles = loggedUserEntity.getRoles();

@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 public class EmployeeManagementSystemApplication {
 
-    @Value("${frontendapplicationuri}")
+    @Value("${front.end.application.uri}")
     private String frontEndOrigin;
 
     public static void main(String[] args) {

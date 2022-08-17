@@ -4,16 +4,13 @@ import com.matthew.employeemanagementsystem.dtos.employee.AddNewEmployeeRequestD
 import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.employee.EmployeeResponseDTO;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 public interface EmployeeFacade {
     EmployeeResponseDTO findEmployeeByNameAndSurname(String name, String surname);
 
-    @Transactional
     EmployeeResponseDTO checkIfAddingEmployeeIsPossibleAndIfYesAddElseThrowException(AddNewEmployeeRequestDTO requestDTO);
 
-    @Transactional
     void deleteEmployeeByNameAndSurname(DeleteEmployeeRequestDTO requestDTO);
 
     List<EmployeeResponseDTO> findEmployeesInDepartment(String departmentName);

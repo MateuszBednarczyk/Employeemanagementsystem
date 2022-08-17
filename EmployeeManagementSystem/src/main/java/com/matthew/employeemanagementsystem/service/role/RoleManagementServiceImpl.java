@@ -12,12 +12,12 @@ import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 class RoleManagementServiceImpl implements RoleManagementService {
 
     private final RoleRepository roleRepository;
 
     @Override
-    @Transactional
     public RoleEntity createRoleEntity(String role) {
         RoleEntity roleEntity = new RoleEntity();
         if (role.equals("ROLE_ADMIN") || role.equals("ROLE_MODERATOR")) {
@@ -31,7 +31,6 @@ class RoleManagementServiceImpl implements RoleManagementService {
     }
 
     @Override
-    @Transactional
     public void deleteRoleEntity(String role) {
         RoleEntity roleEntity = roleRepository.findByRoleType(RoleType.valueOf(role)).orElseThrow(() -> new RoleNotFoundException(role));
         roleRepository.deleteByRoleType(roleEntity.getRoleType());

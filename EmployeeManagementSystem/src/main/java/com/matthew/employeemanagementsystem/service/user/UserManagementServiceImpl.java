@@ -22,6 +22,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 class UserManagementServiceImpl implements UserManagementService {
 
     private final UserRepository userRepository;
@@ -32,7 +33,6 @@ class UserManagementServiceImpl implements UserManagementService {
     private final UserModelMapper userModelMapper;
 
     @Override
-    @Transactional
     public UserResponseDTO registerNewUser(RegisterNewUserRequestDTO requestDTO) throws IllegalArgumentException {
         checkIfUserWithGivenUsernameAlreadyExists(requestDTO.username());
         UserEntity newUserEntity = createEntityToSave(requestDTO);
@@ -42,7 +42,6 @@ class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    @Transactional
     public void deleteUser(DeleteUserRequestDTO requestDTO) {
         UserEntity requestingUser = userFindingService.getUserEntity(requestDTO.username());
         List<RoleEntity> allowedRoles = Arrays.asList(roleFacade.findByRoleType(RoleType.ROLE_ADMIN), roleFacade.findByRoleType(RoleType.ROLE_MODERATOR));

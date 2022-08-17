@@ -4,12 +4,10 @@ import com.matthew.employeemanagementsystem.dtos.employee.AddNewEmployeeRequestD
 import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.employee.EmployeeResponseDTO;
 
-import javax.transaction.Transactional;
-
 interface EmployeeManagementService {
-    @Transactional
+
     EmployeeResponseDTO checkIfAddingEmployeeIsPossibleAndIfYesAddElseThrowException(AddNewEmployeeRequestDTO requestDTO);
 
-    @Transactional
     void deleteEmployeeByNameAndSurname(DeleteEmployeeRequestDTO requestDTO);
+
 }
