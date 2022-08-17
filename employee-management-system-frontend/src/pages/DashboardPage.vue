@@ -36,6 +36,7 @@
 </template>
 
 <script setup lang="ts">
+import ApiService from "@/services/ApiService";
 import UserAccountService from "@/services/UserAccountService";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -47,6 +48,10 @@ onMounted(() => {
   if (!UserAccountService.IsLogged()) {
     router.push("/login");
   }
+
+  // ApiService.getDepartments().then(res => {
+  //   console.log(res)
+  // })
 });
 
 const logout = async () => {

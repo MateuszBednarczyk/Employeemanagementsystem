@@ -6,7 +6,7 @@ import RegisterPage from "@/pages/RegisterPage.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    redirect: "/dashboard",
+    redirect: "/login",
   },
   {
     path: "/dashboard",
