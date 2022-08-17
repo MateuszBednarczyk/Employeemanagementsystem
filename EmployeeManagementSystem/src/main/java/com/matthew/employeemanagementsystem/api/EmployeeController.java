@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 class EmployeeController {
@@ -31,5 +33,10 @@ class EmployeeController {
         employeeFacade.deleteEmployeeByNameAndSurname(requestDTO);
 
         return new ResponseEntity<>(HttpStatus.ACCEPTED.getReasonPhrase(), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/api/{departmentName}/employees")
+    public ResponseEntity<List<EmployeeResponseDTO>> findEmployeesInDepartment(@PathVariable String departmentName) {
+        return new ResponseEntity<>(employeeFacade.findEmployeesInDepartment(departmentName), HttpStatus.OK);
     }
 }

@@ -5,8 +5,12 @@ import com.matthew.employeemanagementsystem.dtos.employee.EmployeeResponseDTO;
 import com.matthew.employeemanagementsystem.exception.employee.EmployeeNotFoundException;
 import com.matthew.employeemanagementsystem.mapper.EmployeeModelMapper;
 import com.matthew.employeemanagementsystem.repository.EmployeeRepository;
+import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -14,6 +18,7 @@ class EmployeeFindingServiceImpl implements EmployeeFindingService {
 
     private final EmployeeRepository employeeRepository;
     private final EmployeeModelMapper employeeModelMapper;
+    private final DepartmentFacade departmentFacade;
 
     @Override
     public EmployeeEntity findEmployeeEntityByNameAndSurname(String name, String surname) {
@@ -25,5 +30,20 @@ class EmployeeFindingServiceImpl implements EmployeeFindingService {
         EmployeeEntity foundEmployeeEntity = employeeRepository.findByNameAndSurname(name, surname).orElseThrow(() -> new EmployeeNotFoundException(name, surname));
 
         return employeeModelMapper.mapEmployeeEntityToEmployeeResponseDTO(foundEmployeeEntity);
+    }
+
+    @Override
+    public List<EmployeeResponseDTO> findEmployeesInDepartment(String departmentName) {
+        return prepareEmployeeResponseDTOsList(findDepartmentEntity(departmentName));
+    }
+
+    private List<EmployeeEntity> findDepartmentEntity(String departmentName) {
+        return departmentFacade.getDepartmentEntity(departmentName).getEmployeesList();
+    }
+
+    private List<EmployeeResponseDTO> prepareEmployeeResponseDTOsList(List<EmployeeEntity> employeeEntitiesList) {
+        List<EmployeeResponseDTO> employeeResponseDTOsList = new ArrayList<>();
+        employeeEntitiesList.forEach(employeeEntity -> employeeResponseDTOsList.add(employeeModelMapper.mapEmployeeEntityToEmployeeResponseDTO(employeeEntity)));
+        return employeeResponseDTOsList;
     }
 }

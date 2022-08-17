@@ -5,6 +5,7 @@ import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestD
 import com.matthew.employeemanagementsystem.dtos.employee.EmployeeResponseDTO;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 public interface EmployeeFacade {
     EmployeeResponseDTO findEmployeeByNameAndSurname(String name, String surname);
@@ -14,4 +15,6 @@ public interface EmployeeFacade {
 
     @Transactional
     void deleteEmployeeByNameAndSurname(DeleteEmployeeRequestDTO requestDTO);
+
+    List<EmployeeResponseDTO> findEmployeesInDepartment(String departmentName);
 }

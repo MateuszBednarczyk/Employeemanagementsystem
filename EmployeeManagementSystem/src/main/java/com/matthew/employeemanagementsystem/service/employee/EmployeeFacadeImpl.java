@@ -6,6 +6,8 @@ import com.matthew.employeemanagementsystem.dtos.employee.EmployeeResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 class EmployeeFacadeImpl implements EmployeeFacade {
@@ -26,5 +28,10 @@ class EmployeeFacadeImpl implements EmployeeFacade {
     @Override
     public void deleteEmployeeByNameAndSurname(DeleteEmployeeRequestDTO requestDTO) {
         employeeManagementService.deleteEmployeeByNameAndSurname(requestDTO);
+    }
+
+    @Override
+    public List<EmployeeResponseDTO> findEmployeesInDepartment(String departmentName) {
+        return employeeFindingService.findEmployeesInDepartment(departmentName);
     }
 }

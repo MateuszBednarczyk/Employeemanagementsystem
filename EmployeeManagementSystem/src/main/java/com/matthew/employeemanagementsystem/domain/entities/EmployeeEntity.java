@@ -1,6 +1,5 @@
 package com.matthew.employeemanagementsystem.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,7 +19,6 @@ public class EmployeeEntity {
     private String name;
     private String surname;
 
-    @JsonIgnore
     @ManyToMany
     private List<DepartmentEntity> departmentEntities = new ArrayList<>();
 

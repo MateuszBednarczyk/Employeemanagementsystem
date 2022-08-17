@@ -74,8 +74,7 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     public void deleteUserEntityFromModeratorList(Principal loggedUser, DeleteUserEntityFromModeratorListRequestDTO requestDTO) throws DepartmentNoPermissionException {
         UserEntity userEntity = userFindingService.getUserEntity(loggedUser.getName());
         if (userEntity.getRoles().contains(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
-            deleteRelatedData(userFindingService.getUserEntity(requestDTO.username()),
-                    departmentFindingService.getDepartmentEntity(requestDTO.departmentName()));
+            deleteRelatedData(userFindingService.getUserEntity(requestDTO.username()), departmentFindingService.getDepartmentEntity(requestDTO.departmentName()));
         } else {
             throw new DepartmentNoPermissionException(requestDTO.departmentName());
         }

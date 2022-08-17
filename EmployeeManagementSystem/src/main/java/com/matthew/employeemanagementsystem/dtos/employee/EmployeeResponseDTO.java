@@ -6,5 +6,5 @@ import org.hibernate.annotations.Immutable;
 import java.util.List;
 
 @Immutable
-public record EmployeeResponseDTO(String name, String surname, List<DepartmentEntity> departmentList) {
+public record EmployeeResponseDTO(String name, String surname, List<DepartmentEntity> departmentEntities) {
 }
