@@ -18,11 +18,6 @@ const routes: Array<RouteRecordRaw> = [
     name: "login",
     component: LoginPage,
   },
-  {
-    path: "/register",
-    name: "register",
-    component: RegisterPage,
-  },
 ];
 
 const router = createRouter({

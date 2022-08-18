@@ -28,13 +28,15 @@ const UserAccountService = {
         this.SetJwt(data.access_token);
         
         localStorage.setItem('refreshToken', data.refresh_token)
-        
+
+        this.SetUsername(res.data.user.username)
         router.push("/dashboard");
       }
     });
   },
   Logout() {
-    this.ClearJwt()
+    // this.ClearJwt()
+    localStorage.clear()
     router.push("/login");
   },
 
@@ -53,12 +55,22 @@ const UserAccountService = {
   SetJwt(token: string) {
     localStorage.setItem("jwt", token);
   },
-  ClearJwt(){
-    localStorage.removeItem('jwt')
-  },
   GetJwt(): string | null {
     return localStorage.getItem("jwt");
   },
+  ClearJwt(){
+    localStorage.removeItem('jwt')
+  },
+
+  SetUsername(username:string){
+    localStorage.setItem('username', username)
+  },
+  GetUsername(){
+    return localStorage.getItem('username')
+  },
+  ClearUsername(){
+    localStorage.removeItem('username')
+  }
 };
 
 export default UserAccountService;
