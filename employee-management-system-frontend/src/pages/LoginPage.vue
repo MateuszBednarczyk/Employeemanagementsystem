@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <!-- <q-btn @click="login"> Login </q-btn> -->
     <q-card class="my-card" color="primary">
       <q-card-section>
         <div class="text-subtitle1">Welcome To</div>
@@ -8,7 +7,6 @@
       </q-card-section>
       <q-card-actions horizontal align="center">
         <q-btn flat label="Login" @click="openLoginDialog" />
-        <q-btn flat label="Register" @click="register" />
       </q-card-actions>
 
       <q-dialog v-model="loginDialogOpen" :persistent="false">
@@ -34,7 +32,6 @@
 </template>
 
 <script setup lang="ts">
-import router from "@/router";
 import UserAccountService from "@/services/UserAccountService";
 import { ref } from "vue";
 
@@ -47,10 +44,6 @@ const login = () => {
   UserAccountService.Login(username.value, password.value);
 };
 
-const register = () => {
-  router.push("/register");
-};
-
 const openLoginDialog = () => {
   if(UserAccountService.IsLogged()){
     UserAccountService.Login('', '')
@@ -58,9 +51,9 @@ const openLoginDialog = () => {
   loginDialogOpen.value = true;
 };
 
-const closeLoginDialog = () => {
-  loginDialogOpen.value = false;
-};
+// const closeLoginDialog = () => {
+//   loginDialogOpen.value = false;
+// };
 </script>
 
 <style lang="scss" scoped>

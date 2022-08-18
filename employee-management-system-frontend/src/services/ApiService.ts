@@ -1,6 +1,7 @@
 import LoginRequestDto from "@/models/login-request-dto";
 import RegisterRequestDto from "@/models/register-request-dto";
 import axios from "axios";
+import UserAccountService from "./UserAccountService";
 
 const baseUrl = "http://localhost:8080/api";
 const ApiService = {
@@ -27,7 +28,11 @@ const ApiService = {
   },
 
   async getDepartments(){
-    return await axios.get(`${baseUrl}/department`);
+    return await axios.get(`${baseUrl}/department/`, {
+      headers:{
+        Authorization: "Bearer " + UserAccountService.GetJwt()
+      }
+    });
   }
 };
 export default ApiService;
