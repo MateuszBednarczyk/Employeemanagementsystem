@@ -29,7 +29,7 @@ class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+        AuthenticationManager authenticationManager = authenticationManager(http.getSharedObject(AuthenticationConfiguration.class));
         AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager, authenticationService);
         authenticationFilter.setFilterProcessesUrl(loginURL);
         http.headers().cacheControl();

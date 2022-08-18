@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
 import com.matthew.employeemanagementsystem.mapper.UserModelMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
@@ -27,8 +29,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             Map<String, String> requestMap = new ObjectMapper().readValue(request.getInputStream(), Map.class);
             String username = requestMap.get("username");
             String password = requestMap.get("password");
+            log.info(username, password);
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-            
+
             return usernamePasswordAuthenticationToken;
         } catch (IOException e) {
             throw new RuntimeException(e);
