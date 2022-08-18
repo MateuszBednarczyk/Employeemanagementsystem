@@ -28,7 +28,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             String username = requestMap.get("username");
             String password = requestMap.get("password");
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-
+            
             return usernamePasswordAuthenticationToken;
         } catch (IOException e) {
             throw new RuntimeException(e);
