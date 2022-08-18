@@ -29,7 +29,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             Map<String, String> requestMap = new ObjectMapper().readValue(request.getInputStream(), Map.class);
             String username = requestMap.get("username");
             String password = requestMap.get("password");
-            log.info(username, password);
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, password);
 
             return usernamePasswordAuthenticationToken;
