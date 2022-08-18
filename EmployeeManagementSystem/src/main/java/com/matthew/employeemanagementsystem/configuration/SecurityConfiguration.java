@@ -29,7 +29,7 @@ class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        AuthenticationManager authenticationManager = authenticationManager(http.getSharedObject(AuthenticationConfiguration.class));
+        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
         AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager, authenticationService);
         authenticationFilter.setFilterProcessesUrl(loginURL);
         http.headers().cacheControl();
@@ -39,14 +39,7 @@ class SecurityConfiguration {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, loginURL).permitAll()
                 .antMatchers("/api/users/register").permitAll()
-                .antMatchers("/api/users/refreshToken").permitAll()
-                .and()
-                .formLogin()
-                .loginPage(loginURL)
-                .and()
-                .rememberMe()
-                .rememberMeCookieName("remember")
-                .tokenValiditySeconds(86400);
+                .antMatchers("/api/users/refreshToken").permitAll();
         http
                 .addFilter(authenticationFilter)
                 .addFilterBefore(new AuthorizationFilter(authorizationService), UsernamePasswordAuthenticationFilter.class);
