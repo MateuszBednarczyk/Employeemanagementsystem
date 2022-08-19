@@ -1,6 +1,5 @@
 package com.matthew.employeemanagementsystem;
 
-import com.matthew.employeemanagementsystem.dtos.department.AddNewDepartmentRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.user.RegisterNewUserRequestDTO;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
 import com.matthew.employeemanagementsystem.service.user.UserManagementService;
@@ -41,7 +40,6 @@ public class EmployeeManagementSystemApplication {
     @Bean
     @EventListener(EmployeeManagementSystemApplication.class)
     public void administratorAccountSetup() {
-        departmentFacade.addNewDepartment(new AddNewDepartmentRequestDTO(adminDepartmentName));
         userManagementService.registerNewUser(new RegisterNewUserRequestDTO(adminUsername, adminPassword, adminDepartmentName, "ROLE_ADMIN"));
     }
 

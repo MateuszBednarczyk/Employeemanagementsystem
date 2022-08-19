@@ -69,10 +69,18 @@ class UserManagementServiceImpl implements UserManagementService {
     private UserEntity createEntityToSave(RegisterNewUserRequestDTO requestDTO) throws IllegalArgumentException {
         UserEntity newUserEntity = new UserEntity(requestDTO.username(), encodePassword(requestDTO.password()));
         RoleEntity role = roleFacade.createRoleEntity(requestDTO.role());
-        newUserEntity.getRoles().add(role);
-        newUserEntity.getDepartmentEntities().add(departmentFacade.getDepartmentEntity(requestDTO.department()));
+        if (role.getRoleType().equals(RoleType.ROLE_ADMIN)) {
+            addRoleToUserEntity(newUserEntity, role);
+        } else {
+            addRoleToUserEntity(newUserEntity, role);
+            newUserEntity.getDepartmentEntities().add(departmentFacade.getDepartmentEntity(requestDTO.department()));
+        }
 
         return newUserEntity;
+    }
+
+    public void addRoleToUserEntity(UserEntity newUserEntity, RoleEntity role) {
+        newUserEntity.getRoles().add(role);
     }
 
     private void checkIfUserWithGivenUsernameAlreadyExists(String username) {
