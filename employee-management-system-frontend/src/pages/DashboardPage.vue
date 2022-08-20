@@ -11,17 +11,22 @@
         >
           Logout
         </q-btn>
+        <q-btn color="primary" icon="check" label="Test" @click="onTestButton" />
       </q-toolbar>
 
       <q-tabs align="left" v-model="tab" inline-label>
-        <q-tab v-for="department in departments" :name="department" :label="department" />
+        <q-tab
+          v-for="department in departments"
+          :name="department"
+          :label="department"
+        />
       </q-tabs>
     </q-header>
 
     <q-page-container>
       <q-tab-panels v-model="tab">
         <q-tab-panel v-for="department in departments" :name="department">
-          Hello, this is {{department}} tab
+          <EmployeeList :department-name="department.departmentName"/>
         </q-tab-panel>
       </q-tab-panels>
     </q-page-container>
@@ -41,8 +46,9 @@ import ApiService from "@/services/ApiService";
 import UserAccountService from "@/services/UserAccountService";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import EmployeeList from "@/components/EmployeeList.vue";
 const router = useRouter();
-const departments = ref<string[]>([]);
+const departments = ref<any[]>([]);
 
 const tab = ref("employees");
 
@@ -54,11 +60,17 @@ onMounted(() => {
   ApiService.getDepartments().then((res) => {
     console.log(res.data);
     res.data.forEach((el: any) => {
-      departments.value.push(el.departmentName)
+      departments.value.push({departmentName: el.departmentName});
     });
-    tab.value = departments.value[0]
+    tab.value = departments.value[0];
   });
 });
+
+const onTestButton = () => {
+  ApiService.refreshToken().then(
+    res => console.log(res)
+  )
+}
 
 const logout = async () => {
   await UserAccountService.Logout();

@@ -11,10 +11,9 @@ const UserAccountService = {
   },
 
   async Login(username: string, password: string) {
-
-    if(this.IsLogged()){
+    if (this.IsLogged() && !UserAccountService.IsJwtExpired()) {
       router.push("/dashboard");
-      return
+      return;
     }
 
     const loginRequest: LoginRequestDto = {
@@ -26,23 +25,24 @@ const UserAccountService = {
       if (res.status === 200) {
         const data: LoginResponse = res.data;
         this.SetJwt(data.access_token);
-        
-        localStorage.setItem('refreshToken', data.refresh_token)
 
-        this.SetUsername(res.data.user.username)
+        this.SetRefreshToken(data.refresh_token);
+
+        console.log('access token ' + data.access_token)
+        console.log('refresh token ' + data.refresh_token)
+
+        this.SetUsername(res.data.user.username);
         router.push("/dashboard");
       }
     });
   },
   Logout() {
-    // this.ClearJwt()
-    localStorage.clear()
+    localStorage.clear();
+
     router.push("/login");
   },
 
   async Register(request: RegisterRequestDto) {
-    //TODO: delete
-    await ApiService.AddTestDepartment(request.department);
 
     ApiService.SendRegisterRequest(request).then((res) => {
       if (res.status === 200) {
@@ -58,19 +58,45 @@ const UserAccountService = {
   GetJwt(): string | null {
     return localStorage.getItem("jwt");
   },
-  ClearJwt(){
-    localStorage.removeItem('jwt')
+  ClearJwt() {
+    localStorage.removeItem("jwt");
+  },
+  IsJwtExpired(): boolean {
+    if(this.GetJwt() === null){
+      return false
+    }
+    const expirationDate = new Date(this.ParseJwt(this.GetJwt()!).exp * 1000)
+    const currentDate = new Date(Date.now())
+    // console.log('currentDate: ' + currentDate)
+    // console.log('expirationDate: ' + expirationDate)
+    return currentDate >= expirationDate;
   },
 
-  SetUsername(username:string){
-    localStorage.setItem('username', username)
+  SetRefreshToken(token: string) {
+    localStorage.setItem("refresh_token", token);
   },
-  GetUsername(){
-    return localStorage.getItem('username')
+  GetRefreshToken() {
+    return localStorage.getItem("refresh_token");
   },
-  ClearUsername(){
-    localStorage.removeItem('username')
-  }
+
+  SetUsername(username: string) {
+    localStorage.setItem("username", username);
+  },
+  GetUsername() {
+    return localStorage.getItem("username");
+  },
+  ClearUsername() {
+    localStorage.removeItem("username");
+  },
+  ParseJwt(token:string) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+  },
 };
 
 export default UserAccountService;
