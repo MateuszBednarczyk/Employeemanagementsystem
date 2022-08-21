@@ -46,6 +46,7 @@ public class TokenServiceImpl implements TokenService {
         return JWT.create()
                 .withSubject(user.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_LIFETIME * 12))
+                .withClaim(CLAIMS, user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .withIssuer(issuer)
                 .sign(algorithm);
     }
