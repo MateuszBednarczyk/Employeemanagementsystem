@@ -45,9 +45,6 @@ const login = () => {
 };
 
 const openLoginDialog = () => {
-  if(UserAccountService.IsLogged()){
-    UserAccountService.Login('', '')
-  }
   loginDialogOpen.value = true;
 };
 

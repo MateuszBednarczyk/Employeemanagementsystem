@@ -1,8 +1,7 @@
-import RegisterRequestDto from "@/models/register-request-dto";
-import { useRouter } from "vue-router";
+import RegisterRequest from "@/models/requests/register-request";
 import ApiService from "./ApiService";
 import router from "@/router";
-import LoginRequestDto from "@/models/login-request-dto";
+import LoginRequest from "@/models/requests/login-request";
 
 const UserAccountService = {
   IsLogged(): boolean {
@@ -11,12 +10,12 @@ const UserAccountService = {
   },
 
   async Login(username: string, password: string) {
-    if (this.IsLogged() && !UserAccountService.IsJwtExpired()) {
-      router.push("/dashboard");
-      return;
-    }
+    // if (this.IsLogged() && !UserAccountService.IsJwtExpired()) {
+    //   router.push("/dashboard");
+    //   return;
+    // }
 
-    const loginRequest: LoginRequestDto = {
+    const loginRequest: LoginRequest = {
       username: username,
       password: password,
     };
@@ -31,8 +30,15 @@ const UserAccountService = {
         console.log('access token ' + data.access_token)
         console.log('refresh token ' + data.refresh_token)
 
-        this.SetUsername(res.data.user.username);
-        router.push("/dashboard");
+        this.SetUsername(data.user.username);
+
+        //TODO: change so the username is not hardcoded
+        if(loginRequest.username === 'admin' && loginRequest.username === 'admin'){
+          router.push("/admin");
+        }else{
+          router.push("/dashboard");
+        }
+
       }
     });
   },
@@ -42,7 +48,7 @@ const UserAccountService = {
     router.push("/login");
   },
 
-  async Register(request: RegisterRequestDto) {
+  async Register(request: RegisterRequest) {
 
     ApiService.SendRegisterRequest(request).then((res) => {
       if (res.status === 200) {
