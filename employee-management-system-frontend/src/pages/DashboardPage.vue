@@ -7,7 +7,7 @@
           align="right"
           color="grey-1"
           text-color="primary"
-          @click="logout"
+          @click="onLogout"
         >
           Logout
         </q-btn>
@@ -72,7 +72,7 @@ const onTestButton = () => {
   )
 }
 
-const logout = async () => {
+const onLogout = async () => {
   await UserAccountService.Logout();
 };
 </script>
