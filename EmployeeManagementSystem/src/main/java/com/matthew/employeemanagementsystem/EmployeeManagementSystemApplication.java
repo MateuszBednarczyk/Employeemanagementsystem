@@ -50,7 +50,7 @@ public class EmployeeManagementSystemApplication {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**").allowedOrigins(frontEndOrigin);
+                registry.addMapping("/api/**").allowedOrigins(frontEndOrigin).allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH");
             }
         };
     }
