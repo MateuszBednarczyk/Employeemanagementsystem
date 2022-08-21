@@ -64,6 +64,11 @@
                             </q-item-label>
                           </q-item-section>
                         </q-item>
+                        <q-item v-if="!department.employees || department.employees.length <= 0">
+                          <q-item-section>
+                            <q-item-label>No employees</q-item-label>
+                          </q-item-section>
+                        </q-item>
                       </q-list>
                     </q-expansion-item>
                   </div>
@@ -100,13 +105,11 @@ import { onMounted, ref } from "vue";
 import ApiService from "@/services/ApiService";
 import EditDepartmentDialog from "./EditDepartmentDialog.vue";
 import AddDepartmentDialog from "./AddDepartmentDialog.vue";
-import router from "@/router";
 import UserAccountService from "@/services/UserAccountService";
 onMounted(() => {
   ApiService.getDepartments().then((res) => {
     departments.value = res.data;
   });
-  // ApiService.AddTestDepartment('hello')
 });
 let departments = ref<Department[]>();
 
