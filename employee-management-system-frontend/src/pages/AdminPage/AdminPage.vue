@@ -3,6 +3,14 @@
     <q-header elevated class="bg-primary text-white">
       <q-toolbar>
         <q-toolbar-title> Admin Panel </q-toolbar-title>
+        <q-btn
+          align="right"
+          color="grey-1"
+          text-color="primary"
+          @click="onLogout"
+        >
+          Logout
+        </q-btn>
       </q-toolbar>
     </q-header>
 
@@ -76,8 +84,15 @@
     </q-footer>
   </q-layout>
 
-  <add-department-dialog :opened="addDepartmentDialogOpened" @dialog-closed="closeAddDepartmentDialog"/>
-  <edit-department-dialog :opened="editDepartmentDialogOpened" :department-name="selectedDepartment!" @dialog-closed="closeEditDepartmentDialog"/>
+  <add-department-dialog
+    :opened="addDepartmentDialogOpened"
+    @dialog-closed="closeAddDepartmentDialog"
+  />
+  <edit-department-dialog
+    :opened="editDepartmentDialogOpened"
+    :department-name="selectedDepartment!"
+    @dialog-closed="closeEditDepartmentDialog"
+  />
 </template>
 
 <script setup lang="ts">
@@ -97,7 +112,7 @@ let departments = ref<Department[]>();
 
 const addDepartmentDialogOpened = ref(false);
 const editDepartmentDialogOpened = ref(false);
-const selectedDepartment = ref<string|null>(null)
+const selectedDepartment = ref<string | null>(null);
 
 const openAddDepartmentDialog = () => {
   addDepartmentDialogOpened.value = true;
@@ -106,18 +121,20 @@ const closeAddDepartmentDialog = () => {
   addDepartmentDialogOpened.value = false;
 };
 
-const openEditDepartmentDialog = (departmentName:string) => {
-  selectedDepartment.value = departmentName
+const openEditDepartmentDialog = (departmentName: string) => {
+  selectedDepartment.value = departmentName;
   editDepartmentDialogOpened.value = true;
   // console.log('opened edit department dialog with ' + selectedDepartment.value)
 };
 
 const closeEditDepartmentDialog = () => {
   editDepartmentDialogOpened.value = false;
-  selectedDepartment.value = null
+  selectedDepartment.value = null;
 };
 
-
+const onLogout = async () => {
+  await UserAccountService.Logout();
+};
 </script>
 
 <style lang="scss" scoped>
