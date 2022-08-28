@@ -82,7 +82,7 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     }
 
     private DepartmentEntity createAndSaveDepartmentEntity(AddNewDepartmentRequestDTO requestDTO) {
-        DepartmentEntity newDepartmentEntity = new DepartmentEntity(requestDTO.departmentName());
+        DepartmentEntity newDepartmentEntity = new DepartmentEntity(requestDTO.departmentName().toLowerCase());
         departmentRepository.save(newDepartmentEntity);
 
         return newDepartmentEntity;
