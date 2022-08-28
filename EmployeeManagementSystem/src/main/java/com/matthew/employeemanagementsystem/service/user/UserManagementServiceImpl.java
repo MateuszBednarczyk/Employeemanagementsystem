@@ -17,6 +17,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,9 +43,9 @@ class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public void deleteUser(DeleteUserRequestDTO requestDTO) {
-        UserEntity requestingUser = userFindingService.getUserEntity(requestDTO.username());
-        List<RoleEntity> allowedRoles = Arrays.asList(roleFacade.findByRoleType(RoleType.ROLE_ADMIN), roleFacade.findByRoleType(RoleType.ROLE_MODERATOR));
+    public void deleteUser(Principal principal, DeleteUserRequestDTO requestDTO) {
+        UserEntity requestingUser = userFindingService.getUserEntity(principal.getName());
+        List<RoleEntity> allowedRoles = Arrays.asList(roleFacade.findByRoleType(RoleType.ROLE_ADMIN));
         if (requestingUser.getRoles().containsAll(allowedRoles)) {
             userRepository.deleteByUsername(requestDTO.username());
         } else {

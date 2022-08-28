@@ -2,11 +2,13 @@ package com.matthew.employeemanagementsystem.service.user;
 
 import com.matthew.employeemanagementsystem.dtos.user.*;
 
+import java.security.Principal;
+
 public interface UserManagementService {
 
     UserResponseDTO registerNewUser(RegisterNewUserRequestDTO requestDTO);
 
-    void deleteUser(DeleteUserRequestDTO deleteUserRequestDTO);
+    void deleteUser(Principal principal, DeleteUserRequestDTO requestDTO);
 
     LoginResponseDTO login(LoginRequestDTO requestDTO);
 
