@@ -37,7 +37,7 @@ class SecurityConfiguration {
         http
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, loginURL).permitAll()
-                .antMatchers("/api/users/register").permitAll()
+                .antMatchers("/api/users/register").hasAnyAuthority("[ROLE_ADMIN]", "[ROLE_SUPERADMIN]")
                 .antMatchers("/api/users/refreshToken").permitAll();
         http
                 .addFilter(authenticationFilter)
@@ -47,7 +47,7 @@ class SecurityConfiguration {
         http
                 .authorizeRequests()
                 .antMatchers("/api/department/add-moderator")
-                .hasAnyAuthority("[ROLE_ADMIN]");
+                .hasAnyAuthority("[ROLE_ADMIN]", "[ROLE_SUPERADMIN]");
 
         return http.build();
     }
