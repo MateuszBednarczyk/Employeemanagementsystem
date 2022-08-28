@@ -42,7 +42,7 @@ public class EmployeeManagementSystemApplication {
     @EventListener(EmployeeManagementSystemApplication.class)
     public void administratorAccountSetup() {
         departmentFacade.addNewDepartment(new AddNewDepartmentRequestDTO(adminDepartmentName));
-        userManagementService.registerNewUser(new RegisterNewUserRequestDTO(adminUsername, adminPassword, adminDepartmentName, "ROLE_ADMIN"));
+        userManagementService.registerNewUser(new RegisterNewUserRequestDTO(adminUsername, adminPassword, adminDepartmentName, "ROLE_SUPERADMIN"));
     }
 
     @Bean

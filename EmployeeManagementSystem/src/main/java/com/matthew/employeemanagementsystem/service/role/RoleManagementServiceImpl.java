@@ -20,7 +20,7 @@ class RoleManagementServiceImpl implements RoleManagementService {
     @Override
     public RoleEntity createRoleEntity(String role) {
         RoleEntity roleEntity = new RoleEntity();
-        if (role.equals("ROLE_ADMIN") || role.equals("ROLE_MODERATOR")) {
+        if (role.equals("ROLE_ADMIN") || role.equals("ROLE_MODERATOR") || role.equals("ROLE_SUPERADMIN")) {
             roleEntity.setRoleType(RoleType.valueOf(role));
             roleRepository.save(roleEntity);
         } else {
