@@ -45,7 +45,7 @@ class UserManagementServiceImpl implements UserManagementService {
     @Override
     public void deleteUser(Principal principal, DeleteUserRequestDTO requestDTO) {
         UserEntity requestingUser = userFindingService.getUserEntity(principal.getName());
-        List<RoleEntity> allowedRoles = Arrays.asList(roleFacade.findByRoleType(RoleType.ROLE_ADMIN));
+        List<RoleEntity> allowedRoles = Arrays.asList(roleFacade.findByRoleType(RoleType.ROLE_SUPERADMIN), roleFacade.findByRoleType(RoleType.ROLE_ADMIN));
         if (requestingUser.getRoles().containsAll(allowedRoles)) {
             userRepository.deleteByUsername(requestDTO.username());
         } else {

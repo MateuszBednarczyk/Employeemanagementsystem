@@ -31,7 +31,7 @@ class DepartmentFindingServiceImpl implements DepartmentFindingService {
 
     @Override
     public DepartmentEntity getDepartmentEntity(String departmentName) {
-        return departmentRepository.findByDepartmentName(departmentName).orElseThrow(() -> new DepartmentNotFoundException(departmentName));
+        return departmentRepository.findByDepartmentName(departmentName.toLowerCase()).orElseThrow(() -> new DepartmentNotFoundException(departmentName));
     }
 
     @Override
@@ -45,7 +45,7 @@ class DepartmentFindingServiceImpl implements DepartmentFindingService {
     public List<DepartmentResponseDTO> findAllDepartments(Principal loggedUser) throws DepartmentNoPermissionException {
         UserEntity loggedUserEntity = userFindingService.getUserEntity(loggedUser.getName());
         List<RoleEntity> userRoles = loggedUserEntity.getRoles();
-        if (userRoles.contains(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
+        if (userRoles.contains(roleFacade.findByRoleType(RoleType.ROLE_SUPERADMIN)) || userRoles.contains(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
 
             return generateList(departmentRepository.findAll());
 
