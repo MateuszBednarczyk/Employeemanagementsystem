@@ -5,6 +5,7 @@ import com.matthew.employeemanagementsystem.domain.entities.RoleEntity;
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
 import com.matthew.employeemanagementsystem.domain.types.RoleType;
 import com.matthew.employeemanagementsystem.dtos.user.*;
+import com.matthew.employeemanagementsystem.exception.role.RoleDoesntHavePermissionToThisFeatureException;
 import com.matthew.employeemanagementsystem.exception.user.EmptyPasswordException;
 import com.matthew.employeemanagementsystem.exception.user.UserDoesNotHavePermissionException;
 import com.matthew.employeemanagementsystem.exception.user.UsernameTakenException;
@@ -34,12 +35,22 @@ class UserManagementServiceImpl implements UserManagementService {
     private final UserModelMapper userModelMapper;
 
     @Override
-    public UserResponseDTO registerNewUser(RegisterNewUserRequestDTO requestDTO) throws IllegalArgumentException {
+    public UserResponseDTO registerNewUser(Principal loggedUser, RegisterNewUserRequestDTO requestDTO) throws IllegalArgumentException {
+        UserEntity loggedUserEntity = userFindingService.getUserEntity(loggedUser.getName());
+        if (requestDTO.role().contains("ADMIN") || requestDTO.role().contains("SUPERADMIN")) {
+            if (!isUserSuperAdmin(loggedUserEntity.getRoles())) {
+                throw new RoleDoesntHavePermissionToThisFeatureException();
+            }
+        }
         checkIfUserWithGivenUsernameAlreadyExists(requestDTO.username());
         UserEntity newUserEntity = createEntityToSave(requestDTO);
         userRepository.save(newUserEntity);
 
         return userModelMapper.mapUserEntityToUserResponseDTO(newUserEntity);
+    }
+
+    private boolean isUserSuperAdmin(List<RoleEntity> usersRole) {
+        return usersRole.contains(roleFacade.findByRoleType(RoleType.ROLE_SUPERADMIN));
     }
 
     @Override
@@ -92,5 +103,11 @@ class UserManagementServiceImpl implements UserManagementService {
         } else {
             throw new EmptyPasswordException();
         }
+    }
+
+    public void setupSuperAdminUser(RegisterNewUserRequestDTO requestDTO) throws IllegalArgumentException {
+        checkIfUserWithGivenUsernameAlreadyExists(requestDTO.username());
+        UserEntity newUserEntity = createEntityToSave(requestDTO);
+        userRepository.save(newUserEntity);
     }
 }

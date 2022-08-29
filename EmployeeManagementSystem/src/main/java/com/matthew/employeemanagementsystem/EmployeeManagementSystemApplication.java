@@ -23,13 +23,13 @@ public class EmployeeManagementSystemApplication {
     private final DepartmentFacade departmentFacade;
 
     @Value("${admin.username}")
-    private String adminUsername;
+    private String setupUsername;
 
     @Value("${admin.password}")
-    private String adminPassword;
+    private String setupPassword;
 
     @Value("${admin.department.name}")
-    private String adminDepartmentName;
+    private String setupDepartmentName;
 
     @Value("${front.end.application.uri}")
     private String frontEndOrigin;
@@ -41,8 +41,8 @@ public class EmployeeManagementSystemApplication {
     @Bean
     @EventListener(EmployeeManagementSystemApplication.class)
     public void administratorAccountSetup() {
-        departmentFacade.addNewDepartment(new AddNewDepartmentRequestDTO(adminDepartmentName));
-        userManagementService.registerNewUser(new RegisterNewUserRequestDTO(adminUsername, adminPassword, adminDepartmentName, "ROLE_SUPERADMIN"));
+        departmentFacade.addNewDepartment(new AddNewDepartmentRequestDTO(setupDepartmentName));
+        userManagementService.setupSuperAdminUser(new RegisterNewUserRequestDTO(setupUsername, setupPassword, setupDepartmentName, "ROLE_SUPERADMIN"));
     }
 
     @Bean

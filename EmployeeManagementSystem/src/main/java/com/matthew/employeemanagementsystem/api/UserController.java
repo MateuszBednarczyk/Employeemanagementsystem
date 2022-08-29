@@ -16,8 +16,8 @@ class UserController {
     private final UserManagementService userManagementService;
 
     @PostMapping("register")
-    public ResponseEntity<UserResponseDTO> registerNewUser(@RequestBody RegisterNewUserRequestDTO requestDTO) {
-        return new ResponseEntity<>(userManagementService.registerNewUser(requestDTO), HttpStatus.OK);
+    public ResponseEntity<UserResponseDTO> registerNewUser(Principal loggedUser, @RequestBody RegisterNewUserRequestDTO requestDTO) {
+        return new ResponseEntity<>(userManagementService.registerNewUser(loggedUser, requestDTO), HttpStatus.OK);
     }
 
     @PostMapping("login")

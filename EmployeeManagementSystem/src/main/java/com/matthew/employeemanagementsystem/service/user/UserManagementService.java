@@ -6,10 +6,12 @@ import java.security.Principal;
 
 public interface UserManagementService {
 
-    UserResponseDTO registerNewUser(RegisterNewUserRequestDTO requestDTO);
+    UserResponseDTO registerNewUser(Principal loggedUser, RegisterNewUserRequestDTO requestDTO);
 
     void deleteUser(Principal principal, DeleteUserRequestDTO requestDTO);
 
     LoginResponseDTO login(LoginRequestDTO requestDTO);
+
+    void setupSuperAdminUser(RegisterNewUserRequestDTO requestDTO);
 
 }

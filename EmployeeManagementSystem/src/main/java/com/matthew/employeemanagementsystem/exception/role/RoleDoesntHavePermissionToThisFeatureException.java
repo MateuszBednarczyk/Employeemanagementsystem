@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.FORBIDDEN)
 public class RoleDoesntHavePermissionToThisFeatureException extends AccessDeniedException {
-    public RoleDoesntHavePermissionToThisFeatureException(String role) {
-        super("you can't do this as " + role);
+    public RoleDoesntHavePermissionToThisFeatureException() {
+        super("you don't have permission");
     }
 }
