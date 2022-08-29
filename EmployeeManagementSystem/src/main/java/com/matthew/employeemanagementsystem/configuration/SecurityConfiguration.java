@@ -24,12 +24,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 class SecurityConfiguration {
     private final AuthorizationService authorizationService;
     private final AuthenticationService authenticationService;
-    private String loginURL = "/api/users/login";
-    private String roleAdmin = "[ROLE_ADMIN]";
-    private String roleSuperAdmin = "[ROLE_SUPERADMIN]";
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        String roleAdmin = "[ROLE_ADMIN]";
+        String roleSuperAdmin = "[ROLE_SUPERADMIN]";
+        String loginURL = "/api/users/login";
         AuthenticationManager authenticationManager = authenticationManager(http.getSharedObject(AuthenticationConfiguration.class));
         AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager, authenticationService);
         authenticationFilter.setFilterProcessesUrl(loginURL);
