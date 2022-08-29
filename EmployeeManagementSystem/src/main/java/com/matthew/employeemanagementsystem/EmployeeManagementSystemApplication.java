@@ -22,13 +22,13 @@ public class EmployeeManagementSystemApplication {
     private final UserManagementService userManagementService;
     private final DepartmentFacade departmentFacade;
 
-    @Value("${admin.username}")
+    @Value("${setup.user.username}")
     private String setupUsername;
 
-    @Value("${admin.password}")
+    @Value("${setup.user.password}")
     private String setupPassword;
 
-    @Value("${admin.department.name}")
+    @Value("${setup.user.department.name}")
     private String setupDepartmentName;
 
     @Value("${front.end.application.uri}")
