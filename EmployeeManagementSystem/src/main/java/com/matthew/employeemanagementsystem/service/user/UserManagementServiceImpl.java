@@ -3,7 +3,7 @@ package com.matthew.employeemanagementsystem.service.user;
 import com.matthew.employeemanagementsystem.configuration.SuffixConfiguration;
 import com.matthew.employeemanagementsystem.domain.entities.RoleEntity;
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
-import com.matthew.employeemanagementsystem.domain.types.RoleType;
+import com.matthew.employeemanagementsystem.domain.enums.RoleType;
 import com.matthew.employeemanagementsystem.dtos.user.*;
 import com.matthew.employeemanagementsystem.exception.role.RoleDoesntHavePermissionToThisFeatureException;
 import com.matthew.employeemanagementsystem.exception.user.EmptyPasswordException;

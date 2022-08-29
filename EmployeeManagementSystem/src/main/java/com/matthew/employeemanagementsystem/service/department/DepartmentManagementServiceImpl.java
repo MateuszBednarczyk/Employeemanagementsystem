@@ -3,14 +3,12 @@ package com.matthew.employeemanagementsystem.service.department;
 import com.matthew.employeemanagementsystem.domain.entities.DepartmentEntity;
 import com.matthew.employeemanagementsystem.domain.entities.EmployeeEntity;
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
-import com.matthew.employeemanagementsystem.domain.types.RoleType;
-import com.matthew.employeemanagementsystem.dtos.department.AddModeratorToDepartmentRequestDTO;
-import com.matthew.employeemanagementsystem.dtos.department.AddNewDepartmentRequestDTO;
-import com.matthew.employeemanagementsystem.dtos.department.DeleteUserEntityFromModeratorListRequestDTO;
-import com.matthew.employeemanagementsystem.dtos.department.DepartmentResponseDTO;
+import com.matthew.employeemanagementsystem.domain.enums.RoleType;
+import com.matthew.employeemanagementsystem.dtos.department.*;
 import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.exception.department.DepartmentAlreadyExistsException;
 import com.matthew.employeemanagementsystem.exception.department.DepartmentNoPermissionException;
+import com.matthew.employeemanagementsystem.mapper.DepartmentModelMapper;
 import com.matthew.employeemanagementsystem.repository.DepartmentRepository;
 import com.matthew.employeemanagementsystem.service.role.RoleFacade;
 import com.matthew.employeemanagementsystem.service.user.UserFindingService;
@@ -28,6 +26,7 @@ import java.security.Principal;
 class DepartmentManagementServiceImpl implements DepartmentManagementService {
     private final DepartmentRepository departmentRepository;
     private final DepartmentFindingService departmentFindingService;
+    private final DepartmentModelMapper departmentModelMapper;
     private final UserFindingService userFindingService;
     private final RoleFacade roleFacade;
 
@@ -74,6 +73,17 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
         } else {
             throw new DepartmentNoPermissionException(requestDTO.departmentName());
         }
+    }
+
+    @Override
+    public DepartmentResponseDTO modifyDepartmentName(ModifyDepartmentRequestDTO requestDTO) {
+        if (!requestDTO.repeatOldDepartmentName().equals(requestDTO.oldDepartmentName()) && requestDTO.repeatNewDepartmentName().equals(requestDTO.newDepartmentName())) {
+            throw new IllegalArgumentException();
+        }
+        DepartmentEntity departmentEntity = departmentFindingService.getDepartmentEntity(requestDTO.oldDepartmentName());
+        departmentEntity.setDepartmentName(requestDTO.newDepartmentName());
+
+        return departmentModelMapper.mapDepartmentEntityToDepartmentResponseDTO(departmentEntity);
     }
 
     public void addDepartmentToEmployeeAndAddEmployeeToDepartment(DepartmentEntity selectedDepartment, EmployeeEntity newEmployeeEntity) {

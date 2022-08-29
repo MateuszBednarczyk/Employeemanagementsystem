@@ -1,6 +1,6 @@
 package com.matthew.employeemanagementsystem.domain.entities;
 
-import com.matthew.employeemanagementsystem.domain.types.RoleType;
+import com.matthew.employeemanagementsystem.domain.enums.RoleType;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;

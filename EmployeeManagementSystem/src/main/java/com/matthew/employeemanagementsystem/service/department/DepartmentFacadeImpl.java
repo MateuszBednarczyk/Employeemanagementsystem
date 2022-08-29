@@ -62,4 +62,9 @@ class DepartmentFacadeImpl implements DepartmentFacade {
     public List<DepartmentResponseDTO> findAllDepartments(Principal loggedUser) throws DepartmentNoPermissionException {
         return departmentFindingService.findAllDepartments(loggedUser);
     }
+
+    @Override
+    public DepartmentResponseDTO modifyDepartmentName(ModifyDepartmentRequestDTO requestDTO) {
+        return departmentManagementService.modifyDepartmentName(requestDTO);
+    }
 }

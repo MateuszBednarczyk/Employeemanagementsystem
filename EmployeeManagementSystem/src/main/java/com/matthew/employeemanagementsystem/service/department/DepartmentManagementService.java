@@ -2,10 +2,7 @@ package com.matthew.employeemanagementsystem.service.department;
 
 import com.matthew.employeemanagementsystem.domain.entities.DepartmentEntity;
 import com.matthew.employeemanagementsystem.domain.entities.EmployeeEntity;
-import com.matthew.employeemanagementsystem.dtos.department.AddModeratorToDepartmentRequestDTO;
-import com.matthew.employeemanagementsystem.dtos.department.AddNewDepartmentRequestDTO;
-import com.matthew.employeemanagementsystem.dtos.department.DeleteUserEntityFromModeratorListRequestDTO;
-import com.matthew.employeemanagementsystem.dtos.department.DepartmentResponseDTO;
+import com.matthew.employeemanagementsystem.dtos.department.*;
 import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.exception.department.DepartmentNoPermissionException;
 
@@ -25,4 +22,5 @@ interface DepartmentManagementService {
 
     void deleteUserEntityFromModeratorList(Principal loggedUser, DeleteUserEntityFromModeratorListRequestDTO requestDTO) throws DepartmentNoPermissionException;
 
+    DepartmentResponseDTO modifyDepartmentName(ModifyDepartmentRequestDTO requestDTO);
 }

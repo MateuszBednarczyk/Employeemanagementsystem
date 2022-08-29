@@ -1,9 +1,6 @@
 package com.matthew.employeemanagementsystem.api;
 
-import com.matthew.employeemanagementsystem.dtos.department.AddModeratorToDepartmentRequestDTO;
-import com.matthew.employeemanagementsystem.dtos.department.AddNewDepartmentRequestDTO;
-import com.matthew.employeemanagementsystem.dtos.department.DeleteUserEntityFromModeratorListRequestDTO;
-import com.matthew.employeemanagementsystem.dtos.department.DepartmentResponseDTO;
+import com.matthew.employeemanagementsystem.dtos.department.*;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -55,6 +52,11 @@ class DepartmentController {
     @GetMapping
     public ResponseEntity<List<DepartmentResponseDTO>> findAllDepartments(Principal loggedUser) throws AccessDeniedException {
         return new ResponseEntity<>(departmentFacade.findAllDepartments(loggedUser), HttpStatus.OK);
+    }
+
+    @PatchMapping("modify")
+    public ResponseEntity<DepartmentResponseDTO> modifyDepartmentName(@RequestBody ModifyDepartmentRequestDTO requestDTO) {
+        return new ResponseEntity<>(departmentFacade.modifyDepartmentName(requestDTO), HttpStatus.OK);
     }
 
 }

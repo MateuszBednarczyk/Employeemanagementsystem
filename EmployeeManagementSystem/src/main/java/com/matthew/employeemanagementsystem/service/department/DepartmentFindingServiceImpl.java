@@ -3,7 +3,7 @@ package com.matthew.employeemanagementsystem.service.department;
 import com.matthew.employeemanagementsystem.domain.entities.DepartmentEntity;
 import com.matthew.employeemanagementsystem.domain.entities.RoleEntity;
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
-import com.matthew.employeemanagementsystem.domain.types.RoleType;
+import com.matthew.employeemanagementsystem.domain.enums.RoleType;
 import com.matthew.employeemanagementsystem.dtos.department.DepartmentResponseDTO;
 import com.matthew.employeemanagementsystem.exception.department.DepartmentNoPermissionException;
 import com.matthew.employeemanagementsystem.exception.department.DepartmentNotFoundException;
