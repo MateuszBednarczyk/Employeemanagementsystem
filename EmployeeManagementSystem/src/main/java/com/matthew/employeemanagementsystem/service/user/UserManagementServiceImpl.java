@@ -37,16 +37,24 @@ class UserManagementServiceImpl implements UserManagementService {
     @Override
     public UserResponseDTO registerNewUser(Principal loggedUser, RegisterNewUserRequestDTO requestDTO) throws IllegalArgumentException {
         UserEntity loggedUserEntity = userFindingService.getUserEntity(loggedUser.getName());
-        if (requestDTO.role().contains("ADMIN") || requestDTO.role().contains("SUPERADMIN")) {
-            if (!isUserSuperAdmin(loggedUserEntity.getRoles())) {
-                throw new RoleDoesntHavePermissionToThisFeatureException();
-            }
-        }
+        checkIfRequestIsAboutAdminOrSuperAdminAndIfRequestingUserHasPermission(requestDTO, loggedUserEntity);
         checkIfUserWithGivenUsernameAlreadyExists(requestDTO.username());
         UserEntity newUserEntity = createEntityToSave(requestDTO);
         userRepository.save(newUserEntity);
 
         return userModelMapper.mapUserEntityToUserResponseDTO(newUserEntity);
+    }
+
+    private void checkIfRequestIsAboutAdminOrSuperAdminAndIfRequestingUserHasPermission(RegisterNewUserRequestDTO requestDTO, UserEntity loggedUserEntity) {
+        if (requestDTO.role().contains("ADMIN") || requestDTO.role().contains("SUPERADMIN")) {
+            checkIfUserHasPermissionToAddSuperAdminOrAdmin(loggedUserEntity);
+        }
+    }
+
+    private void checkIfUserHasPermissionToAddSuperAdminOrAdmin(UserEntity loggedUserEntity) {
+        if (!isUserSuperAdmin(loggedUserEntity.getRoles())) {
+            throw new RoleDoesntHavePermissionToThisFeatureException();
+        }
     }
 
     private boolean isUserSuperAdmin(List<RoleEntity> usersRole) {
