@@ -25,6 +25,8 @@ class SecurityConfiguration {
     private final AuthorizationService authorizationService;
     private final AuthenticationService authenticationService;
     private String loginURL = "/api/users/login";
+    private String roleAdmin = "[ROLE_ADMIN]";
+    private String roleSuperAdmin = "[ROLE_SUPERADMIN]";
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -37,7 +39,7 @@ class SecurityConfiguration {
         http
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, loginURL).permitAll()
-                .antMatchers("/api/users/register").hasAnyAuthority("[ROLE_ADMIN]", "[ROLE_SUPERADMIN]")
+                .antMatchers("/api/users/register").hasAnyAuthority(roleAdmin, roleSuperAdmin)
                 .antMatchers("/api/users/refreshToken").permitAll();
         http
                 .addFilter(authenticationFilter)
@@ -46,8 +48,8 @@ class SecurityConfiguration {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http
                 .authorizeRequests()
-                .antMatchers("/api/department/add-moderator")
-                .hasAnyAuthority("[ROLE_ADMIN]", "[ROLE_SUPERADMIN]");
+                .antMatchers("/api/department/add-moderator").hasAnyAuthority(roleAdmin, roleSuperAdmin)
+                .antMatchers("/api/department/add").hasAnyAuthority(roleAdmin, roleSuperAdmin);
 
         return http.build();
     }
