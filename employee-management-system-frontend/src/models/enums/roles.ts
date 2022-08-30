@@ -1,4 +1,6 @@
 export enum Roles {
-    Admin = "ROLE_ADMIN",
-    Moderator = "ROLE_MODERATOR"
+    Moderator = "[ROLE_MODERATOR]",
+    Admin = "[ROLE_ADMIN]",
+    SuperAdmin = "[ROLE_SUPERADMIN]",
+
 };

@@ -2,6 +2,7 @@ import RegisterRequest from "@/models/requests/register-request";
 import ApiService from "./ApiService";
 import router from "@/router";
 import LoginRequest from "@/models/requests/login-request";
+import { Roles } from "@/models/enums/roles";
 
 const UserAccountService = {
   IsLogged(): boolean {
@@ -10,11 +11,7 @@ const UserAccountService = {
   },
 
   async Login(username: string, password: string) {
-    // if (this.IsLogged() && !UserAccountService.IsJwtExpired()) {
-    //   router.push("/dashboard");
-    //   return;
-    // }
-
+    
     const loginRequest: LoginRequest = {
       username: username,
       password: password,
@@ -27,17 +24,30 @@ const UserAccountService = {
 
         this.SetRefreshToken(data.refresh_token);
 
-        console.log('access token ' + data.access_token)
-        console.log('refresh token ' + data.refresh_token)
 
         this.SetUsername(data.user.username);
 
-        //TODO: change so the username is not hardcoded
-        if(loginRequest.username === 'admin' && loginRequest.username === 'admin'){
-          router.push("/admin");
+        const roles:string[] = this.ParseJwt(data.access_token).roles; 
+
+        if(roles.includes(Roles.SuperAdmin)){
+          this.SetRole(Roles.SuperAdmin)
+        }else if(roles.includes(Roles.Admin)){
+          this.SetRole(Roles.Admin);
+        }else if(roles.includes(Roles.Moderator)){
+          this.SetRole(Roles.Moderator)
         }else{
-          router.push("/dashboard");
+          //if no roles are assigned
+          console.error('no roles assigned signing out...')
+          this.Logout();
         }
+
+        router.push('/dashboard')
+        //TODO: change so the username is not hardcoded
+        // if(loginRequest.username === 'admin' && loginRequest.username === 'admin'){
+        //   router.push("/admin");
+        // }else{
+        //   router.push("/dashboard");
+        // }
 
       }
     });
@@ -103,6 +113,19 @@ const UserAccountService = {
 
     return JSON.parse(jsonPayload);
   },
+
+  SetRole(role:string){
+    // console.log('set role to ' + role)
+    localStorage.setItem('role', role)
+  },
+  GetRole(){
+    const role = localStorage.getItem('role') 
+    if(!role){
+      console.error('no role assigned')
+      this.Logout();
+    }
+    return role
+  }
 };
 
 export default UserAccountService;
