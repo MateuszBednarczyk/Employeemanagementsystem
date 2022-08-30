@@ -9,12 +9,10 @@ const axiosWithTokenCheck = axios.create();
 
 export const httpInterceptor = axiosWithTokenCheck.interceptors.request.use(
   async (request) => {
-    // console.log('url: ' + request.baseURL);
+    // console.log('jwt: ');
+    // console.log(UserAccountService.ParseJwt(UserAccountService.GetJwt()!))
     if (
-      UserAccountService.IsJwtExpired() &&
-      UserAccountService.IsLogged() &&
-      UserAccountService.GetRefreshToken() != null &&
-      request.baseURL
+      UserAccountService.IsJwtExpired()
     ) {
       console.log("token has expired, logged out");
       UserAccountService.Logout();

@@ -54,17 +54,12 @@ onMounted(() => {
   }
 
   ApiService.getDepartments().then((res) => {
-    console.log(res.data);
     res.data.forEach((el: any) => {
       departments.value.push({ departmentName: el.departmentName });
     });
-    // tab.value = departments.value[0];
   });
 });
 
-// const onTestButton = () => {
-//   ApiService.refreshToken().then((res) => console.log(res));
-// };
 
 const onLogout = async () => {
   await UserAccountService.Logout();

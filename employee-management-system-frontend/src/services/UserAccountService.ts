@@ -41,7 +41,7 @@ const UserAccountService = {
           this.Logout();
         }
 
-        router.push('/dashboard')
+        router.push('/employees')
         //TODO: change so the username is not hardcoded
         // if(loginRequest.username === 'admin' && loginRequest.username === 'admin'){
         //   router.push("/admin");
