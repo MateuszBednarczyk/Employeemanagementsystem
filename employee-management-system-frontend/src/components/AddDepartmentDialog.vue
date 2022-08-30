@@ -55,7 +55,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import Spacer from "@/components/Spacer.vue";
+// import Spacer from "@/components/Spacer.vue";
 import ApiService from "@/services/ApiService";
 import router from "@/router";
 // const opened = false;
@@ -76,7 +76,6 @@ const onBeforeShow = () => {
 };
 
 const onSubmit = () => {
-  console.log('adding department')
   ApiService.AddDepartment(departmentName.value!).then(() => {
     router.go(0);
   });
