@@ -15,7 +15,7 @@
   </div> -->
   <q-item clickable :to="props.path">
     <q-item-section avatar>
-      <q-avatar color="primary" text-color="white" icon="bluetooth" />
+      <q-avatar color="primary" text-color="white" :icon="iconPath" />
     </q-item-section>
     <q-item-section>
       <q-item-label class="text-subtitle">{{ props.name }}</q-item-label>
@@ -24,11 +24,25 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from 'vue';
+
+const iconPath = ref('')
 const props = defineProps({
   isExpanded: Boolean,
   name: String,
   path: String,
 });
+onMounted(()=> {
+  if(props.path == 'employees'){
+    iconPath.value = 'img:icons/employee.png'
+  }else if(props.path == 'departments'){
+    iconPath.value = 'img:icons/department.png'
+  }else if(props.path == 'moderators'){
+    iconPath.value = 'img:icons/moderator.png'
+  }else if(props.path == 'admins'){
+    iconPath.value = 'img:icons/admin.png'
+  }
+})
 </script>
 
 <style lang="scss" scoped>
