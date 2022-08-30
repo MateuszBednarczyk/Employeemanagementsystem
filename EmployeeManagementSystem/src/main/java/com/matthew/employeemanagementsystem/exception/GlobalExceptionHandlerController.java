@@ -8,9 +8,7 @@ import com.matthew.employeemanagementsystem.exception.employee.EmployeeNotFoundE
 import com.matthew.employeemanagementsystem.exception.role.RoleDoesntHavePermissionToThisFeatureException;
 import com.matthew.employeemanagementsystem.exception.role.RoleNotFoundException;
 import com.matthew.employeemanagementsystem.exception.role.UnexpectedRoleValue;
-import com.matthew.employeemanagementsystem.exception.user.EmptyPasswordException;
-import com.matthew.employeemanagementsystem.exception.user.UserDoesNotHavePermissionException;
-import com.matthew.employeemanagementsystem.exception.user.UsernameTakenException;
+import com.matthew.employeemanagementsystem.exception.user.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -45,49 +43,61 @@ public class GlobalExceptionHandlerController {
 
     @ExceptionHandler(EmployeeAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public String employeeAlreadyExistsException(EmployeeAlreadyExistsException e){
+    public String employeeAlreadyExistsException(EmployeeAlreadyExistsException e) {
         return e.getMessage();
     }
 
     @ExceptionHandler(EmployeeNotFoundException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public String employeeNotFoundException(EmployeeNotFoundException e){
+    public String employeeNotFoundException(EmployeeNotFoundException e) {
         return e.getMessage();
     }
 
     @ExceptionHandler(RoleDoesntHavePermissionToThisFeatureException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public String roleDoesntHavePermissionToThisFeatureException(RoleDoesntHavePermissionToThisFeatureException e){
+    public String roleDoesntHavePermissionToThisFeatureException(RoleDoesntHavePermissionToThisFeatureException e) {
         return e.getMessage();
     }
 
     @ExceptionHandler(RoleNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String roleNotFoundException(RoleNotFoundException e){
+    public String roleNotFoundException(RoleNotFoundException e) {
         return e.getMessage();
     }
 
     @ExceptionHandler(UnexpectedRoleValue.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String unexpectedRoleValue(UnexpectedRoleValue e){
+    public String unexpectedRoleValue(UnexpectedRoleValue e) {
         return e.getMessage();
     }
 
     @ExceptionHandler(EmptyPasswordException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String emptyPasswordException(EmptyPasswordException e){
+    public String emptyPasswordException(EmptyPasswordException e) {
         return e.getMessage();
     }
 
     @ExceptionHandler(UserDoesNotHavePermissionException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public String userDoesNotHavePermissionException(UserDoesNotHavePermissionException e){
+    public String userDoesNotHavePermissionException(UserDoesNotHavePermissionException e) {
         return e.getMessage();
     }
 
     @ExceptionHandler(UsernameTakenException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public String usernameTakenException(UsernameTakenException e){
+    public String usernameTakenException(UsernameTakenException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(PasswordDoesntMatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String passwordDoesntMatchException(PasswordDoesntMatchException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(BadRepeatingException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String badRepeatingException(BadRepeatingException e) {
         return e.getMessage();
     }
 
