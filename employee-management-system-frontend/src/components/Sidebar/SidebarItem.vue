@@ -1,18 +1,4 @@
 <template>
-  <!-- <div
-    class="sidebar-item-container"
-    :class="{ 'sidebar-item-container-mini': !props.isExpanded }"
-  >
-    <div
-      class="sidebar-item shadow-3"
-      :class="{ 'sidebar-item-hidden': !props.isExpanded }"
-    >
-      <div class="icon"><img src="@/assets/icons/employee.png" alt="" /></div>
-      <div v-if="props.isExpanded" class="text-container">
-        <span class="text-white">expanded</span>
-      </div>
-    </div>
-  </div> -->
   <q-item clickable :to="props.path">
     <q-item-section avatar>
       <q-avatar color="primary" text-color="white" :icon="iconPath" />

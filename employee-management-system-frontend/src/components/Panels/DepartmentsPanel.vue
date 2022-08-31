@@ -7,6 +7,7 @@
         label="Add new department"
         @click="openAddDepartmentDialog"
       />
+
       <q-table
         title="Departments"
         :rows="rows"
@@ -22,14 +23,14 @@
             </q-td>
             <q-td key="actions" :props="props" auto-width>
               <div class="table-actions-container">
-                <q-btn
+                <!-- <q-btn
                   color="primary"
                   label="employees"
                   size="md"
                   @click="viewEmployees(props.rowIndex)"
                 >
                   <q-tooltip :delay="500"> View employees </q-tooltip>
-                </q-btn>
+                </q-btn> -->
                 <q-btn
                   color="primary"
                   icon="edit"
@@ -80,7 +81,6 @@
 
 <script setup lang="ts">
 import ApiService from "@/services/ApiService";
-import AddDepartmentDialog from "@/components/AddDepartmentDialog.vue";
 import { onMounted, ref } from "vue";
 import router from "@/router";
 import { ErrorService } from "@/services/ErrorService";
@@ -91,7 +91,7 @@ onMounted(() => {
 
 //#region Loading data
 const reloadDepartments = () => {
-  ApiService.getDepartments().then((res) => {
+  ApiService.GetDepartments().then((res) => {
     const data: Department[] = res.data;
 
     let t_rows: DepartmentTableRow[] = [];

@@ -9,14 +9,6 @@
     :mini-width="70"
     :breakpoint="500"
   >
-    <!-- <div class="item-list" :class="{ expanded: sidebarExpanded }">
-      <SidebarToggleButton @toggle="toggleSidebar"></SidebarToggleButton>
-
-      <SidebarItem :is-expanded="sidebarExpanded"></SidebarItem>
-      <SidebarItem :is-expanded="sidebarExpanded"></SidebarItem>
-      <SidebarItem :is-expanded="sidebarExpanded"></SidebarItem>
-    </div> -->
-
     <SidebarToggleButton @toggle="toggleSidebar"></SidebarToggleButton>
     <q-list padding>
       <SidebarItem

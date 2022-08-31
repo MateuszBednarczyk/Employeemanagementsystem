@@ -107,7 +107,6 @@ const addModerator = () => {
 
 }
 
-
 const deleteModerator = (rowId: number) => {
   console.log("trying to delete row " + rowId);
   console.log(rows[rowId]);

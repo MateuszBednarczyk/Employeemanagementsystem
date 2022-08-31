@@ -150,7 +150,7 @@ onMounted(() => {
 //#region Handling department changes
 
 const reloadEmployees = () => {
-  ApiService.getDepartments().then((res) => {
+  ApiService.GetDepartments().then((res) => {
     departments.value = [];
     departmentNames.value = [];
     const data: Department[] = res.data;

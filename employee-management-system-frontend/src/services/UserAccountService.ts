@@ -10,8 +10,9 @@ const UserAccountService = {
     return this.GetJwt() != null;
   },
 
+  //#region Login / Logout
+
   async Login(username: string, password: string) {
-    
     const loginRequest: LoginRequest = {
       username: username,
       password: password,
@@ -24,31 +25,23 @@ const UserAccountService = {
 
         this.SetRefreshToken(data.refresh_token);
 
-
         this.SetUsername(data.user.username);
 
-        const roles:string[] = this.ParseJwt(data.access_token).roles; 
+        const roles: string[] = this.ParseJwt(data.access_token).roles;
 
-        if(roles.includes(Roles.SuperAdmin)){
-          this.SetRole(Roles.SuperAdmin)
-        }else if(roles.includes(Roles.Admin)){
+        if (roles.includes(Roles.SuperAdmin)) {
+          this.SetRole(Roles.SuperAdmin);
+        } else if (roles.includes(Roles.Admin)) {
           this.SetRole(Roles.Admin);
-        }else if(roles.includes(Roles.Moderator)){
-          this.SetRole(Roles.Moderator)
-        }else{
+        } else if (roles.includes(Roles.Moderator)) {
+          this.SetRole(Roles.Moderator);
+        } else {
           //if no roles are assigned
-          console.error('no roles assigned signing out...')
+          console.error("no roles assigned signing out...");
           this.Logout();
         }
 
-        router.push('/employees')
-        //TODO: change so the username is not hardcoded
-        // if(loginRequest.username === 'admin' && loginRequest.username === 'admin'){
-        //   router.push("/admin");
-        // }else{
-        //   router.push("/dashboard");
-        // }
-
+        router.push("/employees");
       }
     });
   },
@@ -58,15 +51,10 @@ const UserAccountService = {
     router.push("/login");
   },
 
-  async Register(request: RegisterRequest) {
+  //#endregion
 
-    ApiService.SendRegisterRequest(request).then((res) => {
-      if (res.status === 200) {
-        localStorage.setItem("isLogged", "true");
-        router.push("/dashboard");
-      }
-    });
-  },
+
+  //#region JWT
 
   SetJwt(token: string) {
     localStorage.setItem("jwt", token);
@@ -78,15 +66,33 @@ const UserAccountService = {
     localStorage.removeItem("jwt");
   },
   IsJwtExpired(): boolean {
-    if(this.GetJwt() === null){
-      return false
+    if (this.GetJwt() === null) {
+      return false;
     }
-    const expirationDate = new Date(this.ParseJwt(this.GetJwt()!).exp * 1000)
-    const currentDate = new Date(Date.now())
-    // console.log('currentDate: ' + currentDate)
-    // console.log('expirationDate: ' + expirationDate)
+    const expirationDate = new Date(this.ParseJwt(this.GetJwt()!).exp * 1000);
+    const currentDate = new Date(Date.now());
     return currentDate >= expirationDate;
   },
+
+  ParseJwt(token: string) {
+    var base64Url = token.split(".")[1];
+    var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    var jsonPayload = decodeURIComponent(
+      window
+        .atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
+
+    return JSON.parse(jsonPayload);
+  },
+
+  //#endregion
+
+  //#region Refresh token
 
   SetRefreshToken(token: string) {
     localStorage.setItem("refresh_token", token);
@@ -94,6 +100,10 @@ const UserAccountService = {
   GetRefreshToken() {
     return localStorage.getItem("refresh_token");
   },
+
+  //#endregion
+
+  //#region User data
 
   SetUsername(username: string) {
     localStorage.setItem("username", username);
@@ -104,28 +114,21 @@ const UserAccountService = {
   ClearUsername() {
     localStorage.removeItem("username");
   },
-  ParseJwt(token:string) {
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
 
-    return JSON.parse(jsonPayload);
-  },
-
-  SetRole(role:string){
+  SetRole(role: string) {
     // console.log('set role to ' + role)
-    localStorage.setItem('role', role)
+    localStorage.setItem("role", role);
   },
-  GetRole(){
-    const role = localStorage.getItem('role') 
-    if(!role){
-      console.error('no role assigned')
+  GetRole() {
+    const role = localStorage.getItem("role");
+    if (!role) {
+      console.error("no role assigned");
       this.Logout();
     }
-    return role
-  }
+    return role;
+  },
+
+  //#endregion
 };
 
 export default UserAccountService;

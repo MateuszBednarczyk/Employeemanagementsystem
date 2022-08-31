@@ -27,11 +27,23 @@ export const httpInterceptor = axiosWithTokenCheck.interceptors.request.use(
 );
 
 const ApiService = {
-  //TODO: delete later
+  //#region Departments
   async AddDepartment(departmentName: string) {
     const body = { departmentName: departmentName };
     return await axiosWithTokenCheck.post(`${baseUrl}/department/add`, body);
   },
+
+  async GetDepartments() {
+    return await axiosWithTokenCheck.get(`${baseUrl}/department/`);
+  },
+  async DeleteDepartment(departmentName: string) {
+    return await axiosWithTokenCheck.delete(
+      `${baseUrl}/department/delete/${departmentName}`
+    );
+  },
+  //#endregion
+
+  //#region Employees
 
   async AddEmployee(departmentName: string, employeeData: Employee) {
     const body = {
@@ -41,6 +53,7 @@ const ApiService = {
     };
     return await axiosWithTokenCheck.post(`${baseUrl}/employees/add`, body);
   },
+
   async DeleteEmployee(name: string, surname: string, departmentName: string) {
     const body: DeleteEmployeeRequest = {
       name: name,
@@ -52,9 +65,9 @@ const ApiService = {
     });
   },
 
-  async SendRegisterRequest(request: RegisterRequest) {
-    return await axios.post(`${baseUrl}/users/register`, request);
-  },
+  //#endregion
+
+  //#region Login
 
   async SendLoginRequest(request: LoginRequest) {
     return await axios({
@@ -66,14 +79,11 @@ const ApiService = {
       data: request,
     });
   },
-  async getDepartments() {
-    return await axiosWithTokenCheck.get(`${baseUrl}/department/`);
-  },
-  async DeleteDepartment(departmentName: string) {
-    return await axiosWithTokenCheck.delete(
-      `${baseUrl}/department/delete/${departmentName}`
-    );
-  },
+
+  //#endregion
+
+  //#region Refresh token
+
   async refreshToken() {
     const instance = axios.create();
     const res = await instance.get(`${baseUrl}/users/token/refresh`, {
@@ -82,5 +92,7 @@ const ApiService = {
       },
     });
   },
+
+  //#endregion
 };
 export default ApiService;
