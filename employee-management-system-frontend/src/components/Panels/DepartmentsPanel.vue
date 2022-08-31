@@ -53,10 +53,29 @@
       </q-table>
     </div>
   </q-page>
-  <add-department-dialog
-    :opened="addDepartmentDialogOpened"
-    @dialog-closed="closeAddDepartmentDialog"
-  />
+  <q-dialog v-model="addDepartmentDialogOpened" @before-show="beforeShowDialog">
+    <q-card class="dialog-card">
+      <q-form @submit="submitAddDepartment">
+        <q-card-section>
+          <div class="text-h6">Add department</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input
+            v-model="departmentName"
+            type="text"
+            label="department name"
+            :rules="[(val) => !!val || 'Field is required']"
+          />
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn flat label="Submit" type="submit" color="primary" />
+        </q-card-actions>
+      </q-form>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
@@ -64,10 +83,14 @@ import ApiService from "@/services/ApiService";
 import AddDepartmentDialog from "@/components/AddDepartmentDialog.vue";
 import { onMounted, ref } from "vue";
 import router from "@/router";
-
-const addDepartmentDialogOpened = ref(false);
+import { ErrorService } from "@/services/ErrorService";
 
 onMounted(() => {
+  reloadDepartments();
+});
+
+//#region Loading data
+const reloadDepartments = () => {
   ApiService.getDepartments().then((res) => {
     const data: Department[] = res.data;
 
@@ -79,19 +102,18 @@ onMounted(() => {
       rows.value = t_rows;
     });
   });
-});
-
-const deleteDepartment = (rowIndex: number) => {
-  ApiService.DeleteDepartment(rows.value[rowIndex].name).then((res) => {
-    router.go(0);
-  });
-};
-const editDepartment = (rowIndex: number) => {
-  alert("not implemented yet");
 };
 
-const viewEmployees = (rowIndex: number) => {
-  alert("not implemented yet");
+//#endregion
+
+//#region Dialog handling
+
+const departmentName = ref("");
+
+const addDepartmentDialogOpened = ref(false);
+
+const beforeShowDialog = () => {
+  departmentName.value = "";
 };
 
 const openAddDepartmentDialog = () => {
@@ -100,6 +122,34 @@ const openAddDepartmentDialog = () => {
 const closeAddDepartmentDialog = () => {
   addDepartmentDialogOpened.value = false;
 };
+
+const submitAddDepartment = () => {
+  ApiService.AddDepartment(departmentName.value).then(() => {
+    closeAddDepartmentDialog();
+    reloadDepartments();
+  });
+};
+
+//#endregion
+
+//#region Table actions
+
+const deleteDepartment = (rowIndex: number) => {
+  ApiService.DeleteDepartment(rows.value[rowIndex].name).then((res) => {
+    router.go(0);
+  });
+};
+const editDepartment = (rowIndex: number) => {
+  ErrorService.functionalityNotImplemented();
+};
+
+const viewEmployees = (rowIndex: number) => {
+  ErrorService.functionalityNotImplemented();
+};
+
+//#endregion
+
+//#region Table data
 
 const columns: any = [
   {
@@ -118,6 +168,8 @@ const columns: any = [
 ];
 
 const rows = ref<DepartmentTableRow[]>([]);
+
+//#endregion
 
 interface DepartmentTableRow {
   name: string;

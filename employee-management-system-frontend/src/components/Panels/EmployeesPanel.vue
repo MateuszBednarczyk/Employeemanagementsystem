@@ -12,12 +12,6 @@
               label="Add new employee"
               @click="openAddEmployeeDialog"
             />
-            <!-- <q-btn
-              style="margin-bottom: 0px"
-              color="primary"
-              label="Change department"
-              @click="functionalityNotImplemented"
-            /> -->
           </div>
         </div>
         <div class="col-3" style="padding: 15px; box-sizing: border-box">
@@ -72,54 +66,58 @@
       </q-table>
     </div>
   </q-page>
-  <!-- <add-employee-dialog
-    :opened="addEmployeeDialogOpened"
-    :selected-department="selectedDepartment"
-    @dialog-closed="closeAddEmployeeDialog"
-  >
-  </add-employee-dialog> -->
+
   <q-dialog v-model="addEmployeeDialogOpened" @before-show="beforeShowDialog">
     <q-card class="dialog-card">
-      <q-card-section>
-        <div class="text-h6">
-          Add employee to {{ selectedDepartment?.departmentName }} department
-        </div>
-      </q-card-section>
+      <q-form class="" @submit="submitAddEmployee">
+        <q-card-section>
+          <div class="text-h6">
+            Add employee to {{ selectedDepartment?.departmentName }} department
+          </div>
+        </q-card-section>
 
-      <q-card-section class="q-pt-none">
-        <q-form class="q-gutter-md">
+        <q-card-section class="q-pt-none">
           <q-input
             v-model="firstName"
             type="text"
             label="first name"
-            required
+            :rules="[(val) => !!val || 'Field is required']"
           />
-          <q-input v-model="surname" type="text" label="surname" required />
-        </q-form>
-      </q-card-section>
+          <q-input
+            v-model="surname"
+            type="text"
+            label="surname"
+            :rules="[(val) => !!val || 'Field is required']"
+          />
+        </q-card-section>
 
-      <q-card-actions align="right">
-        <q-btn flat label="Cancel" color="primary" v-close-popup />
-        <q-btn
-          flat
-          label="Submit"
-          color="primary"
-          v-close-popup
-          @click="submitAddEmployee"
-        />
-      </q-card-actions>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn flat label="Submit" type="submit" color="primary" />
+        </q-card-actions>
+      </q-form>
     </q-card>
   </q-dialog>
 </template>
 
 <script setup lang="ts">
 import ApiService from "@/services/ApiService";
+import { ErrorService } from "@/services/ErrorService";
 import { onMounted, ref } from "vue";
 import AddEmployeeDialog from "../AddEmployeeDialog.vue";
 
-// ---dialog---
+//#region Dialog handling
+
+const addEmployeeDialogOpened = ref(false);
 const firstName = ref("");
 const surname = ref("");
+
+const openAddEmployeeDialog = () => {
+  addEmployeeDialogOpened.value = true;
+};
+const closeAddEmployeeDialog = () => {
+  addEmployeeDialogOpened.value = false;
+};
 
 const beforeShowDialog = () => {
   firstName.value = "";
@@ -127,52 +125,87 @@ const beforeShowDialog = () => {
 };
 
 const submitAddEmployee = () => {
-  if (firstName.value == null || surname.value != null) {
-  }
   ApiService.AddEmployee(selectedDepartment.value?.departmentName!, {
     name: firstName.value!,
     surname: surname.value!,
   }).then(() => {
+    closeAddEmployeeDialog();
     reloadEmployees();
   });
 };
 
-// ---dialog---
+//#endregion
 
 const departmentSelectModel = ref<string>("");
 const departmentNames = ref<string[]>([]);
 
-const addEmployeeDialogOpened = ref(false);
+const selectedDepartment = ref<Department>();
 
-const openAddEmployeeDialog = () => {
-  addEmployeeDialogOpened.value = true;
-};
-const closeAddEmployeeDialog = () => {
-  // addEmployeeDialogOpened = false;
-};
+const departments = ref<Department[]>([]);
+
+onMounted(() => {
+  reloadEmployees();
+});
+
+//#region Handling department changes
 
 const reloadEmployees = () => {
   ApiService.getDepartments().then((res) => {
     departments.value = [];
     departmentNames.value = [];
-    res.data.forEach(
-      (element: { departmentName: string; employeesList: [] }) => {
-        departments.value.push({
-          departmentName: element.departmentName,
-          employees: element.employeesList,
-        });
-        departmentNames.value.push(element.departmentName);
-      }
-    );
-    console.log(departments.value)
+    const data: Department[] = res.data;
+    if (data[0].departmentName == "superadmin") {
+      data.shift();
+    }
+    data.forEach((element) => {
+      departments.value.push({
+        departmentName: element.departmentName,
+        employeesList: element.employeesList,
+      });
+
+      departmentNames.value.push(element.departmentName);
+    });
     if (departmentSelectModel.value == "") {
-      departmentSelectModel.value = departmentNames.value[1];
+      departmentSelectModel.value = departmentNames.value.at(0)!;
     }
     selectDepartment(departmentSelectModel.value);
-    // console.log(departments.value);
   });
 };
 
+const selectDepartment = (department: string) => {
+  const index = departments.value.findIndex(
+    (dep) => dep.departmentName == department
+  );
+  // reloadEmployees()
+  changeDepartment(index);
+};
+
+const changeDepartment = (index: number) => {
+  selectedDepartment.value = departments.value[index];
+  rows.value = departments.value[index].employeesList;
+};
+//#endregion
+
+//#region Table actions
+
+const editEmployee = (rowIndex: number) => {
+  ErrorService.functionalityNotImplemented();
+};
+
+const deleteEmployee = (rowIndex: number) => {
+  const row = rows.value[rowIndex];
+  ApiService.DeleteEmployee(
+    row.name,
+    row.surname,
+    selectedDepartment.value?.departmentName!
+  ).then(() => {
+    reloadEmployees();
+  });
+};
+
+//#endregion
+
+//#region Table data
 const columns: any = [
   {
     name: "name",
@@ -197,46 +230,9 @@ const columns: any = [
   },
 ];
 
-const selectedDepartment = ref<Department>();
-
-const departments = ref<Department[]>([]);
 const rows = ref<EmployeeTableRow[]>([]);
 
-onMounted(() => {
-  reloadEmployees();
-});
-
-const editEmployee = (rowIndex: number) => {
-  functionalityNotImplemented();
-};
-const deleteEmployee = (rowIndex: number) => {
-  // functionalityNotImplemented();
-  const row = rows.value[rowIndex];
-  ApiService.DeleteEmployee(
-    row.name,
-    row.surname,
-    selectedDepartment.value?.departmentName!
-  ).then(() => {
-    reloadEmployees();
-  })
-};
-
-const functionalityNotImplemented = () => {
-  alert("this functionality hasn't been implemented yet");
-};
-
-const selectDepartment = (department: string) => {
-  const index = departments.value.findIndex(
-    (dep) => dep.departmentName == department
-  );
-  changeDepartment(index);
-};
-
-const changeDepartment = (index: number) => {
-  selectedDepartment.value = departments.value[index];
-  rows.value = departments.value[index].employees;
-  // console.log("a");
-};
+//#endregion
 
 interface EmployeeTableRow {
   name: string;
