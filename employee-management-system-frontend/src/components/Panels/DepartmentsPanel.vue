@@ -81,18 +81,18 @@ onMounted(() => {
   });
 });
 
-// const addDepartment = () => {};
-
 const deleteDepartment = (rowIndex: number) => {
-  ApiService.DeleteDepartment(rows.value[rowIndex].name).then(
-    res => {
-      router.go(0)
-    }
-  )
+  ApiService.DeleteDepartment(rows.value[rowIndex].name).then((res) => {
+    router.go(0);
+  });
 };
-const editDepartment = (rowIndex: number) => {};
+const editDepartment = (rowIndex: number) => {
+  alert("not implemented yet");
+};
 
-const viewEmployees = (rowIndex: number) => {};
+const viewEmployees = (rowIndex: number) => {
+  alert("not implemented yet");
+};
 
 const openAddDepartmentDialog = () => {
   addDepartmentDialogOpened.value = true;
@@ -125,7 +125,7 @@ interface DepartmentTableRow {
 </script>
 
 <style lang="scss" scoped>
-  .name-td{
-    width: 70%;
-  }
+.name-td {
+  width: 70%;
+}
 </style>
