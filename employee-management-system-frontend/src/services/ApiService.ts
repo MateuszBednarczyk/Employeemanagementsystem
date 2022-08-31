@@ -1,3 +1,4 @@
+import { DeleteEmployeeRequest } from "@/models/requests/delete-employee-request";
 import LoginRequest from "@/models/requests/login-request";
 import RegisterRequest from "@/models/requests/register-request";
 import axios from "axios";
@@ -39,6 +40,16 @@ const ApiService = {
       departmentName: departmentName,
     };
     return await axiosWithTokenCheck.post(`${baseUrl}/employees/add`, body);
+  },
+  async DeleteEmployee(name: string, surname: string, departmentName: string) {
+    const body: DeleteEmployeeRequest = {
+      name: name,
+      surname: surname,
+      departmentName: departmentName,
+    };
+    return await axiosWithTokenCheck.delete(`${baseUrl}/employees/delete`, {
+      data: body,
+    });
   },
 
   async SendRegisterRequest(request: RegisterRequest) {

@@ -78,7 +78,7 @@
     @dialog-closed="closeAddEmployeeDialog"
   >
   </add-employee-dialog> -->
-  <q-dialog v-model="addEmployeeDialogOpened">
+  <q-dialog v-model="addEmployeeDialogOpened" @before-show="beforeShowDialog">
     <q-card class="dialog-card">
       <q-card-section>
         <div class="text-h6">
@@ -121,7 +121,10 @@ import AddEmployeeDialog from "../AddEmployeeDialog.vue";
 const firstName = ref("");
 const surname = ref("");
 
-const beforeShowDialog = () => {};
+const beforeShowDialog = () => {
+  firstName.value = "";
+  surname.value = "";
+};
 
 const submitAddEmployee = () => {
   if (firstName.value == null || surname.value != null) {
@@ -130,13 +133,13 @@ const submitAddEmployee = () => {
     name: firstName.value!,
     surname: surname.value!,
   }).then(() => {
-    reloadEmployees()
+    reloadEmployees();
   });
 };
 
 // ---dialog---
 
-const departmentSelectModel = ref<string>();
+const departmentSelectModel = ref<string>("");
 const departmentNames = ref<string[]>([]);
 
 const addEmployeeDialogOpened = ref(false);
@@ -150,8 +153,8 @@ const closeAddEmployeeDialog = () => {
 
 const reloadEmployees = () => {
   ApiService.getDepartments().then((res) => {
-    departments.value = []
-    departmentNames.value = []
+    departments.value = [];
+    departmentNames.value = [];
     res.data.forEach(
       (element: { departmentName: string; employeesList: [] }) => {
         departments.value.push({
@@ -161,7 +164,10 @@ const reloadEmployees = () => {
         departmentNames.value.push(element.departmentName);
       }
     );
-    departmentSelectModel.value = departmentNames.value[1];
+    console.log(departments.value)
+    if (departmentSelectModel.value == "") {
+      departmentSelectModel.value = departmentNames.value[1];
+    }
     selectDepartment(departmentSelectModel.value);
     // console.log(departments.value);
   });
@@ -197,18 +203,26 @@ const departments = ref<Department[]>([]);
 const rows = ref<EmployeeTableRow[]>([]);
 
 onMounted(() => {
-  reloadEmployees()
+  reloadEmployees();
 });
 
 const editEmployee = (rowIndex: number) => {
   functionalityNotImplemented();
 };
 const deleteEmployee = (rowIndex: number) => {
-  functionalityNotImplemented();
+  // functionalityNotImplemented();
+  const row = rows.value[rowIndex];
+  ApiService.DeleteEmployee(
+    row.name,
+    row.surname,
+    selectedDepartment.value?.departmentName!
+  ).then(() => {
+    reloadEmployees();
+  })
 };
 
 const functionalityNotImplemented = () => {
-  alert("not implemented yet");
+  alert("this functionality hasn't been implemented yet");
 };
 
 const selectDepartment = (department: string) => {
@@ -221,7 +235,7 @@ const selectDepartment = (department: string) => {
 const changeDepartment = (index: number) => {
   selectedDepartment.value = departments.value[index];
   rows.value = departments.value[index].employees;
-  console.log('a')
+  // console.log("a");
 };
 
 interface EmployeeTableRow {
