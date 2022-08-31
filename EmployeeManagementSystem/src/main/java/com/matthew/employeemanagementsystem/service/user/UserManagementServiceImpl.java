@@ -6,9 +6,7 @@ import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
 import com.matthew.employeemanagementsystem.domain.enums.RoleType;
 import com.matthew.employeemanagementsystem.dtos.user.*;
 import com.matthew.employeemanagementsystem.exception.role.RoleDoesntHavePermissionToThisFeatureException;
-import com.matthew.employeemanagementsystem.exception.user.EmptyPasswordException;
-import com.matthew.employeemanagementsystem.exception.user.UserDoesNotHavePermissionException;
-import com.matthew.employeemanagementsystem.exception.user.UsernameTakenException;
+import com.matthew.employeemanagementsystem.exception.user.*;
 import com.matthew.employeemanagementsystem.mapper.UserModelMapper;
 import com.matthew.employeemanagementsystem.repository.UserRepository;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
@@ -75,13 +73,13 @@ class UserManagementServiceImpl implements UserManagementService {
     @Override
     public LoginResponseDTO login(LoginRequestDTO requestDTO) {
         UserEntity userEntity = userFindingService.getUserEntity(requestDTO.username());
-        isCredentialsCorrect(requestDTO, userEntity);
+        isCredentialsCorrect(requestDTO.password(), userEntity.getPassword());
 
         return userModelMapper.mapUserEntityToLoginResponseDTO(userEntity);
     }
 
-    private void isCredentialsCorrect(LoginRequestDTO requestDTO, UserEntity userEntity) {
-        if (!suffixConfiguration.bCryptPasswordEncoder().matches(requestDTO.password(), userEntity.getPassword())) {
+    private void isCredentialsCorrect(String givenPassword, String actualPassword) {
+        if (!isGivenOldPasswordCorrect(givenPassword, actualPassword)) {
             throw new BadCredentialsException("Bad credentials");
         }
     }
@@ -117,5 +115,33 @@ class UserManagementServiceImpl implements UserManagementService {
         checkIfUserWithGivenUsernameAlreadyExists(requestDTO.username());
         UserEntity newUserEntity = createEntityToSave(requestDTO);
         userRepository.save(newUserEntity);
+    }
+
+    @Override
+    public void changeUserPassword(Principal loggedUser, ChangeUserPasswordRequestDTO requestDTO) {
+        UserEntity userEntity = userFindingService.getUserEntity(loggedUser.getName());
+        if (isGivenOldPasswordCorrect(requestDTO.oldPassword(), userEntity.getPassword()) && isPasswordRepeatingCorrect(requestDTO)) {
+            userEntity.setPassword(encodePassword(requestDTO.newPassword()));
+        } else {
+            throw new PasswordDoesntMatchException();
+        }
+    }
+
+    private boolean isGivenOldPasswordCorrect(String charPassword, String actualPassword) {
+        if (suffixConfiguration.bCryptPasswordEncoder().matches(charPassword, actualPassword)) {
+
+            return true;
+        } else {
+            throw new PasswordDoesntMatchException();
+        }
+    }
+
+    private boolean isPasswordRepeatingCorrect(ChangeUserPasswordRequestDTO requestDTO) {
+        if (requestDTO.repeatOldPassword().equals(requestDTO.oldPassword()) && requestDTO.repeatNewPassword().equals(requestDTO.newPassword())) {
+
+            return true;
+        } else {
+            throw new BadRepeatingException();
+        }
     }
 }

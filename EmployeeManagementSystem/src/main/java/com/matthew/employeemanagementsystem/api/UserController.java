@@ -26,8 +26,15 @@ class UserController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteUser(Principal principal, DeleteUserRequestDTO requestDTO) {
+    public ResponseEntity<String> deleteUser(Principal principal, @RequestBody DeleteUserRequestDTO requestDTO) {
         userManagementService.deleteUser(principal, requestDTO);
+
+        return new ResponseEntity<>(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
+    }
+
+    @PatchMapping("/change-password")
+    public ResponseEntity<String> changeUserPassword(Principal loggedUser, @RequestBody ChangeUserPasswordRequestDTO requestDTO) {
+        userManagementService.changeUserPassword(loggedUser, requestDTO);
 
         return new ResponseEntity<>(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
     }

@@ -56,7 +56,7 @@ class DepartmentController {
 
     @PatchMapping("modify")
     public ResponseEntity<DepartmentResponseDTO> modifyDepartmentName(@RequestBody ModifyDepartmentRequestDTO requestDTO) {
-        return new ResponseEntity<>(departmentFacade.modifyDepartmentName(requestDTO), HttpStatus.OK);
+        return new ResponseEntity<>(departmentFacade.modifyDepartmentName(requestDTO), HttpStatus.ACCEPTED);
     }
 
 }

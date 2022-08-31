@@ -14,4 +14,6 @@ public interface UserManagementService {
 
     void setupSuperAdminUser(RegisterNewUserRequestDTO requestDTO);
 
+    void changeUserPassword(Principal loggedUser, ChangeUserPasswordRequestDTO requestDTO);
+
 }
