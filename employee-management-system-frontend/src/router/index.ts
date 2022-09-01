@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import DashboardPage from "@/pages/DashboardPage.vue";
 
-import AdminPage from "@/pages/AdminPage/AdminPage.vue";
 import LoginPage from "@/pages/LoginPage.vue";
 import EmployeesPanel from "@/components/Panels/EmployeesPanel.vue";
 import DepartmentsPanel from "@/components/Panels/DepartmentsPanel.vue";
