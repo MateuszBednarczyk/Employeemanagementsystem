@@ -93,7 +93,9 @@ onMounted(() => {
 const reloadDepartments = () => {
   ApiService.GetDepartments().then((res) => {
     const data: Department[] = res.data;
-
+    if (data[0].departmentName == "superadmin") {
+      data.shift();
+    }
     let t_rows: DepartmentTableRow[] = [];
     data.forEach((el) => {
       t_rows.push({
