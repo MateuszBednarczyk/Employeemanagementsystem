@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
@@ -43,10 +44,10 @@ class UserController {
     }
 
     @GetMapping("/verify")
-    public ResponseEntity<String> verifyUser(@RequestParam String tokenValue) {
+    public ModelAndView verifyUser(HttpServletRequest request, @RequestParam String tokenValue) {
         verificationService.verify(tokenValue);
 
-        return new ResponseEntity<>(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
+        return new ModelAndView("redirect:http://" + request.getServerName() + ":" + request.getServerPort());
     }
 
 }
