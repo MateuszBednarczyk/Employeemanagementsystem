@@ -23,10 +23,18 @@ public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NotNull
     private String username;
+
     @NotNull
     private String password;
+
+    @NotNull
+    private String email;
+
+    @NotNull
+    private boolean isEnabled = false;
 
     @JsonIgnore
     @ManyToMany
@@ -35,9 +43,10 @@ public class UserEntity implements UserDetails {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private List<RoleEntity> roles = new ArrayList<>();
 
-    public UserEntity(String username, String password) {
+    public UserEntity(String username, String password, String email) {
         this.username = username;
         this.password = password;
+        this.email = email;
     }
 
     @Override
@@ -46,6 +55,7 @@ public class UserEntity implements UserDetails {
         for (RoleEntity role : roles) {
             roleTypes.add(role.getRoleType().name());
         }
+
         return Collections.singleton(new SimpleGrantedAuthority(roleTypes.toString()));
     }
 
@@ -76,6 +86,6 @@ public class UserEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.isEnabled;
     }
 }

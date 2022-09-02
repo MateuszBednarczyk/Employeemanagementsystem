@@ -40,7 +40,8 @@ class SecurityConfiguration {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, loginURL).permitAll()
                 .antMatchers("/api/users/register").hasAnyAuthority(roleAdmin, roleSuperAdmin)
-                .antMatchers("/api/users/refreshToken").permitAll();
+                .antMatchers("/api/users/refreshToken").permitAll()
+                .antMatchers("/api/users/verify").permitAll();
         http
                 .addFilter(authenticationFilter)
                 .addFilterBefore(new AuthorizationFilter(authorizationService), UsernamePasswordAuthenticationFilter.class);

@@ -2,11 +2,14 @@ package com.matthew.employeemanagementsystem.api;
 
 import com.matthew.employeemanagementsystem.dtos.user.*;
 import com.matthew.employeemanagementsystem.service.user.UserManagementService;
+import com.matthew.employeemanagementsystem.service.verificationtoken.VerificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 
 @RestController
@@ -14,10 +17,11 @@ import java.security.Principal;
 @RequestMapping("/api/users/")
 class UserController {
     private final UserManagementService userManagementService;
+    private final VerificationService verificationService;
 
     @PostMapping("register")
-    public ResponseEntity<UserResponseDTO> registerNewUser(Principal loggedUser, @RequestBody RegisterNewUserRequestDTO requestDTO) {
-        return new ResponseEntity<>(userManagementService.registerNewUser(loggedUser, requestDTO), HttpStatus.OK);
+    public ResponseEntity<UserResponseDTO> registerNewUser(HttpServletRequest request, Principal loggedUser, @RequestBody RegisterNewUserRequestDTO requestDTO) {
+        return new ResponseEntity<>(userManagementService.registerNewUser(request, loggedUser, requestDTO), HttpStatus.OK);
     }
 
     @PostMapping("login")
@@ -38,4 +42,12 @@ class UserController {
 
         return new ResponseEntity<>(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
     }
+
+    @GetMapping("/verify")
+    public ModelAndView verifyUser(HttpServletRequest request, @RequestParam String tokenValue) {
+        verificationService.verify(tokenValue);
+
+        return new ModelAndView("redirect:http://" + request.getServerName() + ":" + request.getServerPort());
+    }
+
 }
