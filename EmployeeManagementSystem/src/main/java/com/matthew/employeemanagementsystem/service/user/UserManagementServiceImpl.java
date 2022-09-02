@@ -11,10 +11,12 @@ import com.matthew.employeemanagementsystem.mapper.UserModelMapper;
 import com.matthew.employeemanagementsystem.repository.UserRepository;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
 import com.matthew.employeemanagementsystem.service.role.RoleFacade;
+import com.matthew.employeemanagementsystem.service.verificationtoken.VerificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.security.Principal;
 import java.util.Arrays;
@@ -31,13 +33,15 @@ class UserManagementServiceImpl implements UserManagementService {
     private final RoleFacade roleFacade;
     private final UserFindingService userFindingService;
     private final UserModelMapper userModelMapper;
+    private final VerificationService verificationService;
 
     @Override
-    public UserResponseDTO registerNewUser(Principal loggedUser, RegisterNewUserRequestDTO requestDTO) throws IllegalArgumentException {
+    public UserResponseDTO registerNewUser(HttpServletRequest request, Principal loggedUser, RegisterNewUserRequestDTO requestDTO) throws IllegalArgumentException {
         UserEntity loggedUserEntity = userFindingService.getUserEntity(loggedUser.getName());
         checkIfRequestIsAboutAdminOrSuperAdminAndIfRequestingUserHasPermission(requestDTO, loggedUserEntity);
         checkIfUserWithGivenUsernameAlreadyExists(requestDTO.username());
         UserEntity newUserEntity = createEntityToSave(requestDTO);
+        verificationService.generateVerificationTokenAndSendVerificationMail(request, newUserEntity);
         userRepository.save(newUserEntity);
 
         return userModelMapper.mapUserEntityToUserResponseDTO(newUserEntity);
@@ -85,7 +89,7 @@ class UserManagementServiceImpl implements UserManagementService {
     }
 
     private UserEntity createEntityToSave(RegisterNewUserRequestDTO requestDTO) throws IllegalArgumentException {
-        UserEntity newUserEntity = new UserEntity(requestDTO.username(), encodePassword(requestDTO.password()));
+        UserEntity newUserEntity = new UserEntity(requestDTO.username(), encodePassword(requestDTO.password()), requestDTO.email());
         RoleEntity role = roleFacade.createRoleEntity(requestDTO.role());
         addRoleToUserEntity(newUserEntity, role);
         newUserEntity.getDepartmentEntities().add(departmentFacade.getDepartmentEntity(requestDTO.department()));
@@ -113,7 +117,8 @@ class UserManagementServiceImpl implements UserManagementService {
 
     public void setupSuperAdminUser(RegisterNewUserRequestDTO requestDTO) throws IllegalArgumentException {
         checkIfUserWithGivenUsernameAlreadyExists(requestDTO.username());
-        UserEntity newUserEntity = createEntityToSave(requestDTO);
+        UserEntity newUserEntity = createEntityToSave(new RegisterNewUserRequestDTO(requestDTO.username(), requestDTO.password(), requestDTO.email(), requestDTO.department(), requestDTO.role()));
+        newUserEntity.setEnabled(true);
         userRepository.save(newUserEntity);
     }
 
