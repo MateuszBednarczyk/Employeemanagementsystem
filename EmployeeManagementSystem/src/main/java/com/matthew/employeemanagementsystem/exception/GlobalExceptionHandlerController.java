@@ -101,4 +101,10 @@ public class GlobalExceptionHandlerController {
         return e.getMessage();
     }
 
+    @ExceptionHandler(UserIsAlredadyModeratorInDepartment.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public String userIsAlreadyModeratorInDepartment(UserIsAlredadyModeratorInDepartment e) {
+        return e.getMessage();
+    }
+
 }
