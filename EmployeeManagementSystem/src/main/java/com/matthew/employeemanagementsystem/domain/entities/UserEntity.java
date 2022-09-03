@@ -39,9 +39,10 @@ public class UserEntity implements UserDetails {
     @JsonIgnore
     @ManyToMany
     private List<DepartmentEntity> departmentEntities = new ArrayList<>();
+
     @JsonIgnore
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    private List<RoleEntity> roles = new ArrayList<>();
+    @OneToOne
+    private RoleEntity role;
 
     public UserEntity(String username, String password, String email) {
         this.username = username;
@@ -51,12 +52,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<String> roleTypes = new ArrayList<>();
-        for (RoleEntity role : roles) {
-            roleTypes.add(role.getRoleType().name());
-        }
-
-        return Collections.singleton(new SimpleGrantedAuthority(roleTypes.toString()));
+        return Collections.singleton(new SimpleGrantedAuthority(role.getRoleType().toString()));
     }
 
     @Override

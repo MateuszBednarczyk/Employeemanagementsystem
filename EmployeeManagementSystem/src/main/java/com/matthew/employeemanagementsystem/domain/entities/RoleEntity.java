@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "roles")
@@ -20,4 +21,16 @@ public class RoleEntity {
     @NotNull
     private RoleType roleType;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RoleEntity that = (RoleEntity) o;
+        return roleType == that.roleType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(roleType);
+    }
 }

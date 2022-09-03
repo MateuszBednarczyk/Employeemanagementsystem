@@ -1,6 +1,7 @@
 package com.matthew.employeemanagementsystem.api;
 
 import com.matthew.employeemanagementsystem.dtos.user.*;
+import com.matthew.employeemanagementsystem.service.user.UserFindingService;
 import com.matthew.employeemanagementsystem.service.user.UserManagementService;
 import com.matthew.employeemanagementsystem.service.verificationtoken.VerificationService;
 import lombok.RequiredArgsConstructor;
@@ -11,12 +12,14 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users/")
 class UserController {
     private final UserManagementService userManagementService;
+    private final UserFindingService userFindingService;
     private final VerificationService verificationService;
 
     @PostMapping("register")
@@ -48,6 +51,21 @@ class UserController {
         verificationService.verify(tokenValue);
 
         return new ModelAndView("redirect:http://" + request.getServerName() + ":" + request.getServerPort());
+    }
+
+    @GetMapping("/superadmins")
+    public ResponseEntity<List<UserResponseDTO>> findUsersByRoleTypeSuperAdmin() {
+        return new ResponseEntity<>(userFindingService.findUsersByRoleTypeSuperAdmin(), HttpStatus.OK);
+    }
+
+    @GetMapping("/admins")
+    public ResponseEntity<List<UserResponseDTO>> findUsersByRoleTypeAdmin() {
+        return new ResponseEntity<>(userFindingService.findUsersByRoleTypeAdmin(), HttpStatus.OK);
+    }
+
+    @GetMapping("/moderators")
+    public ResponseEntity<List<UserResponseDTO>> findUsersByRoleTypeModerator() {
+        return new ResponseEntity<>(userFindingService.findUsersByRoleTypeModerator(), HttpStatus.OK);
     }
 
 }
