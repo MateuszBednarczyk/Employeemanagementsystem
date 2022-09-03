@@ -65,11 +65,10 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     public void addUserEntityToModeratorList(AddModeratorToDepartmentRequestDTO requestDTO) {
         DepartmentEntity departmentEntity = departmentFindingService.getDepartmentEntity(requestDTO.departmentName());
         UserEntity userEntity = userFindingService.getUserEntity(requestDTO.username());
-        if (!isUserAModeratorInDepartment(departmentEntity, userEntity)) {
-            addUserAsAModerator(departmentEntity, userEntity);
-        } else {
+        if (isUserAModeratorInDepartment(departmentEntity, userEntity)) {
             throw new UserIsAlredadyModeratorInDepartment(requestDTO.username(), requestDTO.departmentName());
         }
+        addUserAsAModerator(departmentEntity, userEntity);
     }
 
     private void addUserAsAModerator(DepartmentEntity departmentEntity, UserEntity userEntity) {
