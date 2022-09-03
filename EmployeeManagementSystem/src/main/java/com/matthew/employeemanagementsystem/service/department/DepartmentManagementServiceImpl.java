@@ -47,7 +47,7 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     public void deleteDepartmentByName(Principal loggedUser, String departmentName) throws DepartmentNoPermissionException {
         DepartmentEntity departmentEntity = departmentFindingService.getDepartmentEntity(departmentName);
         UserEntity userEntity = userFindingService.getUserEntity(loggedUser.getName());
-        if (departmentEntity.getModeratorList().contains(userFindingService.getUserEntity(loggedUser.getName())) || userEntity.getRoles().contains(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
+        if (departmentEntity.getModeratorList().contains(userFindingService.getUserEntity(loggedUser.getName())) || userEntity.getRole().equals(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
             deleteRelatedData(userEntity, departmentEntity);
             departmentRepository.deleteByDepartmentName(departmentName);
         } else {
@@ -68,7 +68,7 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     @Override
     public void deleteUserEntityFromModeratorList(Principal loggedUser, DeleteUserEntityFromModeratorListRequestDTO requestDTO) throws DepartmentNoPermissionException {
         UserEntity userEntity = userFindingService.getUserEntity(loggedUser.getName());
-        if (userEntity.getRoles().contains(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
+        if (userEntity.getRole().equals(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
             deleteRelatedData(userFindingService.getUserEntity(requestDTO.username()), departmentFindingService.getDepartmentEntity(requestDTO.departmentName()));
         } else {
             throw new DepartmentNoPermissionException(requestDTO.departmentName());

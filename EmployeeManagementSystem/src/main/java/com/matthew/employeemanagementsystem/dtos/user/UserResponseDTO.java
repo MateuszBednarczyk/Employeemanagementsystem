@@ -6,5 +6,5 @@ import com.matthew.employeemanagementsystem.domain.entities.RoleEntity;
 import java.util.List;
 
 public record UserResponseDTO(String username, String email, List<DepartmentEntity> departmentEntities,
-                              List<RoleEntity> roles) {
+                              RoleEntity role) {
 }

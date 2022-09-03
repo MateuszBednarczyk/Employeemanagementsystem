@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -54,20 +52,19 @@ class UserManagementServiceImpl implements UserManagementService {
     }
 
     private void checkIfUserHasPermissionToAddSuperAdminOrAdmin(UserEntity loggedUserEntity) {
-        if (!isUserSuperAdmin(loggedUserEntity.getRoles())) {
+        if (!isUserSuperAdmin(loggedUserEntity.getRole())) {
             throw new RoleDoesntHavePermissionToThisFeatureException();
         }
     }
 
-    private boolean isUserSuperAdmin(List<RoleEntity> usersRole) {
-        return usersRole.contains(roleFacade.findByRoleType(RoleType.ROLE_SUPERADMIN));
+    private boolean isUserSuperAdmin(RoleEntity role) {
+        return role.equals(roleFacade.findByRoleType(RoleType.ROLE_SUPERADMIN));
     }
 
     @Override
     public void deleteUser(Principal principal, DeleteUserRequestDTO requestDTO) {
         UserEntity requestingUser = userFindingService.getUserEntity(principal.getName());
-        List<RoleEntity> allowedRoles = Arrays.asList(roleFacade.findByRoleType(RoleType.ROLE_SUPERADMIN), roleFacade.findByRoleType(RoleType.ROLE_ADMIN));
-        if (requestingUser.getRoles().containsAll(allowedRoles)) {
+        if (requestingUser.getRole().equals(roleFacade.findByRoleType(RoleType.ROLE_SUPERADMIN)) || requestingUser.getRole().equals(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
             userRepository.deleteByUsername(requestDTO.username());
         } else {
             throw new UserDoesNotHavePermissionException(requestingUser.getUsername());
@@ -91,14 +88,10 @@ class UserManagementServiceImpl implements UserManagementService {
     private UserEntity createEntityToSave(RegisterNewUserRequestDTO requestDTO) throws IllegalArgumentException {
         UserEntity newUserEntity = new UserEntity(requestDTO.username(), encodePassword(requestDTO.password()), requestDTO.email());
         RoleEntity role = roleFacade.createRoleEntity(requestDTO.role());
-        addRoleToUserEntity(newUserEntity, role);
+        newUserEntity.setRole(role);
         newUserEntity.getDepartmentEntities().add(departmentFacade.getDepartmentEntity(requestDTO.department()));
 
         return newUserEntity;
-    }
-
-    public void addRoleToUserEntity(UserEntity newUserEntity, RoleEntity role) {
-        newUserEntity.getRoles().add(role);
     }
 
     private void checkIfUserWithGivenUsernameAlreadyExists(String username) {
