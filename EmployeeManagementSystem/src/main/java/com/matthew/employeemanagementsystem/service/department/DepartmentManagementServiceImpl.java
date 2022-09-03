@@ -8,6 +8,7 @@ import com.matthew.employeemanagementsystem.dtos.department.*;
 import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.exception.department.DepartmentAlreadyExistsException;
 import com.matthew.employeemanagementsystem.exception.department.DepartmentNoPermissionException;
+import com.matthew.employeemanagementsystem.exception.user.UserIsAlredadyModeratorInDepartment;
 import com.matthew.employeemanagementsystem.mapper.DepartmentModelMapper;
 import com.matthew.employeemanagementsystem.repository.DepartmentRepository;
 import com.matthew.employeemanagementsystem.service.role.RoleFacade;
@@ -32,7 +33,7 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
 
     @Override
     public DepartmentResponseDTO addNewDepartment(AddNewDepartmentRequestDTO requestDTO) {
-        checkIfAddingNewDepartmentIsPossible(requestDTO.departmentName());
+        checkIfAddingNewDepartmentIsPossible(requestDTO.departmentName().toLowerCase());
         DepartmentEntity newDepartmentEntity = createAndSaveDepartmentEntity(requestDTO);
 
         return new DepartmentResponseDTO(newDepartmentEntity.getDepartmentName(), newDepartmentEntity.getEmployeesList());
@@ -47,7 +48,7 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     public void deleteDepartmentByName(Principal loggedUser, String departmentName) throws DepartmentNoPermissionException {
         DepartmentEntity departmentEntity = departmentFindingService.getDepartmentEntity(departmentName);
         UserEntity userEntity = userFindingService.getUserEntity(loggedUser.getName());
-        if (departmentEntity.getModeratorList().contains(userFindingService.getUserEntity(loggedUser.getName())) || userEntity.getRole().equals(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
+        if (isUserAModeratorInDepartment(departmentEntity, userFindingService.getUserEntity(loggedUser.getName())) || userEntity.getRole().equals(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
             deleteRelatedData(userEntity, departmentEntity);
             departmentRepository.deleteByDepartmentName(departmentName);
         } else {
@@ -62,7 +63,21 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
 
     @Override
     public void addUserEntityToModeratorList(AddModeratorToDepartmentRequestDTO requestDTO) {
-        departmentFindingService.getDepartmentEntity(requestDTO.departmentName()).getModeratorList().add(userFindingService.getUserEntity(requestDTO.username()));
+        DepartmentEntity departmentEntity = departmentFindingService.getDepartmentEntity(requestDTO.departmentName());
+        UserEntity userEntity = userFindingService.getUserEntity(requestDTO.username());
+        if (!isUserAModeratorInDepartment(departmentEntity, userEntity)) {
+            addUserAsAModerator(departmentEntity, userEntity);
+        } else {
+            throw new UserIsAlredadyModeratorInDepartment(requestDTO.username(), requestDTO.departmentName());
+        }
+    }
+
+    private void addUserAsAModerator(DepartmentEntity departmentEntity, UserEntity userEntity) {
+        departmentEntity.getModeratorList().add(userEntity);
+    }
+
+    private boolean isUserAModeratorInDepartment(DepartmentEntity departmentEntity, UserEntity userEntity) {
+        return departmentEntity.getModeratorList().contains(userEntity);
     }
 
     @Override

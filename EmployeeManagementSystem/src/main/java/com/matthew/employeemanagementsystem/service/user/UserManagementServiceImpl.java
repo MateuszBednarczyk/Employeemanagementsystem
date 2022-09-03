@@ -4,6 +4,7 @@ import com.matthew.employeemanagementsystem.configuration.SuffixConfiguration;
 import com.matthew.employeemanagementsystem.domain.entities.RoleEntity;
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
 import com.matthew.employeemanagementsystem.domain.enums.RoleType;
+import com.matthew.employeemanagementsystem.dtos.department.AddModeratorToDepartmentRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.user.*;
 import com.matthew.employeemanagementsystem.exception.role.RoleDoesntHavePermissionToThisFeatureException;
 import com.matthew.employeemanagementsystem.exception.user.*;
@@ -41,14 +42,25 @@ class UserManagementServiceImpl implements UserManagementService {
         UserEntity newUserEntity = createEntityToSave(requestDTO);
         verificationService.generateVerificationTokenAndSendVerificationMail(request, newUserEntity);
         userRepository.save(newUserEntity);
+        addUserAsAModeratorInDepartment(requestDTO);
 
         return userModelMapper.mapUserEntityToUserResponseDTO(newUserEntity);
     }
 
+    private void addUserAsAModeratorInDepartment(RegisterNewUserRequestDTO requestDTO) {
+        if (requestDTO.role().contains("MODERATOR")) {
+            departmentFacade.addUserEntityToModeratorList(new AddModeratorToDepartmentRequestDTO(requestDTO.username(), requestDTO.department()));
+        }
+    }
+
     private void checkIfRequestIsAboutAdminOrSuperAdminAndIfRequestingUserHasPermission(RegisterNewUserRequestDTO requestDTO, UserEntity loggedUserEntity) {
-        if (requestDTO.role().contains("ADMIN") || requestDTO.role().contains("SUPERADMIN")) {
+        if (isUserAdminOrSuperAdmin(requestDTO.role())) {
             checkIfUserHasPermissionToAddSuperAdminOrAdmin(loggedUserEntity);
         }
+    }
+
+    private boolean isUserAdminOrSuperAdmin(String role) {
+        return role.contains("ADMIN") || role.contains("SUPERADMIN");
     }
 
     private void checkIfUserHasPermissionToAddSuperAdminOrAdmin(UserEntity loggedUserEntity) {
