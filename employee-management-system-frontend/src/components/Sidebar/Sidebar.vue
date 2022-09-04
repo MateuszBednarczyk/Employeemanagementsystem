@@ -12,21 +12,25 @@
     <SidebarToggleButton @toggle="toggleSidebar"></SidebarToggleButton>
     <q-list padding>
       <SidebarItem
+        v-if="showEmployees"
         :is-expanded="sidebarExpanded"
         name="Employees"
         path="employees"
       ></SidebarItem>
       <SidebarItem
+        v-if="showDepartments"
         :is-expanded="sidebarExpanded"
         name="Departments"
         path="departments"
       ></SidebarItem>
       <SidebarItem
+        v-if="showModerators"
         :is-expanded="sidebarExpanded"
         name="Moderators"
         path="moderators"
       ></SidebarItem>
       <SidebarItem
+        v-if="showAdmins"
         :is-expanded="sidebarExpanded"
         name="Admins"
         path="admins"
@@ -55,6 +59,7 @@ const role = UserAccountService.GetRole();
 if (role == Roles.Moderator) {
   showEmployees.value = true;
 } else if (role == Roles.Admin) {
+  console.log("a");
   showEmployees.value = true;
   showDepartments.value = true;
   showModerators.value = true;

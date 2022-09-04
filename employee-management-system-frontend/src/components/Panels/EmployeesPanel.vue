@@ -165,6 +165,7 @@ const reloadEmployees = () => {
 
       departmentNames.value.push(element.departmentName);
     });
+    console.log(departmentNames)
     if (departmentSelectModel.value == "") {
       departmentSelectModel.value = departmentNames.value.at(0)!;
     }

@@ -99,6 +99,7 @@
 
 <script setup lang="ts">
 import ApiService from "@/services/ApiService";
+import { ErrorService } from "@/services/ErrorService";
 import { onMounted, ref } from "vue";
 
 onMounted(() => {
@@ -183,13 +184,17 @@ const submitAddModerator = () => {
 //#region Table actions
 
 const deleteModerator = (rowId: number) => {
-  console.log("trying to delete row " + rowId);
-  console.log(rows.value[rowId]);
+  // console.log("trying to delete row " + rows.value[rowId].username);
+  // ErrorService.functionalityNotImplemented()
+  ApiService.DeleteModerator(rows.value[rowId].username).then(() => {
+    reloadModerators()
+  })
 };
 
 const editModerator = (rowId: number) => {
-  console.log("trying to edit row " + rowId);
-  console.log(rows.value[rowId]);
+  // console.log("trying to edit row " + rowId);
+  // console.log(rows.value[rowId]);
+  ErrorService.functionalityNotImplemented()
 };
 
 //#endregion

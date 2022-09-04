@@ -68,13 +68,19 @@ const ApiService = {
   //#endregion
 
   //#region Moderators
-  AddModerator(request: AddModeratorRequest) {
+  
+  async AddModerator(request: AddModeratorRequest) {
     const registerRequest:RegisterRequest = {...request, role:Roles.Moderator}
-    return axiosWithTokenCheck.post(`${baseUrl}/users/register`, registerRequest);
+    await axiosWithTokenCheck.post(`${baseUrl}/users/register`, registerRequest);
   },
 
   GetModerators() {
     return axiosWithTokenCheck.get(`${baseUrl}/users/moderators`);
+  },
+
+  DeleteModerator(username:string){
+    const body = {username:username}
+    return axiosWithTokenCheck.delete(`${baseUrl}/users/delete`,{data:body})
   },
 
   //#endregion
