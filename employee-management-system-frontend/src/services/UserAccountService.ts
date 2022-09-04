@@ -37,7 +37,7 @@ const UserAccountService = {
           this.SetRole(Roles.Moderator);
         } else {
           //if no roles are assigned
-          console.error("no roles assigned signing out...");
+          console.error("no roles assigned, signing out...");
           this.Logout();
         }
 
