@@ -1,4 +1,3 @@
-import RegisterRequest from "@/models/requests/register-request";
 import ApiService from "./ApiService";
 import router from "@/router";
 import LoginRequest from "@/models/requests/login-request";

@@ -1,7 +1,6 @@
-interface RegisterRequest {
+interface AddModeratorRequest {
   username: string;
   password: string;
   email: string;
   department: string;
-  role: string;
 }
