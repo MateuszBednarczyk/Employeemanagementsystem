@@ -18,20 +18,17 @@
       >
         <template v-slot:body="props">
           <q-tr :props="props">
-            <q-td key="name" :props="props">
-              {{ props.row.name }}
+            <q-td key="username" :props="props">
+              {{ props.row.username }}
             </q-td>
-            <q-td key="surname" :props="props">
-              {{ props.row.surname }}
+            <q-td key="email" :props="props">
+              {{ props.row.email }}
             </q-td>
             <q-td key="department" :props="props">
               {{ props.row.department }}
             </q-td>
             <q-td key="actions" :props="props" auto-width>
               <div class="table-actions-container">
-                <!-- <q-btn color="primary" icon="search" size="md" @click="viewModerator(props.rowIndex)">
-                  <q-tooltip :delay="500"> Details </q-tooltip>
-                </q-btn> -->
                 <q-btn
                   color="primary"
                   icon="edit"
@@ -113,16 +110,34 @@ onMounted(() => {
 
 const reloadModerators = () => {
   ApiService.GetModerators().then((res) => {
-    console.log(res);
+    const data: ModeratorTableRow[] = res.data.map((el: any) => {
+      return {
+        username: el.username,
+        email: el.email,
+        role: el.role.roleType,
+      };
+    });
+
+    rows.value = data;
   });
 };
 
 const fetchDepartments = () => {
   ApiService.GetDepartments().then((res) => {
-    departmentNames.value = []
-    res.data.forEach((el: Department) => {
-      departmentNames.value.push(el.departmentName)
+    const data: Department[] = res.data;
+    if (data[0].departmentName == "superadmin") {
+      data.shift();
+    }
+
+    departmentNames.value = [];
+
+    data.forEach((el: Department) => {
+      departmentNames.value.push(el.departmentName);
     });
+
+    if (departmentNames.value.length > 0) {
+      dialogDepartment.value = departmentNames.value[0];
+    }
   });
 };
 
@@ -141,6 +156,10 @@ const departmentNames = ref<string[]>([]);
 const openAddModeratorDialog = () => {
   addModeratorDialogOpened.value = true;
 };
+const closeAddModeratorDialog = () => {
+  addModeratorDialogOpened.value = false;
+};
+
 const beforeShowDialog = () => {
   dialogUsername.value = "";
   dialogEmail.value = "";
@@ -153,7 +172,10 @@ const submitAddModerator = () => {
     password: dialogPassword.value,
     department: dialogDepartment.value,
   };
-  ApiService.AddModerator(requestData)
+  ApiService.AddModerator(requestData).then(() => {
+    reloadModerators();
+    closeAddModeratorDialog();
+  });
 };
 
 //#endregion
@@ -162,12 +184,12 @@ const submitAddModerator = () => {
 
 const deleteModerator = (rowId: number) => {
   console.log("trying to delete row " + rowId);
-  console.log(rows[rowId]);
+  console.log(rows.value[rowId]);
 };
 
 const editModerator = (rowId: number) => {
   console.log("trying to edit row " + rowId);
-  console.log(rows[rowId]);
+  console.log(rows.value[rowId]);
 };
 
 //#endregion
@@ -206,13 +228,13 @@ const columns: any = [
   },
 ];
 
-const rows: ModeratorTableRow[] = [];
+const rows = ref<ModeratorTableRow[]>([]);
 
 //#endregion
 
 interface ModeratorTableRow {
-  name: string;
-  surname: string;
+  username: string;
+  email: string;
   department: string;
 }
 </script>
