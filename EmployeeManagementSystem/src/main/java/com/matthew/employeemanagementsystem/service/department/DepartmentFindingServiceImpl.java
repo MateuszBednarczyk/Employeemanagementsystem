@@ -44,12 +44,12 @@ class DepartmentFindingServiceImpl implements DepartmentFindingService {
     @Override
     public List<DepartmentResponseDTO> findAllDepartments(Principal loggedUser) throws DepartmentNoPermissionException {
         UserEntity loggedUserEntity = userFindingService.getUserEntity(loggedUser.getName());
-        RoleEntity userRoles = loggedUserEntity.getRole();
-        if (userRoles.equals(roleFacade.findByRoleType(RoleType.ROLE_SUPERADMIN)) || userRoles.equals(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
+        RoleEntity userRole = loggedUserEntity.getRole();
+        if (userRole.equals(roleFacade.findByRoleType(RoleType.ROLE_SUPERADMIN)) || userRole.equals(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
 
             return generateList(departmentRepository.findAll());
 
-        } else if (userRoles.equals(roleFacade.findByRoleType(RoleType.ROLE_MODERATOR))) {
+        } else if (userRole.equals(roleFacade.findByRoleType(RoleType.ROLE_MODERATOR))) {
 
             return generateList(loggedUserEntity.getDepartmentEntities());
 
