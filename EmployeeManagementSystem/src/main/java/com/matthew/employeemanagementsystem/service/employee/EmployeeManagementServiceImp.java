@@ -5,6 +5,7 @@ import com.matthew.employeemanagementsystem.domain.entities.EmployeeEntity;
 import com.matthew.employeemanagementsystem.dtos.employee.AddNewEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.employee.EmployeeResponseDTO;
+import com.matthew.employeemanagementsystem.dtos.employee.ModifyEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.exception.employee.EmployeeAlreadyExistsException;
 import com.matthew.employeemanagementsystem.mapper.EmployeeModelMapper;
 import com.matthew.employeemanagementsystem.repository.EmployeeRepository;
@@ -38,6 +39,17 @@ class EmployeeManagementServiceImp implements EmployeeManagementService {
         employeeFindingService.findEmployeeEntityByNameAndSurname(requestDTO.name(), requestDTO.surname());
         departmentFacade.deleteEmployeeFromDepartment(requestDTO, employeeFindingService.findEmployeeEntityByNameAndSurname(requestDTO.name(), requestDTO.surname()));
         employeeRepository.deleteByNameAndSurname(requestDTO.name(), requestDTO.surname());
+    }
+
+    @Override
+    public void modifyEmployee(ModifyEmployeeRequestDTO requestDTO) {
+        EmployeeEntity employeeEntity = employeeFindingService.findById(requestDTO.id());
+        if (!employeeEntity.getName().equals(requestDTO.name())) {
+            employeeEntity.setName(requestDTO.name());
+        }
+        if (!employeeEntity.getSurname().equals(requestDTO.surname())) {
+            employeeEntity.setSurname(requestDTO.surname());
+        }
     }
 
     public EmployeeResponseDTO createAndPrepareEntitiesAlsoReturnEmployeeDTO(AddNewEmployeeRequestDTO requestDTO) {
