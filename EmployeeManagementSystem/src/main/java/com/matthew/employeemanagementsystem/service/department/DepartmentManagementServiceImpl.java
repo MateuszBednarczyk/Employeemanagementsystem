@@ -68,11 +68,14 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
         if (isUserAModeratorInDepartment(departmentEntity, userEntity)) {
             throw new UserIsAlredadyModeratorInDepartment(requestDTO.username(), requestDTO.departmentName());
         }
-        addUserAsAModerator(departmentEntity, userEntity);
+        addUserAsAModeratorAndAddDepartmentEntityToUserIfItsNotPresent(departmentEntity, userEntity);
     }
 
-    private void addUserAsAModerator(DepartmentEntity departmentEntity, UserEntity userEntity) {
+    private void addUserAsAModeratorAndAddDepartmentEntityToUserIfItsNotPresent(DepartmentEntity departmentEntity, UserEntity userEntity) {
         departmentEntity.getModeratorList().add(userEntity);
+        if (!userEntity.getDepartmentEntities().contains(departmentEntity)) {
+            userEntity.getDepartmentEntities().add(departmentEntity);
+        }
     }
 
     private boolean isUserAModeratorInDepartment(DepartmentEntity departmentEntity, UserEntity userEntity) {
