@@ -1,6 +1,6 @@
+import { Roles } from "@/models/enums/roles";
 import { DeleteEmployeeRequest } from "@/models/requests/delete-employee-request";
 import LoginRequest from "@/models/requests/login-request";
-import RegisterRequest from "@/models/requests/register-request";
 import axios from "axios";
 import UserAccountService from "./UserAccountService";
 
@@ -64,6 +64,28 @@ const ApiService = {
       data: body,
     });
   },
+
+  //#endregion
+
+  //#region Moderators
+  
+  async AddModerator(request: AddModeratorRequest) {
+    const registerRequest:RegisterRequest = {...request, role:Roles.Moderator}
+    await axiosWithTokenCheck.post(`${baseUrl}/users/register`, registerRequest);
+  },
+
+  GetModerators() {
+    return axiosWithTokenCheck.get(`${baseUrl}/users/moderators`);
+  },
+
+  DeleteModerator(username:string){
+    const body = {username:username}
+    return axiosWithTokenCheck.delete(`${baseUrl}/users/delete`,{data:body})
+  },
+
+  //#endregion
+
+  //#region Admins
 
   //#endregion
 
