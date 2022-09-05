@@ -3,6 +3,7 @@ package com.matthew.employeemanagementsystem.api;
 import com.matthew.employeemanagementsystem.dtos.employee.AddNewEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.employee.EmployeeResponseDTO;
+import com.matthew.employeemanagementsystem.dtos.employee.ModifyEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.service.employee.EmployeeFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,5 +40,12 @@ class EmployeeController {
     @GetMapping("{departmentName}")
     public ResponseEntity<List<EmployeeResponseDTO>> findEmployeesInDepartment(@PathVariable String departmentName) {
         return new ResponseEntity<>(employeeFacade.findEmployeesInDepartment(departmentName), HttpStatus.OK);
+    }
+
+    @PatchMapping("edit")
+    public ResponseEntity<String> modifyEmployee(@RequestBody ModifyEmployeeRequestDTO requestDTO) {
+        employeeFacade.modifyEmployee(requestDTO);
+
+        return new ResponseEntity<>(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
     }
 }

@@ -3,6 +3,7 @@ package com.matthew.employeemanagementsystem.service.employee;
 import com.matthew.employeemanagementsystem.dtos.employee.AddNewEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.employee.EmployeeResponseDTO;
+import com.matthew.employeemanagementsystem.dtos.employee.ModifyEmployeeRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,5 +34,10 @@ class EmployeeFacadeImpl implements EmployeeFacade {
     @Override
     public List<EmployeeResponseDTO> findEmployeesInDepartment(String departmentName) {
         return employeeFindingService.findEmployeesInDepartment(departmentName);
+    }
+
+    @Override
+    public void modifyEmployee(ModifyEmployeeRequestDTO requestDTO) {
+        employeeManagementService.modifyEmployee(requestDTO);
     }
 }
