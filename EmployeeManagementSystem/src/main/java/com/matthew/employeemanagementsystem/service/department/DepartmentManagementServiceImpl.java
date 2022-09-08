@@ -11,7 +11,6 @@ import com.matthew.employeemanagementsystem.exception.department.DepartmentNoPer
 import com.matthew.employeemanagementsystem.exception.user.UserIsAlredadyModeratorInDepartment;
 import com.matthew.employeemanagementsystem.mapper.DepartmentModelMapper;
 import com.matthew.employeemanagementsystem.repository.DepartmentRepository;
-import com.matthew.employeemanagementsystem.service.role.RoleFacade;
 import com.matthew.employeemanagementsystem.service.user.UserFindingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,6 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     private final DepartmentFindingService departmentFindingService;
     private final DepartmentModelMapper departmentModelMapper;
     private final UserFindingService userFindingService;
-    private final RoleFacade roleFacade;
 
     @Override
     public DepartmentResponseDTO addNewDepartment(AddNewDepartmentRequestDTO requestDTO) {
@@ -48,7 +46,7 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     public void deleteDepartmentByName(Principal loggedUser, String departmentName) throws DepartmentNoPermissionException {
         DepartmentEntity departmentEntity = departmentFindingService.getDepartmentEntity(departmentName);
         UserEntity userEntity = userFindingService.getUserEntity(loggedUser.getName());
-        if (isUserAModeratorInDepartment(departmentEntity, userFindingService.getUserEntity(loggedUser.getName())) || userEntity.getRole().equals(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
+        if (isUserAModeratorInDepartment(departmentEntity, userFindingService.getUserEntity(loggedUser.getName())) || userEntity.getRole().equals(RoleType.ROLE_ADMIN)) {
             deleteRelatedData(userEntity, departmentEntity);
             departmentRepository.deleteByDepartmentName(departmentName);
         } else {
@@ -85,7 +83,7 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     @Override
     public void deleteUserEntityFromModeratorList(Principal loggedUser, DeleteUserEntityFromModeratorListRequestDTO requestDTO) throws DepartmentNoPermissionException {
         UserEntity userEntity = userFindingService.getUserEntity(loggedUser.getName());
-        if (userEntity.getRole().equals(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
+        if (userEntity.getRole().equals(RoleType.ROLE_ADMIN)) {
             deleteRelatedData(userFindingService.getUserEntity(requestDTO.username()), departmentFindingService.getDepartmentEntity(requestDTO.departmentName()));
         } else {
             throw new DepartmentNoPermissionException(requestDTO.departmentName());

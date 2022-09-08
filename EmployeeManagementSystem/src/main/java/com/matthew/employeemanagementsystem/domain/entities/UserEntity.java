@@ -1,6 +1,7 @@
 package com.matthew.employeemanagementsystem.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.matthew.employeemanagementsystem.domain.enums.RoleType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -41,18 +42,18 @@ public class UserEntity implements UserDetails {
     private List<DepartmentEntity> departmentEntities = new ArrayList<>();
 
     @JsonIgnore
-    @OneToOne
-    private RoleEntity role;
+    private RoleType role;
 
-    public UserEntity(String username, String password, String email) {
+    public UserEntity(String username, String password, String email, String role) {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.role = RoleType.valueOf(role);
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(role.getRoleType().toString()));
+        return Collections.singleton(new SimpleGrantedAuthority(role.toString()));
     }
 
     @Override
