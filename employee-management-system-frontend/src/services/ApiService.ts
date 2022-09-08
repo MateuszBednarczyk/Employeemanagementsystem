@@ -10,8 +10,6 @@ const axiosWithTokenCheck = axios.create();
 
 export const httpInterceptor = axiosWithTokenCheck.interceptors.request.use(
   async (request) => {
-    // console.log('jwt: ');
-    // console.log(UserAccountService.ParseJwt(UserAccountService.GetJwt()!))
     if (UserAccountService.IsJwtExpired()) {
       console.log("token has expired, logged out");
       UserAccountService.Logout();
@@ -68,21 +66,38 @@ const ApiService = {
   //#endregion
 
   //#region Moderators
-  
+
   async AddModerator(request: AddModeratorRequest) {
-    const registerRequest:RegisterRequest = {...request, role:Roles.Moderator}
-    await axiosWithTokenCheck.post(`${baseUrl}/users/register`, registerRequest);
+    const registerRequest: RegisterRequest = {
+      ...request,
+      role: Roles.Moderator,
+    };
+    await axiosWithTokenCheck.post(
+      `${baseUrl}/users/register`,
+      registerRequest
+    );
   },
 
   GetModerators() {
     return axiosWithTokenCheck.get(`${baseUrl}/users/moderators`);
   },
 
-  DeleteModerator(username:string){
-    const body = {username:username}
-    return axiosWithTokenCheck.delete(`${baseUrl}/users/delete`,{data:body})
+  DeleteModerator(username: string) {
+    const body = { username: username };
+    return axiosWithTokenCheck.delete(`${baseUrl}/users/delete`, {
+      data: body,
+    });
   },
 
+  async AddModeratorToDepartments(username: string, departmentNames: string[]) {
+    for (let i = 0; i < departmentNames.length; i++) {
+      const dep = departmentNames[i];
+      await axiosWithTokenCheck.post(`${baseUrl}/department/add-moderator`, {
+        username: username,
+        departmentName: dep,
+      });
+    }
+  },
   //#endregion
 
   //#region Admins
