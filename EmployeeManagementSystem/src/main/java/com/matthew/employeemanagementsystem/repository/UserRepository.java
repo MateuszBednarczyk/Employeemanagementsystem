@@ -1,6 +1,5 @@
 package com.matthew.employeemanagementsystem.repository;
 
-import com.matthew.employeemanagementsystem.domain.entities.RoleEntity;
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
 import com.matthew.employeemanagementsystem.domain.enums.RoleType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,5 +12,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     void deleteByUsername(String username);
 
-    List<UserEntity> findAllByRoleRoleType(RoleType roleType);
+    List<UserEntity> findAllByRole(RoleType roleType);
 }

@@ -3,7 +3,6 @@ package com.matthew.employeemanagementsystem;
 import com.matthew.employeemanagementsystem.dtos.department.AddNewDepartmentRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.user.RegisterNewUserRequestDTO;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
-import com.matthew.employeemanagementsystem.service.role.RoleFacade;
 import com.matthew.employeemanagementsystem.service.user.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,8 +21,6 @@ public class EmployeeManagementSystemApplication {
 
     private final UserManagementService userManagementService;
     private final DepartmentFacade departmentFacade;
-    private final RoleFacade roleFacade;
-
     @Value("${setup.superadmin.username}")
     private String setupUsername;
 
@@ -41,14 +38,6 @@ public class EmployeeManagementSystemApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(EmployeeManagementSystemApplication.class, args);
-    }
-
-    @Bean
-    @EventListener(EmployeeManagementSystemApplication.class)
-    public void setupRoles() {
-        roleFacade.createRoleEntity("ROLE_SUPERADMIN");
-        roleFacade.createRoleEntity("ROLE_ADMIN");
-        roleFacade.createRoleEntity("ROLE_MODERATOR");
     }
 
     @Bean

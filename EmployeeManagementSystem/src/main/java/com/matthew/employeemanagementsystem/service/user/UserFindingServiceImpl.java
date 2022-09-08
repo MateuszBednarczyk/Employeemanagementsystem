@@ -33,7 +33,7 @@ public class UserFindingServiceImpl implements UserFindingService {
 
     private List<UserResponseDTO> findUsersByRoleAndConvertEntitiesToDTOs(RoleType roleType) {
         List<UserResponseDTO> userResponseDTOs = new ArrayList<>();
-        userRepository.findAllByRoleRoleType(roleType).forEach(userEntity -> userResponseDTOs.add(userModelMapper.mapUserEntityToUserResponseDTO(userEntity)));
+        userRepository.findAllByRole(roleType).forEach(userEntity -> userResponseDTOs.add(userModelMapper.mapUserEntityToUserResponseDTO(userEntity)));
 
         return userResponseDTOs;
     }

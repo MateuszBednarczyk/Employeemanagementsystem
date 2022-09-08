@@ -1,7 +1,6 @@
 package com.matthew.employeemanagementsystem.service.user;
 
 import com.matthew.employeemanagementsystem.configuration.SuffixConfiguration;
-import com.matthew.employeemanagementsystem.domain.entities.RoleEntity;
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
 import com.matthew.employeemanagementsystem.domain.enums.RoleType;
 import com.matthew.employeemanagementsystem.dtos.department.AddModeratorToDepartmentRequestDTO;
@@ -11,7 +10,6 @@ import com.matthew.employeemanagementsystem.exception.user.*;
 import com.matthew.employeemanagementsystem.mapper.UserModelMapper;
 import com.matthew.employeemanagementsystem.repository.UserRepository;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
-import com.matthew.employeemanagementsystem.service.role.RoleFacade;
 import com.matthew.employeemanagementsystem.service.verificationtoken.VerificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,7 +27,6 @@ class UserManagementServiceImpl implements UserManagementService {
     private final UserRepository userRepository;
     private final SuffixConfiguration suffixConfiguration;
     private final DepartmentFacade departmentFacade;
-    private final RoleFacade roleFacade;
     private final UserFindingService userFindingService;
     private final UserModelMapper userModelMapper;
     private final VerificationService verificationService;
@@ -69,14 +66,14 @@ class UserManagementServiceImpl implements UserManagementService {
         }
     }
 
-    private boolean isUserSuperAdmin(RoleEntity role) {
-        return role.equals(roleFacade.findByRoleType(RoleType.ROLE_SUPERADMIN));
+    private boolean isUserSuperAdmin(RoleType role) {
+        return role.equals(RoleType.ROLE_SUPERADMIN);
     }
 
     @Override
     public void deleteUser(Principal principal, DeleteUserRequestDTO requestDTO) {
         UserEntity requestingUser = userFindingService.getUserEntity(principal.getName());
-        if (requestingUser.getRole().equals(roleFacade.findByRoleType(RoleType.ROLE_SUPERADMIN)) || requestingUser.getRole().equals(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
+        if (requestingUser.getRole().equals(RoleType.ROLE_SUPERADMIN) || requestingUser.getRole().equals(RoleType.ROLE_ADMIN)) {
             userRepository.deleteByUsername(requestDTO.username());
         } else {
             throw new UserDoesNotHavePermissionException(requestingUser.getUsername());
@@ -98,9 +95,7 @@ class UserManagementServiceImpl implements UserManagementService {
     }
 
     private UserEntity createEntityToSave(RegisterNewUserRequestDTO requestDTO) throws IllegalArgumentException {
-        UserEntity newUserEntity = new UserEntity(requestDTO.username(), encodePassword(requestDTO.password()), requestDTO.email());
-        RoleEntity role = roleFacade.findByRoleType(RoleType.valueOf(requestDTO.role()));
-        newUserEntity.setRole(role);
+        UserEntity newUserEntity = new UserEntity(requestDTO.username(), encodePassword(requestDTO.password()), requestDTO.email(), requestDTO.role());
         newUserEntity.getDepartmentEntities().add(departmentFacade.getDepartmentEntity(requestDTO.department()));
 
         return newUserEntity;
