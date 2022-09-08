@@ -98,6 +98,20 @@ const ApiService = {
       });
     }
   },
+
+  async RemoveModeratorFromDepartment(
+    username: string,
+    departmentName: string
+  ) {
+    await axiosWithTokenCheck.post(
+      `${baseUrl}/department/delete-user-from-moderator-list`,
+      {
+        username: username,
+        departmentName: departmentName,
+      }
+    );
+  },
+
   //#endregion
 
   //#region Admins

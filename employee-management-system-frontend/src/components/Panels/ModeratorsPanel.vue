@@ -108,7 +108,14 @@
         <q-card-section class="q-pt-none">
           <span> current departments: </span>
           <ul>
-            <li v-for="dep in selectedModerator?.departments">
+            <li style="list-style: none" v-for="dep in selectedModerator?.departments">
+              <q-btn
+                style="width: 25px; margin-right: 10px"
+                size="xs"
+                color="negative"
+                icon="close"
+                @click="removeModeratorFromDepartment(dep.departmentName)"
+              />
               {{ dep.departmentName }}
             </li>
           </ul>
@@ -136,7 +143,7 @@
             </div>
           </div>
           <br />
-          <span> selected departments: </span>
+          <span> selected new departments: </span>
           <ul>
             <li style="list-style: none" v-for="dep in newDepartments">
               <q-btn
@@ -161,6 +168,7 @@
 </template>
 
 <script setup lang="ts">
+import router from "@/router";
 import ApiService from "@/services/ApiService";
 import { onMounted, ref, toRaw } from "vue";
 
@@ -321,6 +329,15 @@ const removeNewDepartment = (departmentName: string) => {
   newDepartments.value = newDepartments.value.filter(
     (dep) => dep != departmentName
   );
+};
+const removeModeratorFromDepartment = (departmentName: string) => {
+  ApiService.RemoveModeratorFromDepartment(
+    selectedModerator.value?.username!,
+    departmentName
+  ).then(() => {
+    closeEditModeratorDialog();
+    reloadModerators();
+  });
 };
 
 //#endregion
