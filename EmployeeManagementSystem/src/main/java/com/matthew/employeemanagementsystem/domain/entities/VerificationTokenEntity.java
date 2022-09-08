@@ -18,10 +18,10 @@ public class VerificationTokenEntity {
     private String tokenValue;
 
     @OneToOne
-    private UserEntity userEntity;
+    private UserEntity user;
 
-    public VerificationTokenEntity(String tokenValue, UserEntity userEntity) {
+    public VerificationTokenEntity(String tokenValue, UserEntity user) {
         this.tokenValue = tokenValue;
-        this.userEntity = userEntity;
+        this.user = user;
     }
 }

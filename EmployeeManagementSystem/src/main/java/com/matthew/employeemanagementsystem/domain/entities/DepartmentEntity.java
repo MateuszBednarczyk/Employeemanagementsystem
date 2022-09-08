@@ -24,11 +24,11 @@ public class DepartmentEntity {
 
     @JsonIgnore
     @ManyToMany
-    private List<EmployeeEntity> employeesList = new ArrayList<>();
+    private List<EmployeeEntity> employees = new ArrayList<>();
 
     @JsonIgnore
     @ManyToMany
-    private List<UserEntity> moderatorList = new ArrayList<>();
+    private List<UserEntity> moderators = new ArrayList<>();
 
     public DepartmentEntity(String departmentName) {
         this.departmentName = departmentName;

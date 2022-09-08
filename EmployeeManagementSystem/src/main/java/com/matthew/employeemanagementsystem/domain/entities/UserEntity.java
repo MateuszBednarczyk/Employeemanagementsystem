@@ -39,7 +39,7 @@ public class UserEntity implements UserDetails {
 
     @JsonIgnore
     @ManyToMany
-    private List<DepartmentEntity> departmentEntities = new ArrayList<>();
+    private List<DepartmentEntity> departments = new ArrayList<>();
 
     @JsonIgnore
     private RoleType role;
