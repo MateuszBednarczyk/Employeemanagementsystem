@@ -38,7 +38,7 @@ class VerificationServiceImpl implements VerificationService {
 
     @Override
     public void verify(String tokenValue) {
-        verificationTokenRepository.findByTokenValue(tokenValue).getUserEntity().setEnabled(true);
+        verificationTokenRepository.findByTokenValue(tokenValue).getUser().setEnabled(true);
     }
 
     public void sendVerificationLink(String verificationLink, String userEmail) {

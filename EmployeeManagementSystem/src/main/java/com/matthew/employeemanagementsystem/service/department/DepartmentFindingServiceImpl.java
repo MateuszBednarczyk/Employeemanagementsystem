@@ -48,7 +48,7 @@ class DepartmentFindingServiceImpl implements DepartmentFindingService {
 
         } else if (userRole.equals(RoleType.ROLE_MODERATOR)) {
 
-            return generateList(loggedUserEntity.getDepartmentEntities());
+            return generateList(loggedUserEntity.getDepartments());
 
         } else {
             throw new DepartmentNoPermissionException();

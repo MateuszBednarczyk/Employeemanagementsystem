@@ -34,12 +34,12 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
         checkIfAddingNewDepartmentIsPossible(requestDTO.departmentName().toLowerCase());
         DepartmentEntity newDepartmentEntity = createAndSaveDepartmentEntity(requestDTO);
 
-        return new DepartmentResponseDTO(newDepartmentEntity.getDepartmentName(), newDepartmentEntity.getEmployeesList());
+        return new DepartmentResponseDTO(newDepartmentEntity.getDepartmentName(), newDepartmentEntity.getEmployees());
     }
 
     @Override
     public void deleteEmployeeFromDepartment(DeleteEmployeeRequestDTO deleteEmployeeRequestDTO, EmployeeEntity employeeEntity) {
-        departmentFindingService.getDepartmentEntity(deleteEmployeeRequestDTO.departmentName()).getEmployeesList().remove(employeeEntity);
+        departmentFindingService.getDepartmentEntity(deleteEmployeeRequestDTO.departmentName()).getEmployees().remove(employeeEntity);
     }
 
     @Override
@@ -55,8 +55,8 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     }
 
     private void deleteRelatedData(UserEntity userEntity, DepartmentEntity departmentEntity) {
-        userEntity.getDepartmentEntities().remove(departmentEntity);
-        departmentEntity.getModeratorList().remove(userEntity);
+        userEntity.getDepartments().remove(departmentEntity);
+        departmentEntity.getModerators().remove(userEntity);
     }
 
     @Override
@@ -70,14 +70,14 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     }
 
     private void addUserAsAModeratorAndAddDepartmentEntityToUserIfItsNotPresent(DepartmentEntity departmentEntity, UserEntity userEntity) {
-        departmentEntity.getModeratorList().add(userEntity);
-        if (!userEntity.getDepartmentEntities().contains(departmentEntity)) {
-            userEntity.getDepartmentEntities().add(departmentEntity);
+        departmentEntity.getModerators().add(userEntity);
+        if (!userEntity.getDepartments().contains(departmentEntity)) {
+            userEntity.getDepartments().add(departmentEntity);
         }
     }
 
     private boolean isUserAModeratorInDepartment(DepartmentEntity departmentEntity, UserEntity userEntity) {
-        return departmentEntity.getModeratorList().contains(userEntity);
+        return departmentEntity.getModerators().contains(userEntity);
     }
 
     @Override
@@ -102,8 +102,8 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     }
 
     public void addDepartmentToEmployeeAndAddEmployeeToDepartment(DepartmentEntity selectedDepartment, EmployeeEntity newEmployeeEntity) {
-        newEmployeeEntity.getDepartmentEntities().add(selectedDepartment);
-        selectedDepartment.getEmployeesList().add(newEmployeeEntity);
+        newEmployeeEntity.getDepartments().add(selectedDepartment);
+        selectedDepartment.getEmployees().add(newEmployeeEntity);
     }
 
     private DepartmentEntity createAndSaveDepartmentEntity(AddNewDepartmentRequestDTO requestDTO) {

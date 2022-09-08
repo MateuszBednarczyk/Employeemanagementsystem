@@ -28,7 +28,7 @@ public class EmployeeEntity {
     private String email;
 
     @ManyToMany
-    private List<DepartmentEntity> departmentEntities = new ArrayList<>();
+    private List<DepartmentEntity> departments = new ArrayList<>();
 
     public EmployeeEntity(String name, String surname, String email) {
         this.name = name;
