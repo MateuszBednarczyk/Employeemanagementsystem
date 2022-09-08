@@ -9,7 +9,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,13 +27,15 @@ public class UserEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotBlank
+    @Size(min = 1, max = 25, message = "Username has to be between 1 and 25 characters")
     private String username;
 
-    @NotNull
+    @NotBlank
     private String password;
 
-    @NotNull
+    @NotBlank
+    @Size(min = 1, max = 100, message = "Email has to be between 1 and 100 characters")
     private String email;
 
     @NotNull
@@ -42,6 +46,7 @@ public class UserEntity implements UserDetails {
     private List<DepartmentEntity> departments = new ArrayList<>();
 
     @JsonIgnore
+    @NotNull
     private RoleType role;
 
     public UserEntity(String username, String password, String email, String role) {

@@ -1,4 +1,9 @@
 package com.matthew.employeemanagementsystem.dtos.employee;
 
-public record DeleteEmployeeRequestDTO(String name, String surname, String departmentName) {
+import javax.validation.constraints.NotBlank;
+
+public record DeleteEmployeeRequestDTO(
+        @NotBlank String name,
+        @NotBlank String surname,
+        @NotBlank String departmentName) {
 }

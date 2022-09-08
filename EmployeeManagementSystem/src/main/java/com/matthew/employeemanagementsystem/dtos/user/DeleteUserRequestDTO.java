@@ -1,4 +1,6 @@
 package com.matthew.employeemanagementsystem.dtos.user;
 
-public record DeleteUserRequestDTO(String username) {
+import javax.validation.constraints.NotBlank;
+
+public record DeleteUserRequestDTO(@NotBlank String username) {
 }

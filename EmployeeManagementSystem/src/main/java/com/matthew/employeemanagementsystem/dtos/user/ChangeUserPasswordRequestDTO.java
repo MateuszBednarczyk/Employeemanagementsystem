@@ -1,6 +1,9 @@
 package com.matthew.employeemanagementsystem.dtos.user;
 
-public record ChangeUserPasswordRequestDTO(String oldPassword, String repeatOldPassword,
-                                           String newPassword,
-                                           String repeatNewPassword) {
+import javax.validation.constraints.NotBlank;
+
+public record ChangeUserPasswordRequestDTO(@NotBlank String oldPassword,
+                                           @NotBlank String repeatOldPassword,
+                                           @NotBlank String newPassword,
+                                           @NotBlank String repeatNewPassword) {
 }

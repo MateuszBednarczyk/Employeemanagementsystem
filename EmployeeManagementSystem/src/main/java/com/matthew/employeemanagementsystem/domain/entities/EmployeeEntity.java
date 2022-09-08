@@ -1,10 +1,11 @@
 package com.matthew.employeemanagementsystem.domain.entities;
 
-import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,13 +19,16 @@ public class EmployeeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotBlank
+    @Size(min = 1, max = 50, message = "Name has to be between 1 and 50 characters")
     private String name;
 
-    @NotNull
+    @NotBlank
+    @Size(min = 1, max = 60, message = "Surname has to be between 1 and 50 characters")
     private String surname;
 
-    @NotNull
+    @NotBlank
+    @Size(min = 1, max = 100, message = "Email has to be between 1 and 100 characters")
     private String email;
 
     @ManyToMany
