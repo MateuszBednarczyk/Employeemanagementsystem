@@ -42,7 +42,7 @@ class EmployeeController {
         return new ResponseEntity<>(employeeFacade.findEmployeesInDepartment(departmentName), HttpStatus.OK);
     }
 
-    @PatchMapping("edit")
+    @PatchMapping("modify")
     public ResponseEntity<String> modifyEmployee(@RequestBody ModifyEmployeeRequestDTO requestDTO) {
         employeeFacade.modifyEmployee(requestDTO);
 
