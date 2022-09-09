@@ -71,7 +71,10 @@
             v-model="dialogEmail"
             type="text"
             label="email"
-            :rules="[(val) => !!val || 'Field is required']"
+            :rules="[
+              (val) => !!val || 'Field is required',
+              (val) => validateEmail(val) || 'Email isn\'t valid',
+            ]"
           />
           <q-input
             v-model="dialogPassword"
@@ -82,7 +85,7 @@
           <q-select
             v-model="dialogDepartment"
             :options="departmentNames"
-            label="Standard"
+            label="Department"
             filled
             required
           />
@@ -302,6 +305,7 @@ const submitEditModerator = () => {
     newDepartments.value
   ).then(() => {
     reloadModerators();
+    closeEditModeratorDialog();
   });
 };
 
@@ -336,6 +340,7 @@ const removeNewDepartment = (departmentName: string) => {
     (dep) => dep != departmentName
   );
 };
+
 const removeModeratorFromDepartment = (departmentName: string) => {
   ApiService.RemoveModeratorFromDepartment(
     selectedModerator.value?.username!,
@@ -344,6 +349,14 @@ const removeModeratorFromDepartment = (departmentName: string) => {
     closeEditModeratorDialog();
     reloadModerators();
   });
+};
+
+const validateEmail = (value: string) => {
+  if (!value) {
+    return false;
+  }
+  const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  return regex.test(value);
 };
 
 //#endregion
@@ -390,7 +403,7 @@ const columns: any = [
     name: "department",
     label: "Department(s)",
     align: "left",
-    sortable: true,
+    sortable: false,
   },
   {
     name: "actions",
