@@ -71,7 +71,10 @@
             v-model="dialogEmail"
             type="text"
             label="email"
-            :rules="[(val) => !!val || 'Field is required']"
+            :rules="[
+              (val) => !!val || 'Field is required',
+              (val) => validateEmail(val) || 'Email isn\'t valid',
+            ]"
           />
           <q-input
             v-model="dialogPassword"
@@ -82,7 +85,7 @@
           <q-select
             v-model="dialogDepartment"
             :options="departmentNames"
-            label="Standard"
+            label="Department"
             filled
             required
           />
@@ -108,7 +111,10 @@
         <q-card-section class="q-pt-none">
           <span> current departments: </span>
           <ul>
-            <li style="list-style: none" v-for="dep in selectedModerator?.departments">
+            <li
+              style="list-style: none"
+              v-for="dep in selectedModerator?.departments"
+            >
               <q-btn
                 style="width: 25px; margin-right: 10px"
                 size="xs"
@@ -168,7 +174,6 @@
 </template>
 
 <script setup lang="ts">
-import router from "@/router";
 import ApiService from "@/services/ApiService";
 import { onMounted, ref, toRaw } from "vue";
 
@@ -179,7 +184,7 @@ onMounted(() => {
 
 const rowDepartmentsToString = (departmentsProxy: any) => {
   const departments = toRaw(departmentsProxy);
-  if (departments.length <= 0) {
+  if (!departments || departments.length <= 0) {
     return "no departments";
   }
   let res = "";
@@ -203,7 +208,7 @@ const reloadModerators = () => {
         username: el.username,
         email: el.email,
         role: el.role.roleType,
-        departments: el.departmentEntities,
+        departments: el.departments,
       };
     });
 
@@ -300,6 +305,7 @@ const submitEditModerator = () => {
     newDepartments.value
   ).then(() => {
     reloadModerators();
+    closeEditModeratorDialog();
   });
 };
 
@@ -308,9 +314,13 @@ const dialogSelectNewDepartment = () => {
     alert("no department selected");
     return;
   }
-  const moderatorDepartmentNames = selectedModerator.value?.departments.map(
-    (dep) => dep.departmentName
-  );
+  let moderatorDepartmentNames = null;
+  if (selectedModerator.value?.departments) {
+    moderatorDepartmentNames = selectedModerator.value?.departments.map(
+      (dep) => dep.departmentName
+    );
+  }
+
   if (
     moderatorDepartmentNames != null &&
     moderatorDepartmentNames.includes(newDepartmentName.value)
@@ -330,6 +340,7 @@ const removeNewDepartment = (departmentName: string) => {
     (dep) => dep != departmentName
   );
 };
+
 const removeModeratorFromDepartment = (departmentName: string) => {
   ApiService.RemoveModeratorFromDepartment(
     selectedModerator.value?.username!,
@@ -338,6 +349,14 @@ const removeModeratorFromDepartment = (departmentName: string) => {
     closeEditModeratorDialog();
     reloadModerators();
   });
+};
+
+const validateEmail = (value: string) => {
+  if (!value) {
+    return false;
+  }
+  const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  return regex.test(value);
 };
 
 //#endregion
@@ -369,14 +388,14 @@ const columns: any = [
     required: true,
     label: "Username",
     align: "left",
-    field: (row: ModeratorTableRow) => row.name,
+    field: (row: ModeratorTableRow) => row.username,
     sortable: true,
   },
   {
     name: "email",
     align: "left",
     label: "Email",
-    field: (row: ModeratorTableRow) => row.surname,
+    field: (row: ModeratorTableRow) => row.email,
 
     sortable: true,
   },
@@ -384,9 +403,7 @@ const columns: any = [
     name: "department",
     label: "Department(s)",
     align: "left",
-    field: (row: ModeratorTableRow) => row.department,
-
-    sortable: true,
+    sortable: false,
   },
   {
     name: "actions",
