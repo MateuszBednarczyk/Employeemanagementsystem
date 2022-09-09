@@ -1,12 +1,11 @@
 <template>
   <q-page padding>
-    <!-- <div>Moderators panel</div> -->
     <div class="table-container">
       <q-btn
         color="primary"
         icon="add"
         label="Add new admin"
-        @click="openAddModeratorDialog"
+        @click="openAddAdminDialog"
       />
       <q-table
         title="Admins"
@@ -33,7 +32,7 @@
                   color="primary"
                   icon="edit"
                   size="md"
-                  @click="editModerator(props.rowIndex)"
+                  @click="editAdmin(props.rowIndex)"
                 >
                   <q-tooltip :delay="500"> Edit </q-tooltip>
                 </q-btn>
@@ -41,7 +40,7 @@
                   color="negative"
                   icon="delete"
                   size="md"
-                  @click="deleteModerator(props.rowIndex)"
+                  @click="deleteAdmin(props.rowIndex)"
                 >
                   <q-tooltip :delay="500"> Remove </q-tooltip>
                 </q-btn>
@@ -53,9 +52,9 @@
     </div>
   </q-page>
 
-  <q-dialog v-model="addModeratorDialogOpened" @before-show="beforeShowDialog">
+  <q-dialog v-model="addAdminDialogOpened" @before-show="beforeShowDialog">
     <q-card class="dialog-card">
-      <q-form class="" @submit="submitAddModerator">
+      <q-form class="" @submit="submitAddAdmin">
         <q-card-section>
           <div class="text-h6">Add new admin</div>
         </q-card-section>
@@ -99,7 +98,7 @@ import { ErrorService } from "@/services/ErrorService";
 import { onMounted, ref, toRaw } from "vue";
 
 onMounted(() => {
-  reloadModerators();
+  reloadAdmins();
   fetchDepartments();
 });
 
@@ -122,9 +121,9 @@ const rowDepartmentsToString = (departmentsProxy: any) => {
 
 //#region Fetching Data
 
-const reloadModerators = () => {
+const reloadAdmins = () => {
   ApiService.GetAdmins().then((res) => {
-    const data: ModeratorTableRow[] = res.data.map((el: any) => {
+    const data: AdminTableRow[] = res.data.map((el: any) => {
       return {
         username: el.username,
         email: el.email,
@@ -159,8 +158,8 @@ const fetchDepartments = () => {
 //#endregion
 
 //#region Handling dialog
-const addModeratorDialogOpened = ref(false);
-const editModeratorDialogOpened = ref(false);
+const addAdminDialogOpened = ref(false);
+const editAdminDialogOpened = ref(false);
 
 const dialogUsername = ref("");
 const dialogEmail = ref("");
@@ -168,31 +167,31 @@ const dialogPassword = ref("");
 const dialogDepartment = ref("");
 
 const departmentNames = ref<string[]>([]);
-const selectedModerator = ref<ModeratorTableRow | null>(null);
+const selectedAdmin = ref<AdminTableRow | null>(null);
 
 const newDepartmentName = ref<string | null>(null);
 const newDepartments = ref<string[]>([]);
 
-const openAddModeratorDialog = () => {
-  addModeratorDialogOpened.value = true;
+const openAddAdminDialog = () => {
+  addAdminDialogOpened.value = true;
 };
-const closeAddModeratorDialog = () => {
-  addModeratorDialogOpened.value = false;
-};
-
-const openEditModeratorDialog = (moderator: ModeratorTableRow) => {
-  selectedModerator.value = moderator;
-  editModeratorDialogOpened.value = true;
+const closeAddAdminDialog = () => {
+  addAdminDialogOpened.value = false;
 };
 
-const closeEditModeratorDialog = () => {
-  editModeratorDialogOpened.value = false;
-  selectedModerator.value = null;
+const openEditAdminDialog = (admin: AdminTableRow) => {
+  selectedAdmin.value = admin;
+  editAdminDialogOpened.value = true;
+};
+
+const closeEditAdminDialog = () => {
+  editAdminDialogOpened.value = false;
+  selectedAdmin.value = null;
   clearFields();
 };
 
 const beforeShowDialog = () => {
-  if (selectedModerator.value == null) return;
+  if (selectedAdmin.value == null) return;
   clearFields();
 };
 const clearFields = () => {
@@ -203,71 +202,15 @@ const clearFields = () => {
   newDepartments.value = [];
 };
 
-const submitAddModerator = () => {
-  const requestData: AddModeratorRequest = {
+const submitAddAdmin = () => {
+  const requestData: AddAdminRequest = {
     username: dialogUsername.value,
     email: dialogEmail.value,
     password: dialogPassword.value,
   };
   ApiService.AddAdmin(requestData).then(() => {
-    reloadModerators();
-    closeAddModeratorDialog();
-  });
-};
-
-const submitEditModerator = () => {
-  if (newDepartments.value.length <= 0) {
-    alert("no departments selected");
-    return;
-  }
-  ApiService.AddModeratorToDepartments(
-    selectedModerator.value?.username!,
-    newDepartments.value
-  ).then(() => {
-    reloadModerators();
-    closeEditModeratorDialog();
-  });
-};
-
-const dialogSelectNewDepartment = () => {
-  if (newDepartmentName.value == null) {
-    alert("no department selected");
-    return;
-  }
-  let moderatorDepartmentNames = null;
-  if (selectedModerator.value?.departments) {
-    moderatorDepartmentNames = selectedModerator.value?.departments.map(
-      (dep) => dep.departmentName
-    );
-  }
-
-  if (
-    moderatorDepartmentNames != null &&
-    moderatorDepartmentNames.includes(newDepartmentName.value)
-  ) {
-    alert("moderator is already assigned to this department");
-    return;
-  }
-  if (newDepartments.value.includes(newDepartmentName.value)) {
-    alert("this department is already selected");
-    return;
-  }
-  newDepartments.value.push(newDepartmentName.value);
-};
-
-const removeNewDepartment = (departmentName: string) => {
-  newDepartments.value = newDepartments.value.filter(
-    (dep) => dep != departmentName
-  );
-};
-
-const removeModeratorFromDepartment = (departmentName: string) => {
-  ApiService.RemoveModeratorFromDepartment(
-    selectedModerator.value?.username!,
-    departmentName
-  ).then(() => {
-    closeEditModeratorDialog();
-    reloadModerators();
+    reloadAdmins();
+    closeAddAdminDialog();
   });
 };
 
@@ -283,17 +226,17 @@ const validateEmail = (value: string) => {
 
 //#region Table actions
 
-const deleteModerator = (rowId: number) => {
+const deleteAdmin = (rowId: number) => {
   ApiService.DeleteModerator(rows.value[rowId].username).then(() => {
-    reloadModerators();
+    reloadAdmins();
   });
 };
 
-const editModerator = (rowId: number) => {
+const editAdmin = (rowId: number) => {
   ErrorService.functionalityNotImplemented();
   const rowProxy = rows.value[rowId];
   const moderator = toRaw(rowProxy);
-  openEditModeratorDialog(moderator);
+  openEditAdminDialog(moderator);
 };
 
 //#endregion
@@ -306,14 +249,14 @@ const columns: any = [
     required: true,
     label: "Username",
     align: "left",
-    field: (row: ModeratorTableRow) => row.username,
+    field: (row: AdminTableRow) => row.username,
     sortable: true,
   },
   {
     name: "email",
     align: "left",
     label: "Email",
-    field: (row: ModeratorTableRow) => row.email,
+    field: (row: AdminTableRow) => row.email,
 
     sortable: true,
   },
@@ -330,11 +273,11 @@ const columns: any = [
   },
 ];
 
-const rows = ref<ModeratorTableRow[]>([]);
+const rows = ref<AdminTableRow[]>([]);
 
 //#endregion
 
-interface ModeratorTableRow {
+interface AdminTableRow {
   username: string;
   email: string;
   role: string;

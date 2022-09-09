@@ -68,7 +68,7 @@ const ApiService = {
   //#region Moderators
 
   async AddModerator(request: AddModeratorRequest) {
-    const registerRequest: RegisterRequest = {
+    const registerRequest: RegisterModeratorRequest = {
       ...request,
       role: Roles.Moderator,
     };
@@ -115,8 +115,8 @@ const ApiService = {
   //#endregion
 
   //#region Admins
-  async AddAdmin(request: AddModeratorRequest) {
-    const registerRequest: RegisterRequest = {
+  async AddAdmin(request: AddAdminRequest) {
+    const registerRequest: RegisterAdminRequest = {
       ...request,
       role: Roles.Admin,
     };
