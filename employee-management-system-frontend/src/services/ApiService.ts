@@ -115,7 +115,27 @@ const ApiService = {
   //#endregion
 
   //#region Admins
+  async AddAdmin(request: AddModeratorRequest) {
+    const registerRequest: RegisterRequest = {
+      ...request,
+      role: Roles.Admin,
+    };
+    await axiosWithTokenCheck.post(
+      `${baseUrl}/users/register`,
+      registerRequest
+    );
+  },
 
+  GetAdmins() {
+    return axiosWithTokenCheck.get(`${baseUrl}/users/admins`);
+  },
+
+  DeleteAdmin(username: string) {
+    const body = { username: username };
+    return axiosWithTokenCheck.delete(`${baseUrl}/users/delete`, {
+      data: body,
+    });
+  },
   //#endregion
 
   //#region Login
