@@ -224,7 +224,7 @@ const validateEmail = (value: string) => {
 //#region Table actions
 
 const deleteAdmin = (rowId: number) => {
-  ApiService.DeleteModerator(rows.value[rowId].username).then(() => {
+  ApiService.DeleteAdmin(rows.value[rowId].username).then(() => {
     reloadAdmins();
   });
 };
@@ -232,8 +232,8 @@ const deleteAdmin = (rowId: number) => {
 const editAdmin = (rowId: number) => {
   ErrorService.functionalityNotImplemented();
   const rowProxy = rows.value[rowId];
-  const moderator = toRaw(rowProxy);
-  openEditAdminDialog(moderator);
+  const admin = toRaw(rowProxy);
+  openEditAdminDialog(admin);
 };
 
 //#endregion
@@ -276,7 +276,7 @@ interface AdminTableRow {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .table-container {
   margin-left: auto;
   margin-right: auto;
@@ -296,11 +296,5 @@ interface AdminTableRow {
   button:not(:last-child) {
     margin-right: 10px;
   }
-}
-
-.edit-moderator-card {
-  padding: 30px;
-  width: 30vw;
-  height: 50vh;
 }
 </style>
