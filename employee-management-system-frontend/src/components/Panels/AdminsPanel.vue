@@ -23,9 +23,6 @@
             <q-td key="email" :props="props">
               {{ props.row.email }}
             </q-td>
-            <q-td key="department" :props="props">
-              {{ rowDepartmentsToString(props.row.departments) }}
-            </q-td>
             <q-td key="actions" :props="props" auto-width>
               <div class="table-actions-container">
                 <q-btn
@@ -259,12 +256,6 @@ const columns: any = [
     field: (row: AdminTableRow) => row.email,
 
     sortable: true,
-  },
-  {
-    name: "department",
-    label: "Department(s)",
-    align: "left",
-    sortable: false,
   },
   {
     name: "actions",
