@@ -160,12 +160,12 @@ const reloadEmployees = () => {
     data.forEach((element) => {
       departments.value.push({
         departmentName: element.departmentName,
-        employeesList: element.employeesList,
+        employees: element.employees,
       });
 
       departmentNames.value.push(element.departmentName);
     });
-    console.log(departmentNames)
+    // console.log(departmentNames.value)
     if (departmentSelectModel.value == "") {
       departmentSelectModel.value = departmentNames.value.at(0)!;
     }
@@ -183,7 +183,7 @@ const selectDepartment = (department: string) => {
 
 const changeDepartment = (index: number) => {
   selectedDepartment.value = departments.value[index];
-  rows.value = departments.value[index].employeesList;
+  rows.value = departments.value[index].employees;
 };
 //#endregion
 

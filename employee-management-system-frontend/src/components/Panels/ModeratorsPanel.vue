@@ -108,7 +108,10 @@
         <q-card-section class="q-pt-none">
           <span> current departments: </span>
           <ul>
-            <li style="list-style: none" v-for="dep in selectedModerator?.departments">
+            <li
+              style="list-style: none"
+              v-for="dep in selectedModerator?.departments"
+            >
               <q-btn
                 style="width: 25px; margin-right: 10px"
                 size="xs"
@@ -168,7 +171,6 @@
 </template>
 
 <script setup lang="ts">
-import router from "@/router";
 import ApiService from "@/services/ApiService";
 import { onMounted, ref, toRaw } from "vue";
 
@@ -179,7 +181,7 @@ onMounted(() => {
 
 const rowDepartmentsToString = (departmentsProxy: any) => {
   const departments = toRaw(departmentsProxy);
-  if (departments.length <= 0) {
+  if (!departments || departments.length <= 0) {
     return "no departments";
   }
   let res = "";
@@ -203,7 +205,7 @@ const reloadModerators = () => {
         username: el.username,
         email: el.email,
         role: el.role.roleType,
-        departments: el.departmentEntities,
+        departments: el.departments,
       };
     });
 
@@ -308,9 +310,13 @@ const dialogSelectNewDepartment = () => {
     alert("no department selected");
     return;
   }
-  const moderatorDepartmentNames = selectedModerator.value?.departments.map(
-    (dep) => dep.departmentName
-  );
+  let moderatorDepartmentNames = null;
+  if (selectedModerator.value?.departments) {
+    moderatorDepartmentNames = selectedModerator.value?.departments.map(
+      (dep) => dep.departmentName
+    );
+  }
+
   if (
     moderatorDepartmentNames != null &&
     moderatorDepartmentNames.includes(newDepartmentName.value)
@@ -369,14 +375,14 @@ const columns: any = [
     required: true,
     label: "Username",
     align: "left",
-    field: (row: ModeratorTableRow) => row.name,
+    field: (row: ModeratorTableRow) => row.username,
     sortable: true,
   },
   {
     name: "email",
     align: "left",
     label: "Email",
-    field: (row: ModeratorTableRow) => row.surname,
+    field: (row: ModeratorTableRow) => row.email,
 
     sortable: true,
   },
@@ -384,8 +390,6 @@ const columns: any = [
     name: "department",
     label: "Department(s)",
     align: "left",
-    field: (row: ModeratorTableRow) => row.department,
-
     sortable: true,
   },
   {
