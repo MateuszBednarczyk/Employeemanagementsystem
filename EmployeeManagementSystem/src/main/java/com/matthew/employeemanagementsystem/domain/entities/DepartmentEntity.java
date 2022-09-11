@@ -27,7 +27,7 @@ public class DepartmentEntity {
     private List<EmployeeEntity> employees = new ArrayList<>();
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<UserEntity> moderators = new ArrayList<>();
 
     public DepartmentEntity(String departmentName) {
