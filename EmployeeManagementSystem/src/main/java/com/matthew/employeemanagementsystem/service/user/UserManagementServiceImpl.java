@@ -9,6 +9,7 @@ import com.matthew.employeemanagementsystem.exception.role.RoleDoesntHavePermiss
 import com.matthew.employeemanagementsystem.exception.user.*;
 import com.matthew.employeemanagementsystem.mapper.UserModelMapper;
 import com.matthew.employeemanagementsystem.repository.UserRepository;
+import com.matthew.employeemanagementsystem.repository.VerificationTokenRepository;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
 import com.matthew.employeemanagementsystem.service.verificationtoken.VerificationService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ class UserManagementServiceImpl implements UserManagementService {
     private final UserFindingService userFindingService;
     private final UserModelMapper userModelMapper;
     private final VerificationService verificationService;
+    private final VerificationTokenRepository verificationTokenRepository;
 
     @Override
     public UserResponseDTO registerNewUser(HttpServletRequest request, Principal loggedUser, RegisterNewUserRequestDTO requestDTO) throws IllegalArgumentException {
@@ -71,9 +73,12 @@ class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public void deleteUser(Principal principal, DeleteUserRequestDTO requestDTO) {
-        UserEntity requestingUser = userFindingService.getUserEntity(principal.getName());
+    public void deleteUser(Principal loggedUser, DeleteUserRequestDTO requestDTO) {
+        UserEntity requestingUser = userFindingService.getUserEntity(loggedUser.getName());
+        UserEntity requestedUser = userFindingService.getUserEntity(requestDTO.username());
         if (requestingUser.getRole().equals(RoleType.ROLE_SUPERADMIN) || requestingUser.getRole().equals(RoleType.ROLE_ADMIN)) {
+            verificationTokenRepository.deleteByUserId(requestDTO.id());
+            departmentFacade.deleteUserFromAllModeratorsList(requestedUser);
             userRepository.deleteByUsername(requestDTO.username());
         } else {
             throw new UserDoesNotHavePermissionException(requestingUser.getUsername());

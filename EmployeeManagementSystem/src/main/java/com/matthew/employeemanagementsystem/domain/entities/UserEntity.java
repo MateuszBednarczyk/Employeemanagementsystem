@@ -38,7 +38,7 @@ public class UserEntity implements UserDetails {
     private boolean isEnabled = false;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH})
     private List<DepartmentEntity> departments = new ArrayList<>();
 
     @JsonIgnore

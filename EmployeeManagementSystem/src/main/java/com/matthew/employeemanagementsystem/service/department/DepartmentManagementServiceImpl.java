@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.security.Principal;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -99,6 +100,12 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
         departmentEntity.setDepartmentName(requestDTO.newDepartmentName());
 
         return departmentModelMapper.mapDepartmentEntityToDepartmentResponseDTO(departmentEntity);
+    }
+
+    @Override
+    public void deleteUserFromAllModeratorsList(UserEntity userToDelete) {
+        List<DepartmentEntity> allDepartments = departmentRepository.findAll();
+        allDepartments.forEach(departmentEntity -> departmentEntity.getModerators().remove(userToDelete));
     }
 
     public void addDepartmentToEmployeeAndAddEmployeeToDepartment(DepartmentEntity selectedDepartment, EmployeeEntity newEmployeeEntity) {
