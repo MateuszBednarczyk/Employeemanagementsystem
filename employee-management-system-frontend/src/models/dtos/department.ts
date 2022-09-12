@@ -1,4 +1,4 @@
 interface Department{
     departmentName: string;
-    employeesList:Employee[]
+    employees:Employee[]
 }

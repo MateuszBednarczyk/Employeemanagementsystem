@@ -18,7 +18,7 @@
           <q-select
             v-model="departmentSelectModel"
             :options="departmentNames"
-            label="Department"
+            :label="getDepartmentSelectLabel()"
             filled
             @update:model-value="selectDepartment"
           />
@@ -104,8 +104,14 @@
 import ApiService from "@/services/ApiService";
 import { ErrorService } from "@/services/ErrorService";
 import { onMounted, ref } from "vue";
-import AddEmployeeDialog from "../AddEmployeeDialog.vue";
 
+const getDepartmentSelectLabel = () => {
+  if (departmentNames.value.length == 0) {
+    return "No departments";
+  } else {
+    return "Department";
+  }
+};
 //#region Dialog handling
 
 const addEmployeeDialogOpened = ref(false);
@@ -113,7 +119,9 @@ const firstName = ref("");
 const surname = ref("");
 
 const openAddEmployeeDialog = () => {
-  addEmployeeDialogOpened.value = true;
+  if (selectedDepartment.value != null) {
+    addEmployeeDialogOpened.value = true;
+  }
 };
 const closeAddEmployeeDialog = () => {
   addEmployeeDialogOpened.value = false;
@@ -154,17 +162,24 @@ const reloadEmployees = () => {
     departments.value = [];
     departmentNames.value = [];
     const data: Department[] = res.data;
-    if (data[0].departmentName == "superadmin") {
-      data.shift();
-    }
+    
+    const elementsToRemove = data.filter(
+      (el) => el.departmentName == "superadmin" || el.departmentName == "admin"
+    );
+    
+    elementsToRemove.forEach((el) => {
+      data.splice(data.indexOf(el), 1);
+    });
+
     data.forEach((element) => {
       departments.value.push({
         departmentName: element.departmentName,
-        employeesList: element.employeesList,
+        employees: element.employees,
       });
 
       departmentNames.value.push(element.departmentName);
     });
+    // console.log(departmentNames.value)
     if (departmentSelectModel.value == "") {
       departmentSelectModel.value = departmentNames.value.at(0)!;
     }
@@ -181,8 +196,11 @@ const selectDepartment = (department: string) => {
 };
 
 const changeDepartment = (index: number) => {
+  if (departments.value.length == 0) {
+    return;
+  }
   selectedDepartment.value = departments.value[index];
-  rows.value = departments.value[index].employeesList;
+  rows.value = departments.value[index].employees;
 };
 //#endregion
 

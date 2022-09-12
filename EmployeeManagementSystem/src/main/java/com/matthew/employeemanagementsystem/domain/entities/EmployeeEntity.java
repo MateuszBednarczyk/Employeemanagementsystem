@@ -24,11 +24,15 @@ public class EmployeeEntity {
     @NotNull
     private String surname;
 
-    @ManyToMany
-    private List<DepartmentEntity> departmentEntities = new ArrayList<>();
+    @NotNull
+    private String email;
 
-    public EmployeeEntity(String name, String surname) {
+    @ManyToMany
+    private List<DepartmentEntity> departments = new ArrayList<>();
+
+    public EmployeeEntity(String name, String surname, String email) {
         this.name = name;
         this.surname = surname;
+        this.email = email;
     }
 }

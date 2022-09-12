@@ -1,6 +1,6 @@
+import { Roles } from "@/models/enums/roles";
 import { DeleteEmployeeRequest } from "@/models/requests/delete-employee-request";
 import LoginRequest from "@/models/requests/login-request";
-import RegisterRequest from "@/models/requests/register-request";
 import axios from "axios";
 import UserAccountService from "./UserAccountService";
 
@@ -10,8 +10,6 @@ const axiosWithTokenCheck = axios.create();
 
 export const httpInterceptor = axiosWithTokenCheck.interceptors.request.use(
   async (request) => {
-    // console.log('jwt: ');
-    // console.log(UserAccountService.ParseJwt(UserAccountService.GetJwt()!))
     if (UserAccountService.IsJwtExpired()) {
       console.log("token has expired, logged out");
       UserAccountService.Logout();
@@ -65,6 +63,80 @@ const ApiService = {
     });
   },
 
+  //#endregion
+
+  //#region Moderators
+
+  async AddModerator(request: AddModeratorRequest) {
+    const registerRequest: RegisterModeratorRequest = {
+      ...request,
+      role: Roles.Moderator,
+    };
+    await axiosWithTokenCheck.post(
+      `${baseUrl}/users/register`,
+      registerRequest
+    );
+  },
+
+  GetModerators() {
+    return axiosWithTokenCheck.get(`${baseUrl}/users/moderators`);
+  },
+
+  DeleteModerator(username: string) {
+    const body = { username: username };
+    return axiosWithTokenCheck.delete(`${baseUrl}/users/delete`, {
+      data: body,
+    });
+  },
+
+  async AddModeratorToDepartments(username: string, departmentNames: string[]) {
+    for (let i = 0; i < departmentNames.length; i++) {
+      const dep = departmentNames[i];
+      await axiosWithTokenCheck.post(`${baseUrl}/department/add-moderator`, {
+        username: username,
+        departmentName: dep,
+      });
+    }
+  },
+
+  async RemoveModeratorFromDepartment(
+    username: string,
+    departmentName: string
+  ) {
+    await axiosWithTokenCheck.post(
+      `${baseUrl}/department/delete-user-from-moderator-list`,
+      {
+        username: username,
+        departmentName: departmentName,
+      }
+    );
+  },
+
+  //#endregion
+
+  //#region Admins
+  async AddAdmin(request: AddAdminRequest) {
+    const registerRequest: RegisterUserRequest = {
+      ...request,
+      role: Roles.Admin,
+      department: "admin"
+    };
+    await axiosWithTokenCheck.post(
+      `${baseUrl}/users/register`,
+      registerRequest
+    );
+  },
+
+  GetAdmins() {
+    return axiosWithTokenCheck.get(`${baseUrl}/users/admins`);
+  },
+
+  DeleteAdmin(username: string) {
+    const body = { username: username };
+    return axiosWithTokenCheck.delete(`${baseUrl}/users/delete`, {
+      data: body,
+    });
+  },
   //#endregion
 
   //#region Login

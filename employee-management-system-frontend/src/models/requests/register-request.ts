@@ -1,8 +1,16 @@
-interface RegisterRequest {
+//redundant
+interface RegisterModeratorRequest {
+  username: string;
+  password: string;
+  email: string;
+  department: string;
+  role: string;
+}
+
+interface RegisterUserRequest{
   username: string;
   password: string;
   department: string;
-  role?: string;
+  email: string;
+  role: string;
 }
-
-export default RegisterRequest;

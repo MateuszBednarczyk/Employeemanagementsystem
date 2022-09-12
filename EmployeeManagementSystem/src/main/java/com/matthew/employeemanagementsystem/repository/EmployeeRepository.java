@@ -7,5 +7,8 @@ import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> {
     Optional<EmployeeEntity> findByNameAndSurname(String name, String surname);
-    void deleteByNameAndSurname (String name, String surname);
+
+    void deleteByNameAndSurname(String name, String surname);
+
+    Optional<EmployeeEntity> findById(Long id);
 }

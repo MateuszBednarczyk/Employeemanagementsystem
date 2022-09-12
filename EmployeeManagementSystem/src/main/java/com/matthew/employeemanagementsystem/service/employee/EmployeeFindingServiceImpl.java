@@ -37,8 +37,13 @@ class EmployeeFindingServiceImpl implements EmployeeFindingService {
         return prepareEmployeeResponseDTOsList(findDepartmentEntity(departmentName));
     }
 
+    @Override
+    public EmployeeEntity findById(Long id) {
+        return employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
+    }
+
     private List<EmployeeEntity> findDepartmentEntity(String departmentName) {
-        return departmentFacade.getDepartmentEntity(departmentName).getEmployeesList();
+        return departmentFacade.getDepartmentEntity(departmentName).getEmployees();
     }
 
     private List<EmployeeResponseDTO> prepareEmployeeResponseDTOsList(List<EmployeeEntity> employeeEntitiesList) {

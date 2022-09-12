@@ -27,8 +27,8 @@ class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        String roleAdmin = "[ROLE_ADMIN]";
-        String roleSuperAdmin = "[ROLE_SUPERADMIN]";
+        String roleAdmin = "ROLE_ADMIN";
+        String roleSuperAdmin = "ROLE_SUPERADMIN";
         String loginURL = "/api/users/login";
         AuthenticationManager authenticationManager = authenticationManager(http.getSharedObject(AuthenticationConfiguration.class));
         AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager, authenticationService);
@@ -40,7 +40,8 @@ class SecurityConfiguration {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, loginURL).permitAll()
                 .antMatchers("/api/users/register").hasAnyAuthority(roleAdmin, roleSuperAdmin)
-                .antMatchers("/api/users/refreshToken").permitAll();
+                .antMatchers("/api/users/refreshToken").permitAll()
+                .antMatchers("/api/users/verify").permitAll();
         http
                 .addFilter(authenticationFilter)
                 .addFilterBefore(new AuthorizationFilter(authorizationService), UsernamePasswordAuthenticationFilter.class);

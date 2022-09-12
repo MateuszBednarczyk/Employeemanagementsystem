@@ -2,7 +2,12 @@
   <q-page padding>
     <!-- <div>Moderators panel</div> -->
     <div class="table-container">
-      <q-btn color="primary" icon="add" label="Add new moderator" @click="addModerator" />
+      <q-btn
+        color="primary"
+        icon="add"
+        label="Add new moderator"
+        @click="openAddModeratorDialog"
+      />
       <q-table
         title="Moderators"
         :rows="rows"
@@ -13,21 +18,23 @@
       >
         <template v-slot:body="props">
           <q-tr :props="props">
-            <q-td key="name" :props="props">
-              {{ props.row.name }}
+            <q-td key="username" :props="props">
+              {{ props.row.username }}
             </q-td>
-            <q-td key="surname" :props="props">
-              {{ props.row.surname }}
+            <q-td key="email" :props="props">
+              {{ props.row.email }}
             </q-td>
             <q-td key="department" :props="props">
-              {{ props.row.department }}
+              {{ rowDepartmentsToString(props.row.departments) }}
             </q-td>
             <q-td key="actions" :props="props" auto-width>
               <div class="table-actions-container">
-                <!-- <q-btn color="primary" icon="search" size="md" @click="viewModerator(props.rowIndex)">
-                  <q-tooltip :delay="500"> Details </q-tooltip>
-                </q-btn> -->
-                <q-btn color="primary" icon="edit" size="md" @click="editModerator(props.rowIndex)">
+                <q-btn
+                  color="primary"
+                  icon="edit"
+                  size="md"
+                  @click="editModerator(props.rowIndex)"
+                >
                   <q-tooltip :delay="500"> Edit </q-tooltip>
                 </q-btn>
                 <q-btn
@@ -45,23 +52,353 @@
       </q-table>
     </div>
   </q-page>
+
+  <q-dialog v-model="addModeratorDialogOpened" @before-show="beforeShowDialog">
+    <q-card class="dialog-card">
+      <q-form class="" @submit="submitAddModerator">
+        <q-card-section>
+          <div class="text-h6">Add new moderator</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input
+            v-model="dialogUsername"
+            type="text"
+            label="username"
+            :rules="[(val) => !!val || 'Field is required']"
+          />
+          <q-input
+            v-model="dialogEmail"
+            type="text"
+            label="email"
+            :rules="[
+              (val) => !!val || 'Field is required',
+              (val) => validateEmail(val) || 'Email isn\'t valid',
+            ]"
+          />
+          <q-input
+            v-model="dialogPassword"
+            type="password"
+            label="password"
+            :rules="[(val) => !!val || 'Field is required']"
+          />
+          <q-select
+            v-model="dialogDepartment"
+            :options="departmentNames"
+            label="Department"
+            filled
+            required
+          />
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn flat label="Submit" type="submit" color="primary" />
+        </q-card-actions>
+      </q-form>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="editModeratorDialogOpened" @before-show="beforeShowDialog">
+    <q-card class="dialog-card edit-moderator-card">
+      <q-form class="" @submit="submitEditModerator">
+        <q-card-section>
+          <div class="text-h6">
+            Edit moderator {{ selectedModerator?.username }}
+          </div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <span> current departments: </span>
+          <ul>
+            <li
+              style="list-style: none"
+              v-for="dep in selectedModerator?.departments"
+            >
+              <q-btn
+                style="width: 25px; margin-right: 10px"
+                size="xs"
+                color="negative"
+                icon="close"
+                @click="removeModeratorFromDepartment(dep.departmentName)"
+              />
+              {{ dep.departmentName }}
+            </li>
+          </ul>
+          <div class="row">
+            <div class="col-9">
+              <q-select
+                v-model="newDepartmentName"
+                :options="departmentNames"
+                label="New department"
+                filled
+                required
+              />
+            </div>
+            <div class="col-2">
+              <div
+                class="column justify-center items-center"
+                style="height: 100%"
+              >
+                <q-btn
+                  color="primary"
+                  label="Add"
+                  @click="dialogSelectNewDepartment"
+                />
+              </div>
+            </div>
+          </div>
+          <br />
+          <span> selected new departments: </span>
+          <ul>
+            <li style="list-style: none" v-for="dep in newDepartments">
+              <q-btn
+                style="width: 25px; margin-right: 10px"
+                size="xs"
+                color="negative"
+                icon="close"
+                @click="removeNewDepartment(dep)"
+              />
+              {{ dep }}
+            </li>
+          </ul>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn flat label="Submit" type="submit" color="primary" />
+        </q-card-actions>
+      </q-form>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
+import ApiService from "@/services/ApiService";
+import { onMounted, ref, toRaw } from "vue";
+
+onMounted(() => {
+  reloadModerators();
+  fetchDepartments();
+});
+
+const rowDepartmentsToString = (departmentsProxy: any) => {
+  const departments = toRaw(departmentsProxy);
+  if (!departments || departments.length <= 0) {
+    return "no departments";
+  }
+  let res = "";
+
+  for (let index = 0; index < departments.length; index++) {
+    const dep = departments[index];
+    res += dep.departmentName;
+    if (index < departments.length - 1) {
+      res += ", ";
+    }
+  }
+  return res;
+};
+
+//#region Fetching Data
+
+const reloadModerators = () => {
+  ApiService.GetModerators().then((res) => {
+    const data: ModeratorTableRow[] = res.data.map((el: any) => {
+      return {
+        username: el.username,
+        email: el.email,
+        role: el.role.roleType,
+        departments: el.departments,
+      };
+    });
+
+    rows.value = data;
+  });
+};
+
+const fetchDepartments = () => {
+  ApiService.GetDepartments().then((res) => {
+    const data: Department[] = res.data;
+    const elementsToRemove = data.filter(
+      (el) => el.departmentName == "superadmin" || el.departmentName == "admin"
+    );
+    elementsToRemove.forEach((el) => {
+      data.splice(data.indexOf(el), 1);
+    });
+
+    departmentNames.value = [];
+
+    data.forEach((el: Department) => {
+      departmentNames.value.push(el.departmentName);
+    });
+
+    if (departmentNames.value.length > 0) {
+      dialogDepartment.value = departmentNames.value[0];
+    }
+  });
+};
+
+//#endregion
+
+//#region Handling dialog
+const addModeratorDialogOpened = ref(false);
+const editModeratorDialogOpened = ref(false);
+
+const dialogUsername = ref("");
+const dialogEmail = ref("");
+const dialogPassword = ref("");
+const dialogDepartment = ref("");
+
+const departmentNames = ref<string[]>([]);
+const selectedModerator = ref<ModeratorTableRow | null>(null);
+
+const newDepartmentName = ref<string | null>(null);
+const newDepartments = ref<string[]>([]);
+
+const openAddModeratorDialog = () => {
+  addModeratorDialogOpened.value = true;
+};
+const closeAddModeratorDialog = () => {
+  addModeratorDialogOpened.value = false;
+};
+
+const openEditModeratorDialog = (moderator: ModeratorTableRow) => {
+  selectedModerator.value = moderator;
+  editModeratorDialogOpened.value = true;
+};
+
+const closeEditModeratorDialog = () => {
+  editModeratorDialogOpened.value = false;
+  selectedModerator.value = null;
+  clearFields();
+};
+
+const beforeShowDialog = () => {
+  if (selectedModerator.value == null) return;
+  clearFields();
+};
+const clearFields = () => {
+  dialogUsername.value = "";
+  dialogEmail.value = "";
+  dialogPassword.value = "";
+  newDepartmentName.value = null;
+  newDepartments.value = [];
+};
+
+const submitAddModerator = () => {
+  const requestData: AddModeratorRequest = {
+    username: dialogUsername.value,
+    email: dialogEmail.value,
+    password: dialogPassword.value,
+    department: dialogDepartment.value,
+  };
+  ApiService.AddModerator(requestData).then(() => {
+    reloadModerators();
+    closeAddModeratorDialog();
+  });
+};
+
+const submitEditModerator = () => {
+  if (newDepartments.value.length <= 0) {
+    alert("no departments selected");
+    return;
+  }
+  ApiService.AddModeratorToDepartments(
+    selectedModerator.value?.username!,
+    newDepartments.value
+  ).then(() => {
+    reloadModerators();
+    closeEditModeratorDialog();
+  });
+};
+
+const dialogSelectNewDepartment = () => {
+  if (newDepartmentName.value == null) {
+    alert("no department selected");
+    return;
+  }
+  let moderatorDepartmentNames = null;
+  if (selectedModerator.value?.departments) {
+    moderatorDepartmentNames = selectedModerator.value?.departments.map(
+      (dep) => dep.departmentName
+    );
+  }
+
+  if (
+    moderatorDepartmentNames != null &&
+    moderatorDepartmentNames.includes(newDepartmentName.value)
+  ) {
+    alert("moderator is already assigned to this department");
+    return;
+  }
+  if (newDepartments.value.includes(newDepartmentName.value)) {
+    alert("this department is already selected");
+    return;
+  }
+  newDepartments.value.push(newDepartmentName.value);
+};
+
+const removeNewDepartment = (departmentName: string) => {
+  newDepartments.value = newDepartments.value.filter(
+    (dep) => dep != departmentName
+  );
+};
+
+const removeModeratorFromDepartment = (departmentName: string) => {
+  ApiService.RemoveModeratorFromDepartment(
+    selectedModerator.value?.username!,
+    departmentName
+  ).then(() => {
+    closeEditModeratorDialog();
+    reloadModerators();
+  });
+};
+
+const validateEmail = (value: string) => {
+  if (!value) {
+    return false;
+  }
+  const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  return regex.test(value);
+};
+
+//#endregion
+
+//#region Table actions
+
+const deleteModerator = (rowId: number) => {
+  // console.log("trying to delete row " + rows.value[rowId].username);
+  // ErrorService.functionalityNotImplemented()
+  ApiService.DeleteModerator(rows.value[rowId].username).then(() => {
+    reloadModerators();
+  });
+};
+
+const editModerator = (rowId: number) => {
+  // ErrorService.functionalityNotImplemented();
+  const rowProxy = rows.value[rowId];
+  const moderator = toRaw(rowProxy);
+  openEditModeratorDialog(moderator);
+};
+
+//#endregion
+
+//#region Table data
+
 const columns: any = [
   {
-    name: "name",
+    name: "username",
     required: true,
-    label: "Name",
+    label: "Username",
     align: "left",
-    field: (row: ModeratorTableRow) => row.name,
+    field: (row: ModeratorTableRow) => row.username,
     sortable: true,
   },
   {
-    name: "surname",
+    name: "email",
     align: "left",
-    label: "Surname",
-    field: (row: ModeratorTableRow) => row.surname,
+    label: "Email",
+    field: (row: ModeratorTableRow) => row.email,
 
     sortable: true,
   },
@@ -69,9 +406,7 @@ const columns: any = [
     name: "department",
     label: "Department(s)",
     align: "left",
-    field: (row: ModeratorTableRow) => row.department,
-
-    sortable: true,
+    sortable: false,
   },
   {
     name: "actions",
@@ -80,47 +415,15 @@ const columns: any = [
   },
 ];
 
-const rows: ModeratorTableRow[] = [
-  {
-    name: "adam",
-    surname: "abacki",
-    department: "helpdesk",
-  },
-  {
-    name: "bartek",
-    surname: "babacki",
-    department: "helpdesk",
-  },
-  {
-    name: "cezary",
-    surname: "cabacki",
-    department: "HR",
-  },
-  {
-    name: "darek",
-    surname: "dabacki",
-    department: "IT",
-  },
-];
+const rows = ref<ModeratorTableRow[]>([]);
 
-const addModerator = () => {
-
-}
-
-const deleteModerator = (rowId: number) => {
-  console.log("trying to delete row " + rowId);
-  console.log(rows[rowId]);
-};
-
-const editModerator = (rowId: number) => {
-  console.log("trying to edit row " + rowId);
-  console.log(rows[rowId]);
-};
+//#endregion
 
 interface ModeratorTableRow {
-  name: string;
-  surname: string;
-  department: string;
+  username: string;
+  email: string;
+  role: string;
+  departments: Department[];
 }
 </script>
 
@@ -128,15 +431,14 @@ interface ModeratorTableRow {
 .table-container {
   margin-left: auto;
   margin-right: auto;
-  
+
   width: 75vw;
   padding: 0 100px;
   margin-top: 50px;
 
-  button{
+  button {
     margin-bottom: 15px;
     margin-left: 15px;
-
   }
 }
 .table-actions-container {
@@ -145,5 +447,11 @@ interface ModeratorTableRow {
   button:not(:last-child) {
     margin-right: 10px;
   }
+}
+
+.edit-moderator-card {
+  padding: 30px;
+  width: 30vw;
+  height: 50vh;
 }
 </style>

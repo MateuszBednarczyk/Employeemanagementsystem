@@ -1,4 +1,3 @@
-import RegisterRequest from "@/models/requests/register-request";
 import ApiService from "./ApiService";
 import router from "@/router";
 import LoginRequest from "@/models/requests/login-request";
@@ -28,7 +27,6 @@ const UserAccountService = {
         this.SetUsername(data.user.username);
 
         const roles: string[] = this.ParseJwt(data.access_token).roles;
-
         if (roles.includes(Roles.SuperAdmin)) {
           this.SetRole(Roles.SuperAdmin);
         } else if (roles.includes(Roles.Admin)) {
@@ -37,7 +35,7 @@ const UserAccountService = {
           this.SetRole(Roles.Moderator);
         } else {
           //if no roles are assigned
-          console.error("no roles assigned signing out...");
+          console.error("no roles assigned, signing out...");
           this.Logout();
         }
 
@@ -116,7 +114,6 @@ const UserAccountService = {
   },
 
   SetRole(role: string) {
-    // console.log('set role to ' + role)
     localStorage.setItem("role", role);
   },
   GetRole() {

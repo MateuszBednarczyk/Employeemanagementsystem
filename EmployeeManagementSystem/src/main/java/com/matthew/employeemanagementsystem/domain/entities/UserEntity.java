@@ -1,6 +1,7 @@
 package com.matthew.employeemanagementsystem.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.matthew.employeemanagementsystem.domain.enums.RoleType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,30 +24,36 @@ public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NotNull
     private String username;
+
     @NotNull
     private String password;
 
-    @JsonIgnore
-    @ManyToMany
-    private List<DepartmentEntity> departmentEntities = new ArrayList<>();
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    private List<RoleEntity> roles = new ArrayList<>();
+    @NotNull
+    private String email;
 
-    public UserEntity(String username, String password) {
+    @NotNull
+    private boolean isEnabled = false;
+
+    @JsonIgnore
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH})
+    private List<DepartmentEntity> departments = new ArrayList<>();
+
+    @JsonIgnore
+    private RoleType role;
+
+    public UserEntity(String username, String password, String email, String role) {
         this.username = username;
         this.password = password;
+        this.email = email;
+        this.role = RoleType.valueOf(role);
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<String> roleTypes = new ArrayList<>();
-        for (RoleEntity role : roles) {
-            roleTypes.add(role.getRoleType().name());
-        }
-        return Collections.singleton(new SimpleGrantedAuthority(roleTypes.toString()));
+        return Collections.singleton(new SimpleGrantedAuthority(role.toString()));
     }
 
     @Override
@@ -76,6 +83,6 @@ public class UserEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.isEnabled;
     }
 }
