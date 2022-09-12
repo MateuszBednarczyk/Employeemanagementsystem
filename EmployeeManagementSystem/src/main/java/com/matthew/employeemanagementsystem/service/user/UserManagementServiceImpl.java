@@ -77,7 +77,7 @@ class UserManagementServiceImpl implements UserManagementService {
         UserEntity requestingUser = userFindingService.getUserEntity(loggedUser.getName());
         UserEntity requestedUser = userFindingService.getUserEntity(requestDTO.username());
         if (requestingUser.getRole().equals(RoleType.ROLE_SUPERADMIN) || requestingUser.getRole().equals(RoleType.ROLE_ADMIN)) {
-            verificationTokenRepository.deleteByUserId(requestDTO.id());
+            verificationTokenRepository.deleteByUserId(requestedUser.getId());
             departmentFacade.deleteUserFromAllModeratorsList(requestedUser);
             userRepository.deleteByUsername(requestDTO.username());
         } else {
