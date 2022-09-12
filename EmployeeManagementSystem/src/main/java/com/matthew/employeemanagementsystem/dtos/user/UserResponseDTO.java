@@ -5,6 +5,6 @@ import com.matthew.employeemanagementsystem.domain.enums.RoleType;
 
 import java.util.List;
 
-public record UserResponseDTO(Long id, String username, String email, List<DepartmentEntity> departments,
+public record UserResponseDTO(String username, String email, List<DepartmentEntity> departments,
                               RoleType role) {
 }
