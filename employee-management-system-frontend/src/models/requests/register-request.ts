@@ -1,3 +1,4 @@
+//redundant
 interface RegisterModeratorRequest {
   username: string;
   password: string;
@@ -6,9 +7,10 @@ interface RegisterModeratorRequest {
   role: string;
 }
 
-interface RegisterAdminRequest{
+interface RegisterUserRequest{
   username: string;
   password: string;
+  department: string;
   email: string;
   role: string;
 }

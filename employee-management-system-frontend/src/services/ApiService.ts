@@ -116,9 +116,10 @@ const ApiService = {
 
   //#region Admins
   async AddAdmin(request: AddAdminRequest) {
-    const registerRequest: RegisterAdminRequest = {
+    const registerRequest: RegisterUserRequest = {
       ...request,
       role: Roles.Admin,
+      department: "admin"
     };
     await axiosWithTokenCheck.post(
       `${baseUrl}/users/register`,
