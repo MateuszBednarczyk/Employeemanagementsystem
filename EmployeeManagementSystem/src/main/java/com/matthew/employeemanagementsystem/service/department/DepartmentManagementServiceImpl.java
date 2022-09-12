@@ -47,7 +47,7 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     public void deleteDepartmentByName(Principal loggedUser, String departmentName) throws DepartmentNoPermissionException {
         DepartmentEntity departmentEntity = departmentFindingService.getDepartmentEntity(departmentName);
         UserEntity userEntity = userFindingService.getUserEntity(loggedUser.getName());
-        if (isUserAModeratorInDepartment(departmentEntity, userFindingService.getUserEntity(loggedUser.getName())) || userEntity.getRole().equals(RoleType.ROLE_ADMIN)) {
+        if (isUserAModeratorInDepartment(departmentEntity, userFindingService.getUserEntity(loggedUser.getName())) || userEntity.getRole().equals(RoleType.ROLE_ADMIN) || userEntity.getRole().equals(RoleType.ROLE_SUPERADMIN)) {
             deleteRelatedData(userEntity, departmentEntity);
             departmentRepository.deleteByDepartmentName(departmentName);
         } else {
