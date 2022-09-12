@@ -27,7 +27,6 @@ const UserAccountService = {
         this.SetUsername(data.user.username);
 
         const roles: string[] = this.ParseJwt(data.access_token).roles;
-        console.log(roles)
         if (roles.includes(Roles.SuperAdmin)) {
           this.SetRole(Roles.SuperAdmin);
         } else if (roles.includes(Roles.Admin)) {
@@ -115,7 +114,6 @@ const UserAccountService = {
   },
 
   SetRole(role: string) {
-    // console.log('set role to ' + role)
     localStorage.setItem("role", role);
   },
   GetRole() {

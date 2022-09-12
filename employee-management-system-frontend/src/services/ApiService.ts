@@ -68,7 +68,7 @@ const ApiService = {
   //#region Moderators
 
   async AddModerator(request: AddModeratorRequest) {
-    const registerRequest: RegisterRequest = {
+    const registerRequest: RegisterModeratorRequest = {
       ...request,
       role: Roles.Moderator,
     };
@@ -115,7 +115,28 @@ const ApiService = {
   //#endregion
 
   //#region Admins
+  async AddAdmin(request: AddAdminRequest) {
+    const registerRequest: RegisterUserRequest = {
+      ...request,
+      role: Roles.Admin,
+      department: "admin"
+    };
+    await axiosWithTokenCheck.post(
+      `${baseUrl}/users/register`,
+      registerRequest
+    );
+  },
 
+  GetAdmins() {
+    return axiosWithTokenCheck.get(`${baseUrl}/users/admins`);
+  },
+
+  DeleteAdmin(username: string) {
+    const body = { username: username };
+    return axiosWithTokenCheck.delete(`${baseUrl}/users/delete`, {
+      data: body,
+    });
+  },
   //#endregion
 
   //#region Login

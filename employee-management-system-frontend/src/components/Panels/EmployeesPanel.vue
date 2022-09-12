@@ -119,7 +119,7 @@ const firstName = ref("");
 const surname = ref("");
 
 const openAddEmployeeDialog = () => {
-  if(selectedDepartment.value != null){
+  if (selectedDepartment.value != null) {
     addEmployeeDialogOpened.value = true;
   }
 };
@@ -162,9 +162,15 @@ const reloadEmployees = () => {
     departments.value = [];
     departmentNames.value = [];
     const data: Department[] = res.data;
-    if (data[0].departmentName == "superadmin") {
-      data.shift();
-    }
+    
+    const elementsToRemove = data.filter(
+      (el) => el.departmentName == "superadmin" || el.departmentName == "admin"
+    );
+    
+    elementsToRemove.forEach((el) => {
+      data.splice(data.indexOf(el), 1);
+    });
+
     data.forEach((element) => {
       departments.value.push({
         departmentName: element.departmentName,

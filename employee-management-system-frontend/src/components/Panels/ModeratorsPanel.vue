@@ -219,9 +219,12 @@ const reloadModerators = () => {
 const fetchDepartments = () => {
   ApiService.GetDepartments().then((res) => {
     const data: Department[] = res.data;
-    if (data[0].departmentName == "superadmin") {
-      data.shift();
-    }
+    const elementsToRemove = data.filter(
+      (el) => el.departmentName == "superadmin" || el.departmentName == "admin"
+    );
+    elementsToRemove.forEach((el) => {
+      data.splice(data.indexOf(el), 1);
+    });
 
     departmentNames.value = [];
 
