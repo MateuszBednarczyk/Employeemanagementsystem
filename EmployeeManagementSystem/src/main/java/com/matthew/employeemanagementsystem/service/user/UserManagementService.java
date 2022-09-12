@@ -9,7 +9,7 @@ public interface UserManagementService {
 
     UserResponseDTO registerNewUser(HttpServletRequest request, Principal loggedUser, RegisterNewUserRequestDTO requestDTO);
 
-    void deleteUser(Principal principal, DeleteUserRequestDTO requestDTO);
+    void deleteUser(Principal loggedUser, DeleteUserRequestDTO requestDTO);
 
     LoginResponseDTO login(LoginRequestDTO requestDTO);
 
