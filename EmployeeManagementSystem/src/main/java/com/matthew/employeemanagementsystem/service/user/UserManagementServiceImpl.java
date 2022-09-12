@@ -2,7 +2,6 @@ package com.matthew.employeemanagementsystem.service.user;
 
 import com.matthew.employeemanagementsystem.configuration.SuffixConfiguration;
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
-import com.matthew.employeemanagementsystem.domain.enums.RoleType;
 import com.matthew.employeemanagementsystem.dtos.department.AddModeratorToDepartmentRequestDTO;
 import com.matthew.employeemanagementsystem.dtos.user.*;
 import com.matthew.employeemanagementsystem.exception.role.RoleDoesntHavePermissionToThisFeatureException;
@@ -11,6 +10,7 @@ import com.matthew.employeemanagementsystem.mapper.UserModelMapper;
 import com.matthew.employeemanagementsystem.repository.UserRepository;
 import com.matthew.employeemanagementsystem.repository.VerificationTokenRepository;
 import com.matthew.employeemanagementsystem.service.department.DepartmentFacade;
+import com.matthew.employeemanagementsystem.service.security.RoleService;
 import com.matthew.employeemanagementsystem.service.verificationtoken.VerificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,6 +32,7 @@ class UserManagementServiceImpl implements UserManagementService {
     private final UserModelMapper userModelMapper;
     private final VerificationService verificationService;
     private final VerificationTokenRepository verificationTokenRepository;
+    private final RoleService roleService;
 
     @Override
     public UserResponseDTO registerNewUser(HttpServletRequest request, Principal loggedUser, RegisterNewUserRequestDTO requestDTO) throws IllegalArgumentException {
@@ -46,37 +47,19 @@ class UserManagementServiceImpl implements UserManagementService {
         return userModelMapper.mapUserEntityToUserResponseDTO(newUserEntity);
     }
 
-    private void addUserAsAModeratorInDepartment(RegisterNewUserRequestDTO requestDTO) {
-        if (requestDTO.role().contains("MODERATOR")) {
-            departmentFacade.addUserEntityToModeratorList(new AddModeratorToDepartmentRequestDTO(requestDTO.username(), requestDTO.department()));
-        }
-    }
+    @Override
+    public LoginResponseDTO login(LoginRequestDTO requestDTO) {
+        UserEntity userEntity = userFindingService.getUserEntity(requestDTO.username());
+        isCredentialsCorrect(requestDTO.password(), userEntity.getPassword());
 
-    private void checkIfRequestIsAboutAdminOrSuperAdminAndIfRequestingUserHasPermission(RegisterNewUserRequestDTO requestDTO, UserEntity loggedUserEntity) {
-        if (isUserAdminOrSuperAdmin(requestDTO.role())) {
-            checkIfUserHasPermissionToAddSuperAdminOrAdmin(loggedUserEntity);
-        }
-    }
-
-    private boolean isUserAdminOrSuperAdmin(String role) {
-        return role.contains("ADMIN") || role.contains("SUPERADMIN");
-    }
-
-    private void checkIfUserHasPermissionToAddSuperAdminOrAdmin(UserEntity loggedUserEntity) {
-        if (!isUserSuperAdmin(loggedUserEntity.getRole())) {
-            throw new RoleDoesntHavePermissionToThisFeatureException();
-        }
-    }
-
-    private boolean isUserSuperAdmin(RoleType role) {
-        return role.equals(RoleType.ROLE_SUPERADMIN);
+        return userModelMapper.mapUserEntityToLoginResponseDTO(userEntity);
     }
 
     @Override
     public void deleteUser(Principal loggedUser, DeleteUserRequestDTO requestDTO) {
         UserEntity requestingUser = userFindingService.getUserEntity(loggedUser.getName());
         UserEntity requestedUser = userFindingService.getUserEntity(requestDTO.username());
-        if (requestingUser.getRole().equals(RoleType.ROLE_SUPERADMIN) || requestingUser.getRole().equals(RoleType.ROLE_ADMIN)) {
+        if (roleService.isUserSuperAdminOrAdmin(requestingUser)) {
             verificationTokenRepository.deleteByUserId(requestedUser.getId());
             departmentFacade.deleteUserFromAllModeratorsList(requestedUser);
             userRepository.deleteByUsername(requestDTO.username());
@@ -86,11 +69,31 @@ class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public LoginResponseDTO login(LoginRequestDTO requestDTO) {
-        UserEntity userEntity = userFindingService.getUserEntity(requestDTO.username());
-        isCredentialsCorrect(requestDTO.password(), userEntity.getPassword());
+    public void changeUserPassword(Principal loggedUser, ChangeUserPasswordRequestDTO requestDTO) {
+        UserEntity userEntity = userFindingService.getUserEntity(loggedUser.getName());
+        if (isGivenOldPasswordCorrect(requestDTO.oldPassword(), userEntity.getPassword()) && isPasswordRepeatingCorrect(requestDTO)) {
+            userEntity.setPassword(encodePassword(requestDTO.newPassword()));
+        } else {
+            throw new PasswordDoesntMatchException();
+        }
+    }
 
-        return userModelMapper.mapUserEntityToLoginResponseDTO(userEntity);
+    private void addUserAsAModeratorInDepartment(RegisterNewUserRequestDTO requestDTO) {
+        if (requestDTO.role().contains("MODERATOR")) {
+            departmentFacade.addUserEntityToModeratorList(new AddModeratorToDepartmentRequestDTO(requestDTO.username(), requestDTO.department()));
+        }
+    }
+
+    private void checkIfRequestIsAboutAdminOrSuperAdminAndIfRequestingUserHasPermission(RegisterNewUserRequestDTO requestDTO, UserEntity loggedUserEntity) {
+        if (roleService.isGivenRoleSuperAdminOrAdmin(requestDTO.role())) {
+            checkIfUserHasPermissionToAddSuperAdminOrAdmin(loggedUserEntity);
+        }
+    }
+
+    private void checkIfUserHasPermissionToAddSuperAdminOrAdmin(UserEntity loggedUserEntity) {
+        if (!roleService.isUserSuperAdmin(loggedUserEntity)) {
+            throw new RoleDoesntHavePermissionToThisFeatureException();
+        }
     }
 
     private void isCredentialsCorrect(String givenPassword, String actualPassword) {
@@ -127,19 +130,8 @@ class UserManagementServiceImpl implements UserManagementService {
         userRepository.save(newUserEntity);
     }
 
-    @Override
-    public void changeUserPassword(Principal loggedUser, ChangeUserPasswordRequestDTO requestDTO) {
-        UserEntity userEntity = userFindingService.getUserEntity(loggedUser.getName());
-        if (isGivenOldPasswordCorrect(requestDTO.oldPassword(), userEntity.getPassword()) && isPasswordRepeatingCorrect(requestDTO)) {
-            userEntity.setPassword(encodePassword(requestDTO.newPassword()));
-        } else {
-            throw new PasswordDoesntMatchException();
-        }
-    }
-
     private boolean isGivenOldPasswordCorrect(String charPassword, String actualPassword) {
         if (suffixConfiguration.bCryptPasswordEncoder().matches(charPassword, actualPassword)) {
-
             return true;
         } else {
             throw new PasswordDoesntMatchException();
@@ -148,7 +140,6 @@ class UserManagementServiceImpl implements UserManagementService {
 
     private boolean isPasswordRepeatingCorrect(ChangeUserPasswordRequestDTO requestDTO) {
         if (requestDTO.repeatOldPassword().equals(requestDTO.oldPassword()) && requestDTO.repeatNewPassword().equals(requestDTO.newPassword())) {
-
             return true;
         } else {
             throw new BadRepeatingException();
