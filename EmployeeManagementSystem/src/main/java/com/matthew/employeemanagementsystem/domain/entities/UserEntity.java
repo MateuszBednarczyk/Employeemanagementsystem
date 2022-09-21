@@ -7,8 +7,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,13 +27,13 @@ public class UserEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotBlank(message = "Username cannot be null")
     private String username;
 
-    @NotNull
+    @NotBlank(message = "Password cannot be null")
     private String password;
 
-    @NotNull
+    @NotBlank(message = "E-Mail cannot be null")
     private String email;
 
     @NotNull
@@ -42,6 +44,7 @@ public class UserEntity implements UserDetails {
     private List<DepartmentEntity> departments = new ArrayList<>();
 
     @JsonIgnore
+    @Enumerated(EnumType.STRING)
     private RoleType role;
 
     public UserEntity(String username, String password, String email, String role) {
