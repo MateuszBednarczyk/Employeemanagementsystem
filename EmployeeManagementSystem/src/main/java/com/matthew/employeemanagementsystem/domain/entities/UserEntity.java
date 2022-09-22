@@ -1,13 +1,16 @@
 package com.matthew.employeemanagementsystem.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.matthew.employeemanagementsystem.domain.enums.RoleType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,30 +26,37 @@ public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
+
+    @NotBlank(message = "Username cannot be null")
     private String username;
-    @NotNull
+
+    @NotBlank(message = "Password cannot be null")
     private String password;
 
-    @JsonIgnore
-    @ManyToMany
-    private List<DepartmentEntity> departmentEntities = new ArrayList<>();
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    private List<RoleEntity> roles = new ArrayList<>();
+    @NotBlank(message = "E-Mail cannot be null")
+    private String email;
 
-    public UserEntity(String username, String password) {
+    @NotNull
+    private boolean isEnabled = false;
+
+    @JsonIgnore
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH})
+    private List<DepartmentEntity> departments = new ArrayList<>();
+
+    @JsonIgnore
+    @Enumerated(EnumType.STRING)
+    private RoleType role;
+
+    public UserEntity(String username, String password, String email, String role) {
         this.username = username;
         this.password = password;
+        this.email = email;
+        this.role = RoleType.valueOf(role);
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<String> roleTypes = new ArrayList<>();
-        for (RoleEntity role : roles) {
-            roleTypes.add(role.getRoleType().name());
-        }
-        return Collections.singleton(new SimpleGrantedAuthority(roleTypes.toString()));
+        return Collections.singleton(new SimpleGrantedAuthority(role.toString()));
     }
 
     @Override
@@ -76,6 +86,6 @@ public class UserEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.isEnabled;
     }
 }

@@ -11,4 +11,6 @@ interface EmployeeFindingService {
     EmployeeResponseDTO findEmployeeByNameAndSurnameAndReturnItAsDTO(String name, String surname);
 
     List<EmployeeResponseDTO> findEmployeesInDepartment(String departmentName);
+
+    EmployeeEntity findById(Long id);
 }

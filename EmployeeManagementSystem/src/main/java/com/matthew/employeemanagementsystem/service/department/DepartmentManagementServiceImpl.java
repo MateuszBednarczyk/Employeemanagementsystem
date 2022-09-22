@@ -3,14 +3,14 @@ package com.matthew.employeemanagementsystem.service.department;
 import com.matthew.employeemanagementsystem.domain.entities.DepartmentEntity;
 import com.matthew.employeemanagementsystem.domain.entities.EmployeeEntity;
 import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
-import com.matthew.employeemanagementsystem.domain.enums.RoleType;
 import com.matthew.employeemanagementsystem.dtos.department.*;
 import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.exception.department.DepartmentAlreadyExistsException;
 import com.matthew.employeemanagementsystem.exception.department.DepartmentNoPermissionException;
+import com.matthew.employeemanagementsystem.exception.user.UserIsAlredadyModeratorInDepartment;
 import com.matthew.employeemanagementsystem.mapper.DepartmentModelMapper;
 import com.matthew.employeemanagementsystem.repository.DepartmentRepository;
-import com.matthew.employeemanagementsystem.service.role.RoleFacade;
+import com.matthew.employeemanagementsystem.service.security.RoleService;
 import com.matthew.employeemanagementsystem.service.user.UserFindingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.security.Principal;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -28,26 +29,26 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     private final DepartmentFindingService departmentFindingService;
     private final DepartmentModelMapper departmentModelMapper;
     private final UserFindingService userFindingService;
-    private final RoleFacade roleFacade;
+    private final RoleService roleService;
 
     @Override
     public DepartmentResponseDTO addNewDepartment(AddNewDepartmentRequestDTO requestDTO) {
-        checkIfAddingNewDepartmentIsPossible(requestDTO.departmentName());
+        checkIfAddingNewDepartmentIsPossible(requestDTO.departmentName().toLowerCase());
         DepartmentEntity newDepartmentEntity = createAndSaveDepartmentEntity(requestDTO);
 
-        return new DepartmentResponseDTO(newDepartmentEntity.getDepartmentName(), newDepartmentEntity.getEmployeesList());
+        return new DepartmentResponseDTO(newDepartmentEntity.getDepartmentName(), newDepartmentEntity.getEmployees());
     }
 
     @Override
     public void deleteEmployeeFromDepartment(DeleteEmployeeRequestDTO deleteEmployeeRequestDTO, EmployeeEntity employeeEntity) {
-        departmentFindingService.getDepartmentEntity(deleteEmployeeRequestDTO.departmentName()).getEmployeesList().remove(employeeEntity);
+        departmentFindingService.getDepartmentEntity(deleteEmployeeRequestDTO.departmentName()).getEmployees().remove(employeeEntity);
     }
 
     @Override
     public void deleteDepartmentByName(Principal loggedUser, String departmentName) throws DepartmentNoPermissionException {
         DepartmentEntity departmentEntity = departmentFindingService.getDepartmentEntity(departmentName);
         UserEntity userEntity = userFindingService.getUserEntity(loggedUser.getName());
-        if (departmentEntity.getModeratorList().contains(userFindingService.getUserEntity(loggedUser.getName())) || userEntity.getRoles().contains(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
+        if (isUserAModeratorInDepartment(departmentEntity, userFindingService.getUserEntity(loggedUser.getName())) || roleService.isUserSuperAdminOrAdmin(userEntity)) {
             deleteRelatedData(userEntity, departmentEntity);
             departmentRepository.deleteByDepartmentName(departmentName);
         } else {
@@ -56,19 +57,35 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
     }
 
     private void deleteRelatedData(UserEntity userEntity, DepartmentEntity departmentEntity) {
-        userEntity.getDepartmentEntities().remove(departmentEntity);
-        departmentEntity.getModeratorList().remove(userEntity);
+        userEntity.getDepartments().remove(departmentEntity);
+        departmentEntity.getModerators().remove(userEntity);
     }
 
     @Override
     public void addUserEntityToModeratorList(AddModeratorToDepartmentRequestDTO requestDTO) {
-        departmentFindingService.getDepartmentEntity(requestDTO.departmentName()).getModeratorList().add(userFindingService.getUserEntity(requestDTO.username()));
+        DepartmentEntity departmentEntity = departmentFindingService.getDepartmentEntity(requestDTO.departmentName());
+        UserEntity userEntity = userFindingService.getUserEntity(requestDTO.username());
+        if (isUserAModeratorInDepartment(departmentEntity, userEntity)) {
+            throw new UserIsAlredadyModeratorInDepartment(requestDTO.username(), requestDTO.departmentName());
+        }
+        addUserAsAModeratorAndAddDepartmentEntityToUserIfItsNotPresent(departmentEntity, userEntity);
+    }
+
+    private void addUserAsAModeratorAndAddDepartmentEntityToUserIfItsNotPresent(DepartmentEntity departmentEntity, UserEntity userEntity) {
+        departmentEntity.getModerators().add(userEntity);
+        if (!userEntity.getDepartments().contains(departmentEntity)) {
+            userEntity.getDepartments().add(departmentEntity);
+        }
+    }
+
+    private boolean isUserAModeratorInDepartment(DepartmentEntity departmentEntity, UserEntity userEntity) {
+        return departmentEntity.getModerators().contains(userEntity);
     }
 
     @Override
     public void deleteUserEntityFromModeratorList(Principal loggedUser, DeleteUserEntityFromModeratorListRequestDTO requestDTO) throws DepartmentNoPermissionException {
         UserEntity userEntity = userFindingService.getUserEntity(loggedUser.getName());
-        if (userEntity.getRoles().contains(roleFacade.findByRoleType(RoleType.ROLE_ADMIN))) {
+        if (roleService.isUserSuperAdminOrAdmin(userEntity)) {
             deleteRelatedData(userFindingService.getUserEntity(requestDTO.username()), departmentFindingService.getDepartmentEntity(requestDTO.departmentName()));
         } else {
             throw new DepartmentNoPermissionException(requestDTO.departmentName());
@@ -86,9 +103,15 @@ class DepartmentManagementServiceImpl implements DepartmentManagementService {
         return departmentModelMapper.mapDepartmentEntityToDepartmentResponseDTO(departmentEntity);
     }
 
+    @Override
+    public void deleteUserFromAllModeratorsList(UserEntity userToDelete) {
+        List<DepartmentEntity> allDepartments = departmentRepository.findAll();
+        allDepartments.forEach(departmentEntity -> departmentEntity.getModerators().remove(userToDelete));
+    }
+
     public void addDepartmentToEmployeeAndAddEmployeeToDepartment(DepartmentEntity selectedDepartment, EmployeeEntity newEmployeeEntity) {
-        newEmployeeEntity.getDepartmentEntities().add(selectedDepartment);
-        selectedDepartment.getEmployeesList().add(newEmployeeEntity);
+        newEmployeeEntity.getDepartments().add(selectedDepartment);
+        selectedDepartment.getEmployees().add(newEmployeeEntity);
     }
 
     private DepartmentEntity createAndSaveDepartmentEntity(AddNewDepartmentRequestDTO requestDTO) {

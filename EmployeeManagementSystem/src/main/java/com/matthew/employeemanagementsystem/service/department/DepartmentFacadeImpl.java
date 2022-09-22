@@ -2,6 +2,7 @@ package com.matthew.employeemanagementsystem.service.department;
 
 import com.matthew.employeemanagementsystem.domain.entities.DepartmentEntity;
 import com.matthew.employeemanagementsystem.domain.entities.EmployeeEntity;
+import com.matthew.employeemanagementsystem.domain.entities.UserEntity;
 import com.matthew.employeemanagementsystem.dtos.department.*;
 import com.matthew.employeemanagementsystem.dtos.employee.DeleteEmployeeRequestDTO;
 import com.matthew.employeemanagementsystem.exception.department.DepartmentNoPermissionException;
@@ -66,5 +67,10 @@ class DepartmentFacadeImpl implements DepartmentFacade {
     @Override
     public DepartmentResponseDTO modifyDepartmentName(ModifyDepartmentRequestDTO requestDTO) {
         return departmentManagementService.modifyDepartmentName(requestDTO);
+    }
+
+    @Override
+    public void deleteUserFromAllModeratorsList(UserEntity userToDelete) {
+        departmentManagementService.deleteUserFromAllModeratorsList(userToDelete);
     }
 }

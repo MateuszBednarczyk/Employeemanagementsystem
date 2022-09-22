@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,16 +20,16 @@ public class DepartmentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotBlank(message = "Department name cannot be null")
     private String departmentName;
 
     @JsonIgnore
     @ManyToMany
-    private List<EmployeeEntity> employeesList = new ArrayList<>();
+    private List<EmployeeEntity> employees = new ArrayList<>();
 
     @JsonIgnore
-    @ManyToMany
-    private List<UserEntity> moderatorList = new ArrayList<>();
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    private List<UserEntity> moderators = new ArrayList<>();
 
     public DepartmentEntity(String departmentName) {
         this.departmentName = departmentName;
