@@ -1,5 +1,6 @@
 package com.matthew.employeemanagementsystem.domain.entities;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,13 +19,13 @@ public class EmployeeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotBlank(message = "Name cannot be null")
     private String name;
 
-    @NotNull
+    @NotBlank(message = "Surname cannot be null")
     private String surname;
 
-    @NotNull
+    @NotBlank(message = "E-Mail cannot be null")
     private String email;
 
     @ManyToMany

@@ -1,4 +1,7 @@
 package com.matthew.employeemanagementsystem.dtos.user;
 
-public record LoginRequestDTO(String username, String password) {
+import javax.validation.constraints.NotBlank;
+
+public record LoginRequestDTO(@NotBlank(message = "Username cannot be null") String username,
+                              @NotBlank(message = "Password cannot be null") String password) {
 }
