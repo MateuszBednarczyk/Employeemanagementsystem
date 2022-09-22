@@ -1,4 +1,9 @@
 package com.matthew.employeemanagementsystem.dtos.employee;
 
-public record AddNewEmployeeRequestDTO(String name, String surname, String email, String departmentName) {
+import javax.validation.constraints.NotBlank;
+
+public record AddNewEmployeeRequestDTO(@NotBlank(message = "Name cannot be null") String name,
+                                       @NotBlank(message = "Surname cannot be null") String surname,
+                                       @NotBlank(message = "E-Mail cannot be null") String email,
+                                       @NotBlank(message = "Department name cannot be null") String departmentName) {
 }
