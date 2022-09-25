@@ -47,6 +47,7 @@ const ApiService = {
     const body = {
       name: employeeData.name,
       surname: employeeData.surname,
+      email:employeeData.email,
       departmentName: departmentName,
     };
     return await axiosWithTokenCheck.post(`${baseUrl}/employees/add`, body);
