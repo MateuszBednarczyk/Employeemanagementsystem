@@ -41,6 +41,9 @@
             <q-td key="surname" :props="props" class="name-td">
               {{ props.row.surname }}
             </q-td>
+            <q-td key="email" :props="props" class="name-td">
+              {{ props.row.email }}
+            </q-td>
             <q-td key="actions" :props="props" auto-width>
               <div class="table-actions-container">
                 <q-btn
@@ -89,6 +92,15 @@
             label="surname"
             :rules="[(val) => !!val || 'Field is required']"
           />
+          <q-input
+            v-model="email"
+            type="email"
+            label="email"
+            :rules="[
+              (val) => !!val || 'Field is required',
+              (val) => validateEmail(val) || 'Email isn\'t valid',
+            ]"
+          />
         </q-card-section>
 
         <q-card-actions align="right">
@@ -117,6 +129,7 @@ const getDepartmentSelectLabel = () => {
 const addEmployeeDialogOpened = ref(false);
 const firstName = ref("");
 const surname = ref("");
+const email = ref("");
 
 const openAddEmployeeDialog = () => {
   if (selectedDepartment.value != null) {
@@ -130,16 +143,26 @@ const closeAddEmployeeDialog = () => {
 const beforeShowDialog = () => {
   firstName.value = "";
   surname.value = "";
+  email.value = "";
 };
 
 const submitAddEmployee = () => {
   ApiService.AddEmployee(selectedDepartment.value?.departmentName!, {
     name: firstName.value!,
     surname: surname.value!,
+    email: email.value!
   }).then(() => {
     closeAddEmployeeDialog();
     reloadEmployees();
   });
+};
+
+const validateEmail = (value: string) => {
+  if (!value) {
+    return false;
+  }
+  const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  return regex.test(value);
 };
 
 //#endregion
@@ -242,6 +265,14 @@ const columns: any = [
     sortable: true,
   },
   {
+    name: "email",
+    required: true,
+    label: "Email",
+    align: "left",
+    field: (row: EmployeeTableRow) => row.email,
+    sortable: true,
+  },
+  {
     name: "actions",
     label: "Actions",
     align: "center",
@@ -255,6 +286,7 @@ const rows = ref<EmployeeTableRow[]>([]);
 interface EmployeeTableRow {
   name: string;
   surname: string;
+  email:string;
 }
 </script>
 
