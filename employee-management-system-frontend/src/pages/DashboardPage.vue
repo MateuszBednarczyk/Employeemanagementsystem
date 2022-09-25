@@ -32,7 +32,6 @@ import { useRouter } from "vue-router";
 import Sidebar from "@/components/Sidebar/Sidebar.vue";
 const router = useRouter();
 
-
 onMounted(() => {
   if (!UserAccountService.IsLogged()) {
     router.push("/login");
@@ -44,4 +43,9 @@ const onLogout = async () => {
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.dialog-card {
+  width: 25vw;
+  padding: 0 20px;
+}
+</style>
