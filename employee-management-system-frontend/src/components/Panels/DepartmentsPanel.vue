@@ -143,7 +143,7 @@ const submitAddDepartment = () => {
 
 const deleteDepartment = (rowIndex: number) => {
   ApiService.DeleteDepartment(rows.value[rowIndex].name).then((res) => {
-    router.go(0);
+    reloadDepartments();
   });
 };
 const editDepartment = (rowIndex: number) => {
